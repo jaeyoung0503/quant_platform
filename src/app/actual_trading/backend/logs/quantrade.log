@@ -17,3 +17,10 @@
 2025-08-27 11:45:50,175 - database - INFO - 데이터베이스 초기화 완료
 2025-08-27 11:45:50,175 - main - INFO - 초기 거래 모드: DEMO
 2025-08-27 11:45:50,178 - data.kiwoom_mock - INFO - 키움 API 연결 시도 중...
+2025-08-27 11:45:52,183 - data.kiwoom_mock - INFO - 키움 API 연결 완료 (모의투자 모드)
+2025-08-27 11:45:52,183 - trading_engine_manager - INFO - 트레이딩 엔진 초기화 중...
+2025-08-27 11:45:52,183 - trading_engine_manager - INFO - 트레이딩 엔진 초기화 완료
+2025-08-27 11:45:52,183 - main - INFO - 시스템 초기화 완료 - 모드: DEMO
+2025-08-27 11:45:52,184 - trading_engine_manager - INFO - 트레이딩 루프 시작
+2025-08-27 11:45:52,184 - trading_engine_manager - ERROR - 트레이딩 루프 오류: name 'asyncio' is not defined
+2025-08-27 11:45:52,184 - trading_engine_manager - INFO - 트레이딩 루프 종료

@@ -1,0 +1,39 @@
+키움증권 API를 실제로 연결하려면 다음 단계를 거쳐야 합니다:
+
+**1. 키움증권 계좌 개설**
+- 키움증권에서 주식 계좌 개설
+- HTS(영웅문) 및 MTS 사용 권한 확보
+
+**2. KOA Studio 설치 및 설정**
+- 키움 개발자 센터에서 KOA Studio 다운로드
+- 설치 후 키움증권 계좌로 로그인
+- API 사용 동의서 작성 및 승인 대기 (보통 1-2일 소요)
+
+**3. 개발 환경 구축**
+- Python의 경우: `pywin32`, `pythoncom` 라이브러리 설치
+- 32비트 Python 환경 필요 (키움 API가 32비트만 지원)
+
+**4. 기본 연결 코드 예시**
+```python
+import win32com.client
+import pythoncom
+
+class KiwoomAPI:
+    def __init__(self):
+        self.ocx = win32com.client.Dispatch("KHOPENAPI.KHOpenAPICtrl.1")
+        
+    def login(self):
+        ret = self.ocx.CommConnect()
+        if ret == 0:
+            print("로그인 요청 성공")
+        else:
+            print("로그인 요청 실패")
+```
+
+**주의사항:**
+- API는 평일 08:20~15:30만 사용 가능
+- 하루 조회 건수 제한 (계좌별로 다름)
+- 실제 거래 시 금전적 손실 위험
+- 먼저 모의투자로 충분히 테스트 필요
+
+현재 만든 대시보드는 UI만 구현된 상태이므로, 실제 API 연동을 위해서는 백엔드 서버가 추가로 필요합니다.

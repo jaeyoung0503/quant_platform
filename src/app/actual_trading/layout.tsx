@@ -1,9 +1,5 @@
-// app/layout.tsx
-
-import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
+// app/actual_trading/layout.tsx
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'QuanTrade Pro - 퀀트 자동매매 시스템',
@@ -13,27 +9,14 @@ export const metadata: Metadata = {
   robots: 'noindex, nofollow', // 보안상 검색엔진 차단
 }
 
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  themeColor: '#111827',
-}
-
-export default function RootLayout({
+export default function ActualTradingLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <html lang="ko" className="dark">
-      <head>
-        <link rel="icon" href="/favicon.ico" />
-      </head>
-      <body className={`${inter.className} bg-gray-900 text-white antialiased`}>
-        <div id="root">
-          {children}
-        </div>
-      </body>
-    </html>
+    <div className="min-h-screen bg-gray-900 text-white">
+      {children}
+    </div>
   )
 }
