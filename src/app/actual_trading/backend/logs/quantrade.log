@@ -11,3 +11,9 @@
 2025-08-26 23:15:48,354 - trading_engine_manager - INFO - 트레이딩 루프 시작
 2025-08-26 23:15:48,355 - trading_engine_manager - ERROR - 트레이딩 루프 오류: name 'asyncio' is not defined
 2025-08-26 23:15:48,355 - trading_engine_manager - INFO - 트레이딩 루프 종료
+2025-08-27 11:45:50,055 - __main__ - INFO - 서버 시작: http://0.0.0.0:8000
+2025-08-27 11:45:50,056 - __main__ - INFO - API 문서: http://0.0.0.0:8000/docs
+2025-08-27 11:45:50,158 - main - INFO - 퀀트 트레이딩 시스템 시작 중...
+2025-08-27 11:45:50,175 - database - INFO - 데이터베이스 초기화 완료
+2025-08-27 11:45:50,175 - main - INFO - 초기 거래 모드: DEMO
+2025-08-27 11:45:50,178 - data.kiwoom_mock - INFO - 키움 API 연결 시도 중...
