@@ -1,0 +1,48 @@
+2025-08-24 17:42:27,595 - __main__ - INFO - 로깅 시스템 초기화 완료
+2025-08-24 17:42:27,596 - __main__ - INFO - 디렉토리 설정 완료
+2025-08-24 17:42:27,674 - database - INFO - 데이터베이스 초기화 완료
+2025-08-24 17:47:28,437 - __main__ - INFO - 로깅 시스템 초기화 완료
+2025-08-24 17:47:28,453 - __main__ - INFO - 디렉토리 설정 완료
+2025-08-24 17:47:28,461 - database - INFO - 데이터베이스 초기화 완료
+2025-08-24 17:47:28,462 - __main__ - INFO - 거래 시스템 초기화 완료
+2025-08-24 17:47:28,561 - __main__ - INFO - QApplication 생성 완료
+2025-08-24 17:47:29,090 - __main__ - ERROR - API 및 서비스 초기화 오류: 'QAxWidget' object has no attribute 'OnEventConnect'
+2025-08-24 17:47:29,106 - kiwoom_api - INFO - 키움 API 연결 해제 완료
+2025-08-24 17:47:29,110 - __main__ - ERROR - 시스템 실행 오류: 'TradingSystem' object has no attribute 'trading_service'
+2025-08-24 17:51:14,778 - __main__ - INFO - 로깅 시스템 초기화 완료
+2025-08-24 17:51:14,778 - __main__ - INFO - 디렉토리 설정 완료
+2025-08-24 17:51:14,780 - database - INFO - 데이터베이스 초기화 완료
+2025-08-24 17:51:14,780 - __main__ - INFO - 거래 시스템 초기화 완료
+2025-08-24 17:51:14,808 - __main__ - INFO - QApplication 생성 완료
+2025-08-24 17:51:14,822 - __main__ - ERROR - API 및 서비스 초기화 오류: cannot access local variable 'KIWOOM_AVAILABLE' where it is not associated with a value
+2025-08-24 17:51:14,822 - kiwoom_api - INFO - 키움 API 연결 해제 완료
+2025-08-24 17:51:14,823 - __main__ - ERROR - 시스템 실행 오류: 'TradingSystem' object has no attribute 'trading_service'
+2025-08-24 17:53:20,445 - __main__ - INFO - 로깅 시스템 초기화 완료
+2025-08-24 17:53:20,446 - __main__ - INFO - 디렉토리 설정 완료
+2025-08-24 17:53:20,448 - database - INFO - 데이터베이스 초기화 완료
+2025-08-24 17:53:20,448 - __main__ - INFO - 거래 시스템 초기화 완료
+2025-08-24 17:53:20,475 - __main__ - INFO - QApplication 생성 완료
+2025-08-24 17:53:20,481 - __main__ - ERROR - API 및 서비스 초기화 오류: cannot access local variable 'KIWOOM_AVAILABLE' where it is not associated with a value
+2025-08-24 17:53:20,481 - __main__ - ERROR - 기본 서비스 초기화도 실패: cannot access local variable 'KIWOOM_AVAILABLE' where it is not associated with a value
+2025-08-24 17:53:20,481 - __main__ - ERROR - 시스템 실행 오류: cannot access local variable 'KIWOOM_AVAILABLE' where it is not associated with a value
+2025-08-24 17:53:26,492 - kiwoom_api - INFO - 키움 API 연결 해제 완료
+2025-08-24 17:53:26,506 - kiwoom_api - INFO - 키움 API 연결 해제 완료
+2025-08-24 17:55:28,204 - __main__ - INFO - 로깅 시스템 초기화 완료
+2025-08-24 17:55:28,205 - __main__ - INFO - 디렉토리 설정 완료
+2025-08-24 17:55:28,207 - database - INFO - 데이터베이스 초기화 완료
+2025-08-24 17:55:28,207 - __main__ - INFO - 거래 시스템 초기화 완료
+2025-08-24 17:55:28,254 - __main__ - INFO - QApplication 생성 완료
+2025-08-24 17:55:28,552 - kiwoom_api - WARNING - 키움 API 시그널 연결 실패
+2025-08-24 17:55:28,552 - kiwoom_api - INFO - 키움 API 컨트롤 생성 성공
+2025-08-24 17:55:28,553 - kiwoom_api - ERROR - 키움 API 연결 실패: None
+2025-08-24 17:55:28,569 - __main__ - INFO - API 및 서비스 초기화 성공
+2025-08-24 17:55:29,731 - __main__ - INFO - 시스템 실행 완료
+2025-08-24 17:55:40,225 - kiwoom_api - INFO - 모의 주문 성공: 005930 지정가매수 10주
+2025-08-24 17:55:40,236 - database - INFO - 주문 저장 완료: ID 1
+2025-08-24 17:55:40,249 - trading_service - INFO - 매수 주문 완료: 005930 10주 @ 70,000원
+2025-08-24 17:55:54,830 - trading_service - ERROR - 매수 주문 실패: 모의 주문 실패 (랜덤)
+2025-08-24 17:56:50,242 - kiwoom_api - INFO - 모의 주문 성공: 005930 지정가매수 10주
+2025-08-24 17:56:50,265 - database - INFO - 주문 저장 완료: ID 2
+2025-08-24 17:56:50,271 - trading_service - INFO - 매수 주문 완료: 005930 10주 @ 70,000원
+2025-08-24 17:57:42,893 - kiwoom_api - INFO - 키움 API 연결 해제 완료
+2025-08-24 17:57:42,894 - gui_windows - INFO - 시스템 정상 종료

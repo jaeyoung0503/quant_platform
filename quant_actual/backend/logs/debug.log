@@ -1,0 +1,343 @@
+2025-08-26 19:05:49,669 - __main__ - INFO - ==================================================
+2025-08-26 19:05:49,670 - __main__ - INFO - QuanTrade Pro 디버깅 모드 시작
+2025-08-26 19:05:49,670 - __main__ - INFO - ==================================================
+2025-08-26 19:05:50,303 - __main__ - INFO - database 모듈 import 성공
+2025-08-26 19:05:50,321 - __main__ - ERROR - api 모듈 import 실패: invalid syntax (engine.py, line 1)
+2025-08-26 19:05:50,323 - __main__ - ERROR - trading.engine 모듈 import 실패: invalid syntax (engine.py, line 1)
+2025-08-26 19:05:50,323 - __main__ - INFO - FastAPI 앱 생성 중...
+2025-08-26 19:05:50,324 - __main__ - INFO - CORS 미들웨어 설정 중...
+2025-08-26 19:05:50,324 - __main__ - WARNING - API 라우터가 없어 등록 건너뜀
+2025-08-26 19:05:50,325 - __main__ - INFO - 서버 시작 준비 중...
+2025-08-26 19:05:50,326 - __main__ - INFO - 서버 설정 - Host: 0.0.0.0, Port: 8000
+2025-08-26 19:05:50,326 - __main__ - INFO - 디버깅 모드로 서버를 시작합니다...
+2025-08-26 19:05:50,326 - __main__ - INFO - 접속 URL: http://0.0.0.0:8000
+2025-08-26 19:05:50,326 - __main__ - INFO - 디버깅 정보: http://0.0.0.0:8000/debug
+2025-08-26 19:05:50,326 - __main__ - INFO - 헬스 체크: http://0.0.0.0:8000/health
+2025-08-26 19:05:50,326 - __main__ - INFO - 최근 로그: http://0.0.0.0:8000/logs
+2025-08-26 19:05:50,329 - asyncio - DEBUG - Using proactor: IocpProactor
+2025-08-26 19:05:50,386 - main - INFO - ==================================================
+2025-08-26 19:05:50,387 - main - INFO - QuanTrade Pro 디버깅 모드 시작
+2025-08-26 19:05:50,387 - main - INFO - ==================================================
+2025-08-26 19:05:50,387 - main - INFO - database 모듈 import 성공
+2025-08-26 19:05:50,391 - main - ERROR - api 모듈 import 실패: invalid syntax (engine.py, line 1)
+2025-08-26 19:05:50,392 - main - ERROR - trading.engine 모듈 import 실패: invalid syntax (engine.py, line 1)
+2025-08-26 19:05:50,393 - main - INFO - FastAPI 앱 생성 중...
+2025-08-26 19:05:50,393 - main - INFO - CORS 미들웨어 설정 중...
+2025-08-26 19:05:50,394 - main - WARNING - API 라우터가 없어 등록 건너뜀
+2025-08-26 19:05:50,396 - main - INFO - 🚀 퀀트 트레이딩 시스템 초기화 시작...
+2025-08-26 19:05:50,396 - main - INFO - 1. 데이터베이스 초기화 중...
+2025-08-26 19:05:50,396 - database - INFO - 데이터베이스 초기화 시작...
+2025-08-26 19:05:50,399 - database - DEBUG - SQLite 최적화 설정 적용됨
+2025-08-26 19:05:50,400 - database - ERROR - 데이터베이스 초기화 실패: Not an executable object: 'SELECT 1'
+2025-08-26 19:05:50,400 - main - INFO - 데이터베이스 초기화 결과: False
+2025-08-26 19:05:50,400 - database - ERROR - 데이터베이스 오류: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 19:05:50,400 - database - ERROR - 데이터베이스 상태 체크 실패: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 19:05:50,401 - main - INFO - 데이터베이스 상태: {'healthy': False, 'error': "Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')", 'response_time_ms': -1, 'tables': 0, 'records': {}}
+2025-08-26 19:05:50,401 - main - INFO - 2. 키움 클라이언트 초기화 중...
+2025-08-26 19:05:50,415 - main - INFO - 키움 Mock 클라이언트 생성 성공
+2025-08-26 19:05:50,415 - data.kiwoom_mock - INFO - 키움 API 연결 시도 중...
+2025-08-26 19:05:52,417 - data.kiwoom_mock - INFO - 키움 API 연결 완료 (모의투자 모드)
+2025-08-26 19:05:52,419 - main - INFO - 키움 클라이언트 연결 결과: True
+2025-08-26 19:05:52,420 - main - INFO - 3. 트레이딩 엔진 초기화 중...
+2025-08-26 19:05:52,420 - main - WARNING - TradingEngine 클래스가 없어 초기화 건너뜀
+2025-08-26 19:05:52,420 - main - INFO - ✅ 시스템 초기화 완료!
+2025-08-26 19:09:28,259 - main - INFO - 🛑 시스템 종료 중...
+2025-08-26 19:09:28,259 - main - INFO - ✅ 시스템 종료 완료
+2025-08-26 19:09:28,262 - data.kiwoom_mock - INFO - 가격 업데이트 시뮬레이션 종료
+2025-08-26 19:13:14,548 - __main__ - INFO - ==================================================
+2025-08-26 19:13:14,555 - __main__ - INFO - QuanTrade Pro 디버깅 모드 시작
+2025-08-26 19:13:14,566 - __main__ - INFO - ==================================================
+2025-08-26 19:13:14,976 - __main__ - INFO - database 모듈 import 성공
+2025-08-26 19:13:14,982 - __main__ - ERROR - api 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 19:13:14,982 - __main__ - ERROR - trading.engine 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 19:13:14,982 - __main__ - INFO - FastAPI 앱 생성 중...
+2025-08-26 19:13:14,983 - __main__ - INFO - CORS 미들웨어 설정 중...
+2025-08-26 19:13:14,984 - __main__ - WARNING - API 라우터가 없어 등록 건너뜀
+2025-08-26 19:13:14,987 - __main__ - INFO - 서버 시작 준비 중...
+2025-08-26 19:13:14,987 - __main__ - INFO - 서버 설정 - Host: 0.0.0.0, Port: 8000
+2025-08-26 19:13:14,988 - __main__ - INFO - 디버깅 모드로 서버를 시작합니다...
+2025-08-26 19:13:14,988 - __main__ - INFO - 접속 URL: http://0.0.0.0:8000
+2025-08-26 19:13:14,988 - __main__ - INFO - 디버깅 정보: http://0.0.0.0:8000/debug
+2025-08-26 19:13:14,989 - __main__ - INFO - 헬스 체크: http://0.0.0.0:8000/health
+2025-08-26 19:13:14,989 - __main__ - INFO - 최근 로그: http://0.0.0.0:8000/logs
+2025-08-26 19:13:14,992 - asyncio - DEBUG - Using proactor: IocpProactor
+2025-08-26 19:13:15,036 - main - INFO - ==================================================
+2025-08-26 19:13:15,037 - main - INFO - QuanTrade Pro 디버깅 모드 시작
+2025-08-26 19:13:15,037 - main - INFO - ==================================================
+2025-08-26 19:13:15,037 - main - INFO - database 모듈 import 성공
+2025-08-26 19:13:15,038 - main - ERROR - api 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 19:13:15,038 - main - ERROR - trading.engine 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 19:13:15,039 - main - INFO - FastAPI 앱 생성 중...
+2025-08-26 19:13:15,039 - main - INFO - CORS 미들웨어 설정 중...
+2025-08-26 19:13:15,043 - main - WARNING - API 라우터가 없어 등록 건너뜀
+2025-08-26 19:13:15,044 - main - INFO - 🚀 퀀트 트레이딩 시스템 초기화 시작...
+2025-08-26 19:13:15,044 - main - INFO - 1. 데이터베이스 초기화 중...
+2025-08-26 19:13:15,044 - database - INFO - 데이터베이스 초기화 시작...
+2025-08-26 19:13:15,048 - database - DEBUG - SQLite 최적화 설정 적용됨
+2025-08-26 19:13:15,051 - database - ERROR - 데이터베이스 초기화 실패: Not an executable object: 'SELECT 1'
+2025-08-26 19:13:15,051 - main - INFO - 데이터베이스 초기화 결과: False
+2025-08-26 19:13:15,052 - database - ERROR - 데이터베이스 오류: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 19:13:15,052 - database - ERROR - 데이터베이스 상태 체크 실패: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 19:13:15,052 - main - INFO - 데이터베이스 상태: {'healthy': False, 'error': "Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')", 'response_time_ms': -1, 'tables': 0, 'records': {}}
+2025-08-26 19:13:15,052 - main - INFO - 2. 키움 클라이언트 초기화 중...
+2025-08-26 19:13:15,054 - main - INFO - 키움 Mock 클라이언트 생성 성공
+2025-08-26 19:13:15,054 - data.kiwoom_mock - INFO - 키움 API 연결 시도 중...
+2025-08-26 19:13:17,061 - data.kiwoom_mock - INFO - 키움 API 연결 완료 (모의투자 모드)
+2025-08-26 19:13:17,064 - main - INFO - 키움 클라이언트 연결 결과: True
+2025-08-26 19:13:17,064 - main - INFO - 3. 트레이딩 엔진 초기화 중...
+2025-08-26 19:13:17,065 - main - WARNING - TradingEngine 클래스가 없어 초기화 건너뜀
+2025-08-26 19:13:17,066 - main - INFO - ✅ 시스템 초기화 완료!
+2025-08-26 19:13:26,849 - main - INFO - 🛑 시스템 종료 중...
+2025-08-26 19:13:26,850 - main - INFO - ✅ 시스템 종료 완료
+2025-08-26 19:13:26,852 - data.kiwoom_mock - INFO - 가격 업데이트 시뮬레이션 종료
+2025-08-26 19:14:42,659 - __main__ - INFO - ==================================================
+2025-08-26 19:14:42,659 - __main__ - INFO - QuanTrade Pro 디버깅 모드 시작
+2025-08-26 19:14:42,660 - __main__ - INFO - ==================================================
+2025-08-26 19:14:43,177 - __main__ - INFO - database 모듈 import 성공
+2025-08-26 19:14:43,179 - __main__ - ERROR - api 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 19:14:43,180 - __main__ - ERROR - trading.engine 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 19:14:43,180 - __main__ - INFO - FastAPI 앱 생성 중...
+2025-08-26 19:14:43,181 - __main__ - INFO - CORS 미들웨어 설정 중...
+2025-08-26 19:14:43,181 - __main__ - WARNING - API 라우터가 없어 등록 건너뜀
+2025-08-26 19:14:43,182 - __main__ - INFO - 서버 시작 준비 중...
+2025-08-26 19:14:43,184 - __main__ - INFO - 서버 설정 - Host: 0.0.0.0, Port: 8000
+2025-08-26 19:14:43,184 - __main__ - INFO - 디버깅 모드로 서버를 시작합니다...
+2025-08-26 19:14:43,184 - __main__ - INFO - 접속 URL: http://0.0.0.0:8000
+2025-08-26 19:14:43,185 - __main__ - INFO - 디버깅 정보: http://0.0.0.0:8000/debug
+2025-08-26 19:14:43,185 - __main__ - INFO - 헬스 체크: http://0.0.0.0:8000/health
+2025-08-26 19:14:43,185 - __main__ - INFO - 최근 로그: http://0.0.0.0:8000/logs
+2025-08-26 19:14:43,191 - asyncio - DEBUG - Using proactor: IocpProactor
+2025-08-26 19:14:43,233 - main - INFO - ==================================================
+2025-08-26 19:14:43,233 - main - INFO - QuanTrade Pro 디버깅 모드 시작
+2025-08-26 19:14:43,233 - main - INFO - ==================================================
+2025-08-26 19:14:43,234 - main - INFO - database 모듈 import 성공
+2025-08-26 19:14:43,235 - main - ERROR - api 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 19:14:43,235 - main - ERROR - trading.engine 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 19:14:43,236 - main - INFO - FastAPI 앱 생성 중...
+2025-08-26 19:14:43,236 - main - INFO - CORS 미들웨어 설정 중...
+2025-08-26 19:14:43,237 - main - WARNING - API 라우터가 없어 등록 건너뜀
+2025-08-26 19:14:43,240 - main - INFO - 🚀 퀀트 트레이딩 시스템 초기화 시작...
+2025-08-26 19:14:43,241 - main - INFO - 1. 데이터베이스 초기화 중...
+2025-08-26 19:14:43,243 - database - INFO - 데이터베이스 초기화 시작...
+2025-08-26 19:14:43,247 - database - DEBUG - SQLite 최적화 설정 적용됨
+2025-08-26 19:14:43,251 - database - ERROR - 데이터베이스 초기화 실패: Not an executable object: 'SELECT 1'
+2025-08-26 19:14:43,260 - main - INFO - 데이터베이스 초기화 결과: False
+2025-08-26 19:14:43,261 - database - ERROR - 데이터베이스 오류: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 19:14:43,262 - database - ERROR - 데이터베이스 상태 체크 실패: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 19:14:43,263 - main - INFO - 데이터베이스 상태: {'healthy': False, 'error': "Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')", 'response_time_ms': -1, 'tables': 0, 'records': {}}
+2025-08-26 19:14:43,263 - main - INFO - 2. 키움 클라이언트 초기화 중...
+2025-08-26 19:14:43,265 - main - INFO - 키움 Mock 클라이언트 생성 성공
+2025-08-26 19:14:43,268 - data.kiwoom_mock - INFO - 키움 API 연결 시도 중...
+2025-08-26 19:14:45,283 - data.kiwoom_mock - INFO - 키움 API 연결 완료 (모의투자 모드)
+2025-08-26 19:14:45,284 - main - INFO - 키움 클라이언트 연결 결과: True
+2025-08-26 19:14:45,285 - main - INFO - 3. 트레이딩 엔진 초기화 중...
+2025-08-26 19:14:45,286 - main - WARNING - TradingEngine 클래스가 없어 초기화 건너뜀
+2025-08-26 19:14:45,286 - main - INFO - ✅ 시스템 초기화 완료!
+2025-08-26 19:18:08,493 - main - INFO - 🛑 시스템 종료 중...
+2025-08-26 19:18:08,494 - main - INFO - ✅ 시스템 종료 완료
+2025-08-26 19:18:08,496 - data.kiwoom_mock - INFO - 가격 업데이트 시뮬레이션 종료
+2025-08-26 19:18:15,115 - __main__ - INFO - ==================================================
+2025-08-26 19:18:15,116 - __main__ - INFO - QuanTrade Pro 디버깅 모드 시작
+2025-08-26 19:18:15,116 - __main__ - INFO - ==================================================
+2025-08-26 19:18:15,564 - __main__ - INFO - database 모듈 import 성공
+2025-08-26 19:18:15,567 - __main__ - ERROR - api 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 19:18:15,568 - __main__ - ERROR - trading.engine 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 19:18:15,568 - __main__ - INFO - FastAPI 앱 생성 중...
+2025-08-26 19:18:15,569 - __main__ - INFO - CORS 미들웨어 설정 중...
+2025-08-26 19:18:15,569 - __main__ - WARNING - API 라우터가 없어 등록 건너뜀
+2025-08-26 19:18:15,570 - __main__ - INFO - 서버 시작 준비 중...
+2025-08-26 19:18:15,570 - __main__ - INFO - 서버 설정 - Host: 0.0.0.0, Port: 8000
+2025-08-26 19:18:15,570 - __main__ - INFO - 디버깅 모드로 서버를 시작합니다...
+2025-08-26 19:18:15,580 - __main__ - INFO - 접속 URL: http://0.0.0.0:8000
+2025-08-26 19:18:15,581 - __main__ - INFO - 디버깅 정보: http://0.0.0.0:8000/debug
+2025-08-26 19:18:15,582 - __main__ - INFO - 헬스 체크: http://0.0.0.0:8000/health
+2025-08-26 19:18:15,582 - __main__ - INFO - 최근 로그: http://0.0.0.0:8000/logs
+2025-08-26 19:18:15,587 - asyncio - DEBUG - Using proactor: IocpProactor
+2025-08-26 19:18:15,638 - main - INFO - ==================================================
+2025-08-26 19:18:15,639 - main - INFO - QuanTrade Pro 디버깅 모드 시작
+2025-08-26 19:18:15,640 - main - INFO - ==================================================
+2025-08-26 19:18:15,640 - main - INFO - database 모듈 import 성공
+2025-08-26 19:18:15,643 - main - ERROR - api 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 19:18:15,645 - main - ERROR - trading.engine 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 19:18:15,645 - main - INFO - FastAPI 앱 생성 중...
+2025-08-26 19:18:15,646 - main - INFO - CORS 미들웨어 설정 중...
+2025-08-26 19:18:15,646 - main - WARNING - API 라우터가 없어 등록 건너뜀
+2025-08-26 19:18:15,648 - main - INFO - 🚀 퀀트 트레이딩 시스템 초기화 시작...
+2025-08-26 19:18:15,648 - main - INFO - 1. 데이터베이스 초기화 중...
+2025-08-26 19:18:15,648 - database - INFO - 데이터베이스 초기화 시작...
+2025-08-26 19:18:15,652 - database - DEBUG - SQLite 최적화 설정 적용됨
+2025-08-26 19:18:15,653 - database - ERROR - 데이터베이스 초기화 실패: Not an executable object: 'SELECT 1'
+2025-08-26 19:18:15,654 - main - INFO - 데이터베이스 초기화 결과: False
+2025-08-26 19:18:15,654 - database - ERROR - 데이터베이스 오류: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 19:18:15,655 - database - ERROR - 데이터베이스 상태 체크 실패: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 19:18:15,655 - main - INFO - 데이터베이스 상태: {'healthy': False, 'error': "Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')", 'response_time_ms': -1, 'tables': 0, 'records': {}}
+2025-08-26 19:18:15,655 - main - INFO - 2. 키움 클라이언트 초기화 중...
+2025-08-26 19:18:15,657 - main - INFO - 키움 Mock 클라이언트 생성 성공
+2025-08-26 19:18:15,658 - data.kiwoom_mock - INFO - 키움 API 연결 시도 중...
+2025-08-26 19:18:17,667 - data.kiwoom_mock - INFO - 키움 API 연결 완료 (모의투자 모드)
+2025-08-26 19:18:17,668 - main - INFO - 키움 클라이언트 연결 결과: True
+2025-08-26 19:18:17,668 - main - INFO - 3. 트레이딩 엔진 초기화 중...
+2025-08-26 19:18:17,668 - main - WARNING - TradingEngine 클래스가 없어 초기화 건너뜀
+2025-08-26 19:18:17,669 - main - INFO - ✅ 시스템 초기화 완료!
+2025-08-26 19:19:47,459 - main - DEBUG - 루트 엔드포인트 호출됨
+2025-08-26 19:20:27,518 - main - DEBUG - 헬스 체크 요청됨
+2025-08-26 19:20:27,519 - database - ERROR - 데이터베이스 오류: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 19:20:27,520 - database - ERROR - 데이터베이스 상태 체크 실패: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 19:20:27,520 - main - DEBUG - 헬스 체크 결과: {'status': 'healthy', 'timestamp': '2025-08-26T19:20:27.518940', 'components': {'database': 'unhealthy', 'trading_engine': 'not_initialized', 'api': 'healthy'}}
+2025-08-26 19:20:32,463 - main - DEBUG - 헬스 체크 요청됨
+2025-08-26 19:20:32,464 - database - ERROR - 데이터베이스 오류: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 19:20:32,465 - database - ERROR - 데이터베이스 상태 체크 실패: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 19:20:32,465 - main - DEBUG - 헬스 체크 결과: {'status': 'healthy', 'timestamp': '2025-08-26T19:20:32.464423', 'components': {'database': 'unhealthy', 'trading_engine': 'not_initialized', 'api': 'healthy'}}
+2025-08-26 19:20:43,111 - main - DEBUG - 디버깅 정보 요청됨
+2025-08-26 19:20:43,112 - database - ERROR - 데이터베이스 오류: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 19:20:43,113 - database - ERROR - 데이터베이스 상태 체크 실패: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 19:20:43,114 - main - DEBUG - 디버깅 정보 반환: {'system': {'timestamp': '2025-08-26T19:20:43.112329', 'trading_engine_status': 'not_initialized', 'background_task_status': 'stopped'}, 'database': {'healthy': False, 'error': "Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')", 'response_time_ms': -1, 'tables': 0, 'records': {}}, 'trading_engine': {}}
+2025-08-26 19:23:40,968 - main - INFO - 🛑 시스템 종료 중...
+2025-08-26 19:23:40,969 - main - INFO - ✅ 시스템 종료 완료
+2025-08-26 19:23:40,971 - data.kiwoom_mock - INFO - 가격 업데이트 시뮬레이션 종료
+2025-08-26 20:00:59,898 - __main__ - INFO - ==================================================
+2025-08-26 20:00:59,899 - __main__ - INFO - QuanTrade Pro 디버깅 모드 시작
+2025-08-26 20:00:59,899 - __main__ - INFO - ==================================================
+2025-08-26 20:01:00,568 - __main__ - INFO - database 모듈 import 성공
+2025-08-26 20:01:00,576 - __main__ - ERROR - api 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 20:01:00,578 - __main__ - ERROR - trading.engine 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 20:01:00,579 - __main__ - INFO - FastAPI 앱 생성 중...
+2025-08-26 20:01:00,581 - __main__ - INFO - CORS 미들웨어 설정 중...
+2025-08-26 20:01:00,581 - __main__ - WARNING - API 라우터가 없어 등록 건너뜀
+2025-08-26 20:01:00,583 - __main__ - INFO - 서버 시작 준비 중...
+2025-08-26 20:01:00,584 - __main__ - INFO - 서버 설정 - Host: 0.0.0.0, Port: 8000
+2025-08-26 20:01:00,584 - __main__ - INFO - 디버깅 모드로 서버를 시작합니다...
+2025-08-26 20:01:00,585 - __main__ - INFO - 접속 URL: http://0.0.0.0:8000
+2025-08-26 20:01:00,585 - __main__ - INFO - 디버깅 정보: http://0.0.0.0:8000/debug
+2025-08-26 20:01:00,585 - __main__ - INFO - 헬스 체크: http://0.0.0.0:8000/health
+2025-08-26 20:01:00,586 - __main__ - INFO - 최근 로그: http://0.0.0.0:8000/logs
+2025-08-26 20:01:00,600 - asyncio - DEBUG - Using proactor: IocpProactor
+2025-08-26 20:01:00,701 - main - INFO - ==================================================
+2025-08-26 20:01:00,701 - main - INFO - QuanTrade Pro 디버깅 모드 시작
+2025-08-26 20:01:00,702 - main - INFO - ==================================================
+2025-08-26 20:01:00,702 - main - INFO - database 모듈 import 성공
+2025-08-26 20:01:00,703 - main - ERROR - api 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 20:01:00,704 - main - ERROR - trading.engine 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 20:01:00,704 - main - INFO - FastAPI 앱 생성 중...
+2025-08-26 20:01:00,704 - main - INFO - CORS 미들웨어 설정 중...
+2025-08-26 20:01:00,704 - main - WARNING - API 라우터가 없어 등록 건너뜀
+2025-08-26 20:01:00,706 - main - INFO - 🚀 퀀트 트레이딩 시스템 초기화 시작...
+2025-08-26 20:01:00,706 - main - INFO - 1. 데이터베이스 초기화 중...
+2025-08-26 20:01:00,707 - database - INFO - 데이터베이스 초기화 시작...
+2025-08-26 20:01:00,719 - database - DEBUG - SQLite 최적화 설정 적용됨
+2025-08-26 20:01:00,720 - database - ERROR - 데이터베이스 초기화 실패: Not an executable object: 'SELECT 1'
+2025-08-26 20:01:00,721 - main - INFO - 데이터베이스 초기화 결과: False
+2025-08-26 20:01:00,721 - database - ERROR - 데이터베이스 오류: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 20:01:00,722 - database - ERROR - 데이터베이스 상태 체크 실패: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 20:01:00,722 - main - INFO - 데이터베이스 상태: {'healthy': False, 'error': "Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')", 'response_time_ms': -1, 'tables': 0, 'records': {}}
+2025-08-26 20:01:00,724 - main - INFO - 2. 키움 클라이언트 초기화 중...
+2025-08-26 20:01:00,730 - main - INFO - 키움 Mock 클라이언트 생성 성공
+2025-08-26 20:01:00,731 - data.kiwoom_mock - INFO - 키움 API 연결 시도 중...
+2025-08-26 20:01:02,749 - data.kiwoom_mock - INFO - 키움 API 연결 완료 (모의투자 모드)
+2025-08-26 20:01:02,750 - main - INFO - 키움 클라이언트 연결 결과: True
+2025-08-26 20:01:02,751 - main - INFO - 3. 트레이딩 엔진 초기화 중...
+2025-08-26 20:01:02,751 - main - WARNING - TradingEngine 클래스가 없어 초기화 건너뜀
+2025-08-26 20:01:02,752 - main - INFO - ✅ 시스템 초기화 완료!
+2025-08-26 20:06:46,964 - main - DEBUG - 루트 엔드포인트 호출됨
+2025-08-26 20:10:58,289 - __main__ - INFO - ==================================================
+2025-08-26 20:10:58,292 - __main__ - INFO - QuanTrade Pro 디버깅 모드 시작
+2025-08-26 20:10:58,299 - __main__ - INFO - ==================================================
+2025-08-26 20:10:58,996 - __main__ - INFO - database 모듈 import 성공
+2025-08-26 20:10:59,001 - __main__ - ERROR - api 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 20:10:59,001 - __main__ - ERROR - trading.engine 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 20:10:59,002 - __main__ - INFO - FastAPI 앱 생성 중...
+2025-08-26 20:10:59,006 - __main__ - INFO - CORS 미들웨어 설정 중...
+2025-08-26 20:10:59,007 - __main__ - WARNING - API 라우터가 없어 등록 건너뜀
+2025-08-26 20:10:59,014 - __main__ - INFO - 서버 시작 준비 중...
+2025-08-26 20:10:59,015 - __main__ - INFO - 서버 설정 - Host: 0.0.0.0, Port: 8000
+2025-08-26 20:10:59,016 - __main__ - INFO - 디버깅 모드로 서버를 시작합니다...
+2025-08-26 20:10:59,017 - __main__ - INFO - 접속 URL: http://0.0.0.0:8000
+2025-08-26 20:10:59,018 - __main__ - INFO - 디버깅 정보: http://0.0.0.0:8000/debug
+2025-08-26 20:10:59,018 - __main__ - INFO - 헬스 체크: http://0.0.0.0:8000/health
+2025-08-26 20:10:59,019 - __main__ - INFO - 최근 로그: http://0.0.0.0:8000/logs
+2025-08-26 20:10:59,033 - asyncio - DEBUG - Using proactor: IocpProactor
+2025-08-26 20:10:59,115 - main - INFO - ==================================================
+2025-08-26 20:10:59,115 - main - INFO - QuanTrade Pro 디버깅 모드 시작
+2025-08-26 20:10:59,116 - main - INFO - ==================================================
+2025-08-26 20:10:59,116 - main - INFO - database 모듈 import 성공
+2025-08-26 20:10:59,118 - main - ERROR - api 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 20:10:59,120 - main - ERROR - trading.engine 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 20:10:59,120 - main - INFO - FastAPI 앱 생성 중...
+2025-08-26 20:10:59,122 - main - INFO - CORS 미들웨어 설정 중...
+2025-08-26 20:10:59,123 - main - WARNING - API 라우터가 없어 등록 건너뜀
+2025-08-26 20:10:59,132 - main - INFO - 🚀 퀀트 트레이딩 시스템 초기화 시작...
+2025-08-26 20:10:59,138 - main - INFO - 1. 데이터베이스 초기화 중...
+2025-08-26 20:10:59,142 - database - INFO - 데이터베이스 초기화 시작...
+2025-08-26 20:10:59,152 - database - DEBUG - SQLite 최적화 설정 적용됨
+2025-08-26 20:10:59,154 - database - ERROR - 데이터베이스 초기화 실패: Not an executable object: 'SELECT 1'
+2025-08-26 20:10:59,155 - main - INFO - 데이터베이스 초기화 결과: False
+2025-08-26 20:10:59,155 - database - ERROR - 데이터베이스 오류: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 20:10:59,156 - database - ERROR - 데이터베이스 상태 체크 실패: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 20:10:59,158 - main - INFO - 데이터베이스 상태: {'healthy': False, 'error': "Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')", 'response_time_ms': -1, 'tables': 0, 'records': {}}
+2025-08-26 20:10:59,162 - main - INFO - 2. 키움 클라이언트 초기화 중...
+2025-08-26 20:10:59,166 - main - INFO - 키움 Mock 클라이언트 생성 성공
+2025-08-26 20:10:59,167 - data.kiwoom_mock - INFO - 키움 API 연결 시도 중...
+2025-08-26 20:11:01,184 - data.kiwoom_mock - INFO - 키움 API 연결 완료 (모의투자 모드)
+2025-08-26 20:11:01,184 - main - INFO - 키움 클라이언트 연결 결과: True
+2025-08-26 20:11:01,185 - main - INFO - 3. 트레이딩 엔진 초기화 중...
+2025-08-26 20:11:01,185 - main - WARNING - TradingEngine 클래스가 없어 초기화 건너뜀
+2025-08-26 20:11:01,186 - main - INFO - ✅ 시스템 초기화 완료!
+2025-08-26 20:11:01,207 - main - INFO - 🛑 시스템 종료 중...
+2025-08-26 20:11:01,208 - main - INFO - ✅ 시스템 종료 완료
+2025-08-26 20:11:01,209 - data.kiwoom_mock - INFO - 가격 업데이트 시뮬레이션 종료
+2025-08-26 20:11:40,469 - __main__ - INFO - ==================================================
+2025-08-26 20:11:40,475 - __main__ - INFO - QuanTrade Pro 디버깅 모드 시작
+2025-08-26 20:11:40,476 - __main__ - INFO - ==================================================
+2025-08-26 20:11:40,929 - __main__ - INFO - database 모듈 import 성공
+2025-08-26 20:11:40,932 - __main__ - ERROR - api 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 20:11:40,933 - __main__ - ERROR - trading.engine 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 20:11:40,933 - __main__ - INFO - FastAPI 앱 생성 중...
+2025-08-26 20:11:40,933 - __main__ - INFO - CORS 미들웨어 설정 중...
+2025-08-26 20:11:40,934 - __main__ - WARNING - API 라우터가 없어 등록 건너뜀
+2025-08-26 20:11:40,934 - __main__ - INFO - 서버 시작 준비 중...
+2025-08-26 20:11:40,935 - __main__ - INFO - 서버 설정 - Host: 0.0.0.0, Port: 8000
+2025-08-26 20:11:40,935 - __main__ - INFO - 디버깅 모드로 서버를 시작합니다...
+2025-08-26 20:11:40,935 - __main__ - INFO - 접속 URL: http://0.0.0.0:8000
+2025-08-26 20:11:40,935 - __main__ - INFO - 디버깅 정보: http://0.0.0.0:8000/debug
+2025-08-26 20:11:40,936 - __main__ - INFO - 헬스 체크: http://0.0.0.0:8000/health
+2025-08-26 20:11:40,936 - __main__ - INFO - 최근 로그: http://0.0.0.0:8000/logs
+2025-08-26 20:11:40,939 - asyncio - DEBUG - Using proactor: IocpProactor
+2025-08-26 20:11:40,975 - main - INFO - ==================================================
+2025-08-26 20:11:40,975 - main - INFO - QuanTrade Pro 디버깅 모드 시작
+2025-08-26 20:11:40,976 - main - INFO - ==================================================
+2025-08-26 20:11:40,976 - main - INFO - database 모듈 import 성공
+2025-08-26 20:11:40,977 - main - ERROR - api 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 20:11:40,977 - main - ERROR - trading.engine 모듈 import 실패: cannot import name 'TradingEngine' from 'trading.engine' (C:\Aproject\quant_platform\quant_actual\backend\trading\engine.py)
+2025-08-26 20:11:40,978 - main - INFO - FastAPI 앱 생성 중...
+2025-08-26 20:11:40,978 - main - INFO - CORS 미들웨어 설정 중...
+2025-08-26 20:11:40,978 - main - WARNING - API 라우터가 없어 등록 건너뜀
+2025-08-26 20:11:40,980 - main - INFO - 🚀 퀀트 트레이딩 시스템 초기화 시작...
+2025-08-26 20:11:40,980 - main - INFO - 1. 데이터베이스 초기화 중...
+2025-08-26 20:11:40,980 - database - INFO - 데이터베이스 초기화 시작...
+2025-08-26 20:11:40,983 - database - DEBUG - SQLite 최적화 설정 적용됨
+2025-08-26 20:11:40,983 - database - ERROR - 데이터베이스 초기화 실패: Not an executable object: 'SELECT 1'
+2025-08-26 20:11:40,984 - main - INFO - 데이터베이스 초기화 결과: False
+2025-08-26 20:11:40,984 - database - ERROR - 데이터베이스 오류: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 20:11:40,984 - database - ERROR - 데이터베이스 상태 체크 실패: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 20:11:40,985 - main - INFO - 데이터베이스 상태: {'healthy': False, 'error': "Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')", 'response_time_ms': -1, 'tables': 0, 'records': {}}
+2025-08-26 20:11:40,985 - main - INFO - 2. 키움 클라이언트 초기화 중...
+2025-08-26 20:11:40,986 - main - INFO - 키움 Mock 클라이언트 생성 성공
+2025-08-26 20:11:40,987 - data.kiwoom_mock - INFO - 키움 API 연결 시도 중...
+2025-08-26 20:11:43,002 - data.kiwoom_mock - INFO - 키움 API 연결 완료 (모의투자 모드)
+2025-08-26 20:11:43,002 - main - INFO - 키움 클라이언트 연결 결과: True
+2025-08-26 20:11:43,002 - main - INFO - 3. 트레이딩 엔진 초기화 중...
+2025-08-26 20:11:43,003 - main - WARNING - TradingEngine 클래스가 없어 초기화 건너뜀
+2025-08-26 20:11:43,003 - main - INFO - ✅ 시스템 초기화 완료!
+2025-08-26 20:11:43,005 - main - INFO - 🛑 시스템 종료 중...
+2025-08-26 20:11:43,005 - main - INFO - ✅ 시스템 종료 완료
+2025-08-26 20:11:43,006 - data.kiwoom_mock - INFO - 가격 업데이트 시뮬레이션 종료
+2025-08-26 20:18:26,655 - main - DEBUG - 루트 엔드포인트 호출됨
+2025-08-26 20:24:23,323 - main - DEBUG - 루트 엔드포인트 호출됨
+2025-08-26 20:24:37,609 - main - DEBUG - 헬스 체크 요청됨
+2025-08-26 20:24:37,615 - database - ERROR - 데이터베이스 오류: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 20:24:37,622 - database - ERROR - 데이터베이스 상태 체크 실패: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 20:24:37,636 - main - DEBUG - 헬스 체크 결과: {'status': 'healthy', 'timestamp': '2025-08-26T20:24:37.615605', 'components': {'database': 'unhealthy', 'trading_engine': 'not_initialized', 'api': 'healthy'}}
+2025-08-26 20:30:51,421 - main - DEBUG - 헬스 체크 요청됨
+2025-08-26 20:30:51,425 - database - ERROR - 데이터베이스 오류: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 20:30:51,425 - database - ERROR - 데이터베이스 상태 체크 실패: Textual SQL expression 'SELECT COUNT(*) FROM sqli...' should be explicitly declared as text('SELECT COUNT(*) FROM sqli...')
+2025-08-26 20:30:51,426 - main - DEBUG - 헬스 체크 결과: {'status': 'healthy', 'timestamp': '2025-08-26T20:30:51.424732', 'components': {'database': 'unhealthy', 'trading_engine': 'not_initialized', 'api': 'healthy'}}

@@ -1,0 +1,103 @@
+
+{
+  "investment": {
+    "default_amount": 100000,
+    "default_start_date": "2020-01-01",
+    "default_end_date": "2024-12-31",
+    "rebalancing_frequency": "quarterly"
+  },
+  "strategies": {
+    "momentum": {
+      "lookback_period": 20,
+      "min_return_threshold": 0.02,
+      "description": "과거 수익률 기반 모멘텀 전략"
+    },
+    "rsi": {
+      "period": 14,
+      "overbought": 70,
+      "oversold": 30,
+      "description": "상대강도지수 기반 역추세 전략"
+    },
+    "bollinger": {
+      "period": 20,
+      "std_dev": 2,
+      "description": "볼린저밴드 기반 평균회귀 전략"
+    },
+    "macd": {
+      "fast_period": 12,
+      "slow_period": 26,
+      "signal_period": 9,
+      "description": "MACD 기반 추세추종 전략"
+    },
+    "mean_reversion": {
+      "lookback_period": 20,
+      "zscore_threshold": 2.0,
+      "description": "평균회귀 전략"
+    },
+    "value": {
+      "max_pe_ratio": 15,
+      "max_pb_ratio": 1.5,
+      "min_market_cap": 1000000000,
+      "description": "PER, PBR 기반 가치투자 전략"
+    },
+    "quality": {
+      "min_roe": 15,
+      "min_roa": 8,
+      "max_debt_equity": 0.5,
+      "description": "ROE, ROA 기반 퀄리티 전략"
+    },
+    "growth": {
+      "min_revenue_growth": 10,
+      "min_earnings_growth": 15,
+      "description": "매출/이익 성장률 기반 성장투자 전략"
+    },
+    "dividend": {
+      "min_dividend_yield": 2.0,
+      "min_payout_ratio": 0.3,
+      "max_payout_ratio": 0.8,
+      "description": "배당수익률 기반 배당투자 전략"
+    },
+    "garp": {
+      "max_peg_ratio": 1.5,
+      "min_roe": 15,
+      "max_pe_ratio": 20,
+      "description": "합리적 가격의 성장주 전략"
+    },
+    "momentum_value": {
+      "momentum_weight": 0.6,
+      "value_weight": 0.4,
+      "description": "모멘텀과 가치투자 결합 전략"
+    }
+  },
+  "portfolio": {
+    "max_positions": 20,
+    "max_position_size": 0.1,
+    "min_position_size": 0.02,
+    "transaction_cost": 0.001,
+    "rebalancing_threshold": 0.05
+  },
+  "risk_management": {
+    "max_sector_weight": 0.3,
+    "max_single_position": 0.1,
+    "stop_loss": 0.1,
+    "max_drawdown": 0.2
+  },
+  "data": {
+    "price_file": "data/sample_data/market_prices.csv",
+    "financial_file": "data/sample_data/financials.csv",
+    "market_file": "data/sample_data/market_data.csv"
+  },
+  "output": {
+    "reports_dir": "outputs/reports",
+    "charts_dir": "outputs/charts",
+    "logs_dir": "outputs/logs",
+    "auto_open_browser": true,
+    "save_portfolio_csv": true
+  },
+  "display": {
+    "max_table_rows": 10,
+    "decimal_places": 2,
+    "currency": "USD",
+    "date_format": "%Y-%m-%d"
+  }
+}

@@ -1,0 +1,5 @@
+PyQt5 pandas numpy sqlite3 logging datetime typing random json os sys shutil psutil
+
+실거래: real_main.Py
+모의투자: main.Py
+
