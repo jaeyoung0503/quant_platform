@@ -24,3 +24,28 @@
 2025-08-27 11:45:52,184 - trading_engine_manager - INFO - 트레이딩 루프 시작
 2025-08-27 11:45:52,184 - trading_engine_manager - ERROR - 트레이딩 루프 오류: name 'asyncio' is not defined
 2025-08-27 11:45:52,184 - trading_engine_manager - INFO - 트레이딩 루프 종료
+2025-08-27 11:46:55,829 - trading_engine_manager - INFO - 자동매매 시작됨
+2025-08-27 11:46:55,829 - api - INFO - 자동매매 시작됨
+2025-08-27 11:47:38,958 - api - INFO - 전략 비활성화: 2
+2025-08-27 11:47:42,096 - api - INFO - 전략 비활성화: 1
+2025-08-27 11:47:43,205 - api - INFO - 전략 활성화: 3
+2025-08-27 11:48:10,786 - trading_engine_manager - INFO - 자동매매 시작됨
+2025-08-27 11:48:10,787 - api - INFO - 자동매매 시작됨
+2025-08-27 11:48:27,571 - trading_engine_manager - INFO - 자동매매 시작됨
+2025-08-27 11:48:27,572 - api - INFO - 자동매매 시작됨
+2025-08-27 11:49:06,163 - trading_engine_manager - CRITICAL - 긴급중단 실행됨
+2025-08-27 11:49:06,163 - api - CRITICAL - 긴급중단 실행됨
+2025-08-27 11:49:38,282 - trading_engine_manager - CRITICAL - 긴급중단 실행됨
+2025-08-27 11:49:38,282 - api - CRITICAL - 긴급중단 실행됨
+2025-08-27 11:59:50,441 - trading_engine_manager - CRITICAL - 긴급중단 실행됨
+2025-08-27 11:59:50,441 - api - CRITICAL - 긴급중단 실행됨
+2025-08-27 11:59:59,337 - trading_engine_manager - INFO - 자동매매 시작됨
+2025-08-27 11:59:59,337 - api - INFO - 자동매매 시작됨
+2025-08-27 12:00:12,815 - trading_engine_manager - CRITICAL - 긴급중단 실행됨
+2025-08-27 12:00:12,815 - api - CRITICAL - 긴급중단 실행됨
+2025-08-27 12:13:02,987 - trading_engine_manager - INFO - 자동매매 시작됨
+2025-08-27 12:13:02,987 - api - INFO - 자동매매 시작됨
+2025-08-27 12:13:16,424 - trading_engine_manager - CRITICAL - 긴급중단 실행됨
+2025-08-27 12:13:16,424 - api - CRITICAL - 긴급중단 실행됨
+2025-08-27 12:26:29,614 - trading_engine_manager - CRITICAL - 긴급중단 실행됨
+2025-08-27 12:26:29,615 - api - CRITICAL - 긴급중단 실행됨

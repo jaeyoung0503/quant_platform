@@ -1,18 +1,16 @@
 'use client';
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  LineChart, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Line, 
+import {
+  LineChart,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Line,
   ResponsiveContainer,
 } from 'recharts';
 
-// 타입 정의들
 interface StockData {
   date: string;
   close: number;
@@ -64,13 +62,6 @@ interface Strategy {
   icon: React.ComponentType<{ className?: string }>;
 }
 
-interface Stock {
-  symbol: string;
-  name: string;
-  price: number;
-  volatility: number;
-}
-
 interface ChartDataPoint {
   date: string;
   close: number;
@@ -91,17 +82,10 @@ interface AnalysisStep {
 }
 
 // 아이콘 컴포넌트들
-const TrendingUp = ({ className = "w-3 h-4" }: { className?: string }) => (
+const TrendingUp = ({ className = "w-4 h-4" }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
     <polyline points="22,7 13.5,15.5 8.5,10.5 2,17"></polyline>
     <polyline points="16,7 22,7 22,13"></polyline>
-  </svg>
-);
-
-const TrendingDown = ({ className = "w-3 h-4" }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <polyline points="22,17 13.5,8.5 8.5,13.5 2,7"></polyline>
-    <polyline points="16,17 22,17 22,11"></polyline>
   </svg>
 );
 
@@ -148,13 +132,6 @@ const RefreshCw = ({ className = "w-4 h-4" }: { className?: string }) => (
   </svg>
 );
 
-const CheckCircle = ({ className = "w-4 h-4" }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-    <polyline points="22,4 12,14.01 9,11.01"></polyline>
-  </svg>
-);
-
 const CheckCircle2 = ({ className = "w-4 h-4" }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -184,44 +161,103 @@ const Eye = ({ className = "w-4 h-4" }: { className?: string }) => (
   </svg>
 );
 
-const EyeOff = ({ className = "w-4 h-4" }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-    <line x1="1" y1="1" x2="23" y2="23"></line>
-  </svg>
-);
-
 const ChevronDown = ({ className = "w-4 h-4" }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
     <polyline points="6,9 12,15 18,9"></polyline>
   </svg>
 );
 
-// 유틸리티 클래스들
-class MockDataGenerator {
-  static generateStockData(symbol: string, days: number = 252, initialPrice: number = 100, volatility: number = 0.025): StockData[] {
+const Upload = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+    <polyline points="17,8 12,3 7,8"></polyline>
+    <line x1="12" y1="3" x2="12" y2="15"></line>
+  </svg>
+);
+
+// CSV 데이터 로더
+class CSVDataLoader {
+  static async loadStockData(): Promise<StockData[]> {
+    try {
+      const response = await fetch('/data/stock.csv');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const csvText = await response.text();
+      return this.parseCSV(csvText);
+    } catch (error) {
+      console.error('CSV 파일 로드 실패, 샘플 데이터 사용:', error);
+      return this.generateSampleData();
+    }
+  }
+
+  static parseCSV(csvText: string): StockData[] {
+    const lines = csvText.trim().split('\n');
+    if (lines.length < 2) {
+      throw new Error('CSV 파일이 비어있습니다.');
+    }
+
+    const headers = lines[0].toLowerCase().split(',').map(h => h.trim());
+    const headerMap = {
+      date: headers.findIndex(h => h.includes('date')),
+      open: headers.findIndex(h => h.includes('open')),
+      high: headers.findIndex(h => h.includes('high')),
+      low: headers.findIndex(h => h.includes('low')),
+      close: headers.findIndex(h => h.includes('close')),
+      volume: headers.findIndex(h => h.includes('volume'))
+    };
+
+    if (headerMap.date === -1 || headerMap.close === -1) {
+      throw new Error('필수 컬럼이 없습니다: date, close');
+    }
+
     const data: StockData[] = [];
-    let currentPrice = initialPrice;
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(',').map(v => v.trim());
+      
+      const dateStr = values[headerMap.date];
+      const close = parseFloat(values[headerMap.close]);
+      const open = headerMap.open !== -1 ? parseFloat(values[headerMap.open]) || close : close;
+      const high = headerMap.high !== -1 ? parseFloat(values[headerMap.high]) || close : close;
+      const low = headerMap.low !== -1 ? parseFloat(values[headerMap.low]) || close : close;
+      const volume = headerMap.volume !== -1 ? parseInt(values[headerMap.volume]) || 0 : 0;
+
+      if (isNaN(close) || close <= 0) continue;
+      
+      const date = new Date(dateStr).toISOString().split('T')[0];
+      if (!date) continue;
+      
+      data.push({ date, open, high, low, close, volume });
+    }
+
+    if (data.length < 10) {
+      throw new Error('유효한 데이터가 부족합니다');
+    }
+
+    return data.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }
+
+  static generateSampleData(): StockData[] {
+    const data: StockData[] = [];
+    let currentPrice = 100;
     
-    for (let i = 0; i < days; i++) {
-      const returns = (Math.random() - 0.5) * volatility * 2 + 0.0005;
+    for (let i = 0; i < 252; i++) {
+      const returns = (Math.random() - 0.5) * 0.05;
       currentPrice = currentPrice * (1 + returns);
-      currentPrice = Math.max(currentPrice, initialPrice * 0.3);
       
       const date = new Date();
-      date.setDate(date.getDate() - (days - i));
+      date.setDate(date.getDate() - (252 - i));
       
-      const dailyVolatility = volatility * (0.5 + Math.random() * 0.5);
-      const open = currentPrice * (1 + (Math.random() - 0.5) * dailyVolatility);
-      const high = Math.max(open, currentPrice) * (1 + Math.random() * dailyVolatility);
-      const low = Math.min(open, currentPrice) * (1 - Math.random() * dailyVolatility);
+      const open = currentPrice * (1 + (Math.random() - 0.5) * 0.02);
+      const high = Math.max(open, currentPrice) * (1 + Math.random() * 0.02);
+      const low = Math.min(open, currentPrice) * (1 - Math.random() * 0.02);
       
       data.push({
         date: date.toISOString().split('T')[0],
         close: currentPrice,
-        open: open,
-        high: high,
-        low: low,
+        open,
+        high,
+        low,
         volume: Math.floor(1000000 * (0.5 + Math.random() * 1.5))
       });
     }
@@ -230,6 +266,7 @@ class MockDataGenerator {
   }
 }
 
+// 기술적 지표 계산
 class TechnicalIndicatorsCalculator {
   static calculateMA(data: StockData[], period: number): (number | null)[] {
     const result: (number | null)[] = [];
@@ -237,7 +274,7 @@ class TechnicalIndicatorsCalculator {
       if (i < period - 1) {
         result.push(null);
       } else {
-        const sum = data.slice(i - period + 1, i + 1).reduce((acc: number, val: StockData) => acc + val.close, 0);
+        const sum = data.slice(i - period + 1, i + 1).reduce((acc, val) => acc + val.close, 0);
         result.push(sum / period);
       }
     }
@@ -279,7 +316,7 @@ class TechnicalIndicatorsCalculator {
         const slice = data.slice(i - period + 1, i + 1);
         const mean = ma[i];
         if (mean !== null) {
-          const variance = slice.reduce((acc: number, val: StockData) => acc + Math.pow(val.close - mean, 2), 0) / period;
+          const variance = slice.reduce((acc, val) => acc + Math.pow(val.close - mean, 2), 0) / period;
           const std = Math.sqrt(variance);
           upper.push(mean + (std * 2));
           lower.push(mean - (std * 2));
@@ -294,6 +331,7 @@ class TechnicalIndicatorsCalculator {
   }
 }
 
+// 트레이딩 전략
 class TradingStrategiesEngine {
   static generateSignals(data: StockData[], strategy: string, indicators: TechnicalIndicators): TradingSignal[] {
     const signals: TradingSignal[] = [];
@@ -397,8 +435,6 @@ class TradingStrategiesEngine {
 
 // 메인 컴포넌트
 export default function OneStockAnalyzer(): JSX.Element {
-  const [selectedStock, setSelectedStock] = useState<string>('');
-  const [selectedPeriod, setSelectedPeriod] = useState<string>('252');
   const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [analysisResults, setAnalysisResults] = useState<Record<string, AnalysisResult>>({});
@@ -412,19 +448,9 @@ export default function OneStockAnalyzer(): JSX.Element {
   });
   const [analysisSteps, setAnalysisSteps] = useState<AnalysisStep[]>([]);
   const [currentStep, setCurrentStep] = useState<number>(0);
-  
-  // 매수매도 신호 관련 상태
-  const [showSignals, setShowSignals] = useState<boolean>(false);
   const [expandedSignals, setExpandedSignals] = useState<Record<string, boolean>>({});
-
-  const stocks: Stock[] = [
-    { symbol: 'AAPL', name: 'Apple Inc.', price: 180, volatility: 0.025 },
-    { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 130, volatility: 0.022 },
-    { symbol: 'MSFT', name: 'Microsoft Corp.', price: 350, volatility: 0.020 },
-    { symbol: 'TSLA', name: 'Tesla Inc.', price: 250, volatility: 0.045 },
-    { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 500, volatility: 0.035 },
-    { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 150, volatility: 0.025 },
-  ];
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [csvLoadStatus, setCsvLoadStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   const strategies: Strategy[] = [
     { id: 'golden_cross', name: 'Golden Cross Strategy', icon: TrendingUp },
@@ -433,120 +459,86 @@ export default function OneStockAnalyzer(): JSX.Element {
     { id: 'macd_crossover', name: 'MACD Crossover', icon: Shield }
   ];
 
-  const periods = [
-    { value: '63', label: '3개월 (63일)' },
-    { value: '126', label: '6개월 (126일)' },
-    { value: '252', label: '1년 (252일)' },
-    { value: '756', label: '3년 (756일)' },
-    { value: '1260', label: '5년 (1260일)' }
-  ];
-
   const initializeAnalysisSteps = (): void => {
     const steps: AnalysisStep[] = [
-      {
-        step: 'Data Loading',
-        status: 'pending',
-        message: '주가 데이터 다운로드 중...',
-        details: `${selectedStock} 종목의 ${selectedPeriod}일 데이터를 가져오고 있습니다.`
-      },
-      {
-        step: 'Technical Indicators',
-        status: 'pending', 
-        message: '기술적 지표 계산 중...',
-        details: 'MA, RSI, Bollinger Bands 등 기술적 지표를 계산하고 있습니다.'
-      },
-      {
-        step: 'Signal Generation',
-        status: 'pending',
-        message: '매매 신호 생성 중...',
-        details: `선택된 ${selectedStrategies.length}개 전략에 대한 매매 신호를 생성하고 있습니다.`
-      },
-      {
-        step: 'Backtesting',
-        status: 'pending',
-        message: '백테스트 실행 중...',
-        details: '각 전략의 성과를 분석하고 백테스트 결과를 계산하고 있습니다.'
-      },
-      {
-        step: 'Analysis Complete',
-        status: 'pending',
-        message: '분석 완료',
-        details: '모든 분석이 완료되었습니다. 결과를 확인해보세요.'
-      }
+      { step: 'CSV Data Loading', status: 'pending', message: 'CSV 파일 로드 중...', details: '/data/stock.csv 파일을 읽고 있습니다.' },
+      { step: 'Data Validation', status: 'pending', message: '데이터 검증 중...', details: '날짜 형식 및 데이터 유효성을 확인합니다.' },
+      { step: 'Technical Indicators', status: 'pending', message: '기술적 지표 계산 중...', details: 'MA, RSI, Bollinger Bands를 계산합니다.' },
+      { step: 'Signal Generation', status: 'pending', message: '매매 신호 생성 중...', details: '선택된 전략으로 신호를 생성합니다.' },
+      { step: 'Backtesting', status: 'pending', message: '백테스트 실행 중...', details: '각 전략의 성과를 분석합니다.' },
+      { step: 'Analysis Complete', status: 'pending', message: '분석 완료', details: '모든 분석이 완료되었습니다.' }
     ];
-    
     setAnalysisSteps(steps);
     setCurrentStep(0);
   };
 
   const updateStepStatus = (stepIndex: number, status: 'pending' | 'running' | 'completed' | 'error'): void => {
-    setAnalysisSteps(prev => prev.map((step, index) => 
+    setAnalysisSteps(prev => prev.map((step, index) =>
       index === stepIndex ? { ...step, status } : step
     ));
   };
 
   const runAnalysis = async (): Promise<void> => {
-    if (!selectedStock || selectedStrategies.length === 0) return;
-
+    if (selectedStrategies.length === 0) return;
+    
     setIsLoading(true);
-    setShowSignals(false);
+    setCsvLoadStatus('loading');
+    setErrorMessage('');
     initializeAnalysisSteps();
 
     try {
-      // Step 1: Data Loading
       setCurrentStep(0);
       updateStepStatus(0, 'running');
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      const stockConfig = stocks.find(s => s.symbol === selectedStock);
-      const days = parseInt(selectedPeriod);
-      const data = MockDataGenerator.generateStockData(selectedStock, days, stockConfig?.price || 100, stockConfig?.volatility || 0.025);
+      await new Promise(resolve => setTimeout(resolve, 500));
       
+      const data = await CSVDataLoader.loadStockData();
+      setCsvLoadStatus('success');
       updateStepStatus(0, 'completed');
 
-      // Step 2: Technical Indicators
       setCurrentStep(1);
       updateStepStatus(1, 'running');
       await new Promise(resolve => setTimeout(resolve, 800));
+      setStockData(data);
+      updateStepStatus(1, 'completed');
 
+      setCurrentStep(2);
+      updateStepStatus(2, 'running');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       const ma5 = TechnicalIndicatorsCalculator.calculateMA(data, 5);
       const ma20 = TechnicalIndicatorsCalculator.calculateMA(data, 20);
       const ma60 = TechnicalIndicatorsCalculator.calculateMA(data, 60);
       const rsi = TechnicalIndicatorsCalculator.calculateRSI(data);
       const bb = TechnicalIndicatorsCalculator.calculateBollingerBands(data);
-
-      setStockData(data);
+      
       setIndicators({ ma5, ma20, ma60, rsi, bb });
-      updateStepStatus(1, 'completed');
+      updateStepStatus(2, 'completed');
 
-      // Step 3: Signal Generation
-      setCurrentStep(2);
-      updateStepStatus(2, 'running');
+      setCurrentStep(3);
+      updateStepStatus(3, 'running');
       await new Promise(resolve => setTimeout(resolve, 1200));
 
       const results: Record<string, AnalysisResult> = {};
-      
       for (const strategyId of selectedStrategies) {
         const signals = TradingStrategiesEngine.generateSignals(data, strategyId, { ma5, ma20, ma60, rsi, bb });
         const backtest = TradingStrategiesEngine.runBacktest(data, signals);
         results[strategyId] = { signals, backtest };
       }
-
-      updateStepStatus(2, 'completed');
-
-      // Step 4: Backtesting
-      setCurrentStep(3);
-      updateStepStatus(3, 'running');
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      setAnalysisResults(results);
       updateStepStatus(3, 'completed');
 
-      // Step 5: Complete
       setCurrentStep(4);
+      updateStepStatus(4, 'running');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setAnalysisResults(results);
       updateStepStatus(4, 'completed');
 
+      setCurrentStep(5);
+      updateStepStatus(5, 'completed');
+
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : '분석 중 오류가 발생했습니다';
+      setErrorMessage(errorMsg);
+      setCsvLoadStatus('error');
       updateStepStatus(currentStep, 'error');
     } finally {
       setIsLoading(false);
@@ -554,8 +546,8 @@ export default function OneStockAnalyzer(): JSX.Element {
   };
 
   const handleStrategyToggle = (strategyId: string): void => {
-    setSelectedStrategies(prev => 
-      prev.includes(strategyId) 
+    setSelectedStrategies(prev =>
+      prev.includes(strategyId)
         ? prev.filter(id => id !== strategyId)
         : [...prev, strategyId]
     );
@@ -563,7 +555,6 @@ export default function OneStockAnalyzer(): JSX.Element {
 
   const getChartData = (): ChartDataPoint[] => {
     if (!stockData) return [];
-    
     return stockData.map((item, index) => ({
       date: item.date,
       close: item.close,
@@ -597,12 +588,6 @@ export default function OneStockAnalyzer(): JSX.Element {
     return new Date(dateString).toLocaleDateString('ko-KR');
   };
 
-  const getSignalIcon = (type: 'BUY' | 'SELL') => {
-    return type === 'BUY' ? 
-      <TrendingUp className="w-4 h-4 text-green-400" /> : 
-      <TrendingDown className="w-4 h-4 text-red-400" />;
-  };
-
   const getSignalColor = (type: 'BUY' | 'SELL') => {
     return type === 'BUY' ? 'text-green-400' : 'text-red-400';
   };
@@ -612,7 +597,7 @@ export default function OneStockAnalyzer(): JSX.Element {
       <header className="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center space-x-3"
@@ -622,20 +607,9 @@ export default function OneStockAnalyzer(): JSX.Element {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-100">Single Stock Technical Analysis</h1>
-                <p className="text-gray-400 text-sm">Single Stock Focus - 4 Core Strategies</p>
+                <p className="text-gray-400 text-sm">CSV Data Analysis - 4 Core Strategies</p>
               </div>
             </motion.div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="text-right">
-                <p className="text-gray-300 text-sm">분석 방식</p>
-                <p className="text-gray-100 font-semibold">단일 종목 집중 분석</p>
-              </div>
-              <div className="text-right">
-                <p className="text-gray-300 text-sm">전략 수</p>
-                <p className="text-gray-100 font-semibold">4가지 핵심 전략</p>
-              </div>
-            </div>
           </div>
         </div>
       </header>
@@ -643,61 +617,37 @@ export default function OneStockAnalyzer(): JSX.Element {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           
-          {/* 왼쪽 패널 */}
           <div className="xl:col-span-1 space-y-6">
-            {/* 설정 패널 */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-gray-800 rounded-2xl border border-gray-700 p-6"
             >
               <h2 className="text-xl font-bold text-gray-100 mb-6 flex items-center text-gray-400">
                 <Target />
-                <span className="ml-2">Single Stock Analysis</span>
+                <span className="ml-2">CSV Data Analysis</span>
               </h2>
 
+              {errorMessage && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-6 p-4 bg-red-900/20 border border-red-600 rounded-xl"
+                >
+                  <div className="flex items-start space-x-3">
+                    <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-red-300 mb-1">CSV 데이터 오류</h4>
+                      <p className="text-red-200 text-sm">{errorMessage}</p>
+                      <p className="text-red-300 text-xs mt-2">
+                        파일 형식: date,year,ticker,name,market,open,high,low,close,volume
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               <div className="space-y-6">
-                
-                {/* 종목 선택 */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-100 mb-4 flex items-center">
-                    <span className="text-lg">📈</span>
-                    <span className="ml-2">Stock Selection</span>
-                  </h3>
-                  <select
-                    value={selectedStock}
-                    onChange={(e) => setSelectedStock(e.target.value)}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-100 focus:outline-none focus:border-gray-500"
-                  >
-                    <option value="">Select a stock...</option>
-                    {stocks.map(stock => (
-                      <option key={stock.symbol} value={stock.symbol}>
-                        {stock.symbol} - {stock.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* 기간 선택 */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-100 mb-4 flex items-center">
-                    <span className="text-lg">📅</span>
-                    <span className="ml-2">Analysis Period</span>
-                  </h3>
-                  <select
-                    value={selectedPeriod}
-                    onChange={(e) => setSelectedPeriod(e.target.value)}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-100 focus:outline-none focus:border-gray-500"
-                  >
-                    {periods.map(period => (
-                      <option key={period.value} value={period.value}>
-                        {period.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* 전략 선택 */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-100 mb-4 flex items-center">
                     <span className="text-lg">📊</span>
@@ -713,28 +663,24 @@ export default function OneStockAnalyzer(): JSX.Element {
                         transition={{ delay: index * 0.1 }}
                         className={`p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
                           selectedStrategies.includes(strategy.id)
-                            ? 'border-gray-500 bg-gray-600 shadow-'
+                            ? 'border-gray-500 bg-gray-600 shadow-lg'
                             : 'border-gray-600 bg-gray-800 hover:border-gray-500 hover:bg-gray-700'
                         }`}
                         onClick={() => handleStrategyToggle(strategy.id)}
                       >
-                        <div className="flex items-center space=x=3">
-                            <div className="flex items-center space-x-3">
-                            <div className="text-gray-400">
-                              <strategy.icon />
-                            </div>
-                            <div>
-                              <h4 className="font-semibold text-gray-100 text-sm">{strategy.name}</h4>
-                              <p className="text-gray-400 text-xs">
-                                {strategy.id === 'golden_cross' ? 'MA5 vs MA20 크로스오버' :
-                                strategy.id === 'rsi_divergence' ? 'RSI 과매수/과매도 구간' :
-                                strategy.id === 'bollinger_bands' ? '볼린저 밴드 터치 전략' :
-                                'MACD 신호선 교차'}
-                              </p>
-                            </div>
+                        <div className="flex items-center space-x-3">
+                          <div className="text-gray-400">
+                            <strategy.icon />
                           </div>
-                         
-                     
+                          <div>
+                            <h4 className="font-semibold text-gray-100 text-sm">{strategy.name}</h4>
+                            <p className="text-gray-400 text-xs">
+                              {strategy.id === 'golden_cross' ? 'MA5 vs MA20 크로스오버' :
+                              strategy.id === 'rsi_divergence' ? 'RSI 과매수/과매도 구간' :
+                              strategy.id === 'bollinger_bands' ? '볼린저 밴드 터치 전략' :
+                              'MACD 신호선 교차'}
+                            </p>
+                          </div>
                         </div>
                       </motion.div>
                     ))}
@@ -742,21 +688,41 @@ export default function OneStockAnalyzer(): JSX.Element {
 
                   {selectedStrategies.length > 0 && (
                     <div className="mt-4 bg-gray-700 rounded-lg p-3">
-                      <p className="text-gray-300 text-sm mb-1">
-                        <span className="text-lg">✅</span> Selected: {selectedStrategies.length} strategies
+                      <p className="text-gray-300 text-sm">
+                        Selected: {selectedStrategies.length} strategies
                       </p>
                     </div>
                   )}
                 </div>
 
-                {/* 분석 실행 버튼 */}
+                <div className="bg-gray-700 rounded-lg p-4">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Upload className="w-4 h-4 text-gray-400" />
+                    <span className="text-gray-300 text-sm font-medium">CSV 데이터 상태</span>
+                  </div>
+                  <div className={`text-sm ${
+                    csvLoadStatus === 'success' ? 'text-green-400' :
+                    csvLoadStatus === 'error' ? 'text-red-400' :
+                    csvLoadStatus === 'loading' ? 'text-blue-400' :
+                    'text-gray-400'
+                  }`}>
+                    {csvLoadStatus === 'success' ? `로드 완료 (${stockData?.length || 0}개 레코드)` :
+                     csvLoadStatus === 'error' ? '로드 실패 - 에러 확인 필요' :
+                     csvLoadStatus === 'loading' ? '로드 중...' :
+                     '대기 중 - /data/stock.csv'}
+                  </div>
+                  <p className="text-gray-500 text-xs mt-1">
+                    필요 형식: date,year,ticker,name,market,open,high,low,close,volume
+                  </p>
+                </div>
+
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={runAnalysis}
-                  disabled={!selectedStock || selectedStrategies.length === 0 || isLoading}
-                  className={`w-full mt-6 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center space-x-2 ${
-                    selectedStock && selectedStrategies.length > 0 && !isLoading
+                  disabled={selectedStrategies.length === 0 || isLoading}
+                  className={`w-full py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center space-x-2 ${
+                    selectedStrategies.length > 0 && !isLoading
                       ? 'bg-gray-600 text-gray-100 hover:bg-gray-500 shadow-lg'
                       : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   }`}
@@ -769,16 +735,13 @@ export default function OneStockAnalyzer(): JSX.Element {
                   ) : (
                     <>
                       <Play />
-                      <span>분석 시작</span>
+                      <span>CSV 데이터 분석 시작</span>
                     </>
                   )}
                 </motion.button>
-
-                {/* 매수매도 신호 보기 버튼 제거 - 자동으로 표시됨 */}
               </div>
             </motion.div>
 
-            {/* 분석 진행 상황 */}
             {(isLoading || analysisSteps.length > 0) && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -789,7 +752,7 @@ export default function OneStockAnalyzer(): JSX.Element {
                   <Activity />
                   <span className="ml-2">Analysis Progress</span>
                 </h2>
-
+                
                 <div className="space-y-4">
                   {analysisSteps.map((step, index) => (
                     <motion.div
@@ -818,6 +781,9 @@ export default function OneStockAnalyzer(): JSX.Element {
                             {step.status === 'running' && (
                               <span className="text-xs bg-gray-500 text-gray-200 px-2 py-1 rounded">진행중</span>
                             )}
+                            {step.status === 'error' && (
+                              <span className="text-xs bg-red-600 text-white px-2 py-1 rounded">오류</span>
+                            )}
                           </div>
                           <p className="text-gray-300 text-xs mb-2">{step.message}</p>
                           <p className="text-gray-400 text-xs">{step.details}</p>
@@ -829,12 +795,10 @@ export default function OneStockAnalyzer(): JSX.Element {
               </motion.div>
             )}
           </div>
-
-                        {/* 오른쪽 패널 */}
+          
           <div className="xl:col-span-2">
             <div className="space-y-6">
               
-              {/* 분석 결과 요약 - 최상단으로 이동 */}
               <AnimatePresence>
                 {Object.keys(analysisResults).length > 0 && (
                   <motion.div
@@ -846,7 +810,7 @@ export default function OneStockAnalyzer(): JSX.Element {
                       <BarChart3 />
                       <span className="ml-2">분석 결과 요약</span>
                     </h2>
-
+                    
                     <div className="space-y-4">
                       {Object.entries(analysisResults).map(([strategyId, result]) => {
                         const strategy = strategies.find(s => s.id === strategyId);
@@ -889,17 +853,17 @@ export default function OneStockAnalyzer(): JSX.Element {
                             <div className="flex justify-between items-center pt-3 border-t border-gray-600">
                               <div className="flex items-center space-x-4">
                                 <span className="text-gray-400 text-xs">
-                                  📊 {signals.length}개 매매신호
+                                  {signals.length}개 매매신호
                                 </span>
                                 <span className="text-gray-400 text-xs">
-                                  💰 ${backtest.finalValue.toLocaleString()}
+                                  ${backtest.finalValue.toLocaleString()}
                                 </span>
                               </div>
                               <span className={`text-xs font-semibold ${
-                                backtest.totalReturn > 10 ? 'text-gray-200' : 
+                                backtest.totalReturn > 10 ? 'text-gray-200' :
                                 backtest.totalReturn > 0 ? 'text-gray-300' : 'text-gray-500'
                               }`}>
-                                {backtest.totalReturn > 10 ? '뛰어난 전략' : 
+                                {backtest.totalReturn > 10 ? '뛰어난 전략' :
                                  backtest.totalReturn > 0 ? '우수한 전략' : '개선 필요'}
                               </span>
                             </div>
@@ -913,25 +877,24 @@ export default function OneStockAnalyzer(): JSX.Element {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => {
-                          setSelectedStock('');
                           setSelectedStrategies([]);
                           setStockData(null);
                           setAnalysisResults({});
                           setAnalysisSteps([]);
-                          setShowSignals(false);
+                          setErrorMessage('');
+                          setCsvLoadStatus('idle');
                           setExpandedSignals({});
                         }}
                         className="bg-gray-600 text-gray-100 hover:bg-gray-500 px-6 py-3 rounded-xl font-semibold transition-all flex items-center space-x-2 mx-auto"
                       >
                         <RefreshCw className="w-4 h-4" />
-                        <span>다른 종목 분석하기</span>
+                        <span>다른 분석 시작하기</span>
                       </motion.button>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* 차트 및 결과 섹션 */}
               <AnimatePresence>
                 {stockData && (
                   <motion.div
@@ -940,103 +903,37 @@ export default function OneStockAnalyzer(): JSX.Element {
                     exit={{ opacity: 0, y: -20 }}
                     className="space-y-6"
                   >
-                    {/* 메인 차트 - 볼린저 밴드 오버랩 */}
                     <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
                       <h3 className="text-lg font-bold text-gray-100 mb-4 flex items-center text-gray-400">
                         <TrendingUp />
-                        <span className="ml-2">{selectedStock} 주가 차트 & 기술지표</span>
+                        <span className="ml-2">주가 차트 & 기술지표</span>
                       </h3>
                       
                       <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={getChartData()}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#4b5563" />
-                            <XAxis 
-                              dataKey="date" 
-                              stroke="#9ca3af"
-                              fontSize={12}
-                            />
-                            <YAxis 
-                              stroke="#9ca3af"
-                              fontSize={12}
-                              tickFormatter={(value) => `$${value.toFixed(0)}`}
-                            />
-                            <Tooltip 
-                              contentStyle={{
-                                backgroundColor: '#374151',
-                                border: '1px solid #4b5563',
-                                borderRadius: '8px',
-                                color: '#f9fafb'
-                              }}
-                            />
-                            {/* 볼린저 밴드 먼저 그리기 */}
-                            <Line 
-                              type="monotone" 
-                              dataKey="bb_upper" 
-                              stroke="#6b7280" 
-                              strokeWidth={1}
-                              strokeDasharray="5,5"
-                              dot={false}
-                              name="BB Upper"
-                            />
-                            <Line 
-                              type="monotone" 
-                              dataKey="bb_middle" 
-                              stroke="#9ca3af" 
-                              strokeWidth={1}
-                              strokeDasharray="3,3"
-                              dot={false}
-                              name="BB Middle"
-                            />
-                            <Line 
-                              type="monotone" 
-                              dataKey="bb_lower" 
-                              stroke="#6b7280" 
-                              strokeWidth={1}
-                              strokeDasharray="5,5"
-                              dot={false}
-                              name="BB Lower"
-                            />
-                            {/* 주가 차트 */}
-                            <Line 
-                              type="monotone" 
-                              dataKey="close" 
-                              stroke="#f9fafb" 
-                              strokeWidth={2}
-                              dot={false}
-                              name="Close"
-                            />
-                            {/* 이동평균선들 */}
-                            <Line 
-                              type="monotone" 
-                              dataKey="ma5" 
-                              stroke="#10b981" 
-                              strokeWidth={1.5}
-                              dot={false}
-                              name="MA5"
-                            />
-                            <Line 
-                              type="monotone" 
-                              dataKey="ma20" 
-                              stroke="#3b82f6" 
-                              strokeWidth={1.5}
-                              dot={false}
-                              name="MA20"
-                            />
-                            <Line 
-                              type="monotone" 
-                              dataKey="ma60" 
-                              stroke="#ef4444" 
-                              strokeWidth={1}
-                              dot={false}
-                              name="MA60"
-                            />
+                            <XAxis dataKey="date" stroke="#9ca3af" fontSize={12} />
+                            <YAxis stroke="#9ca3af" fontSize={12} tickFormatter={(value) => `$${value.toFixed(0)}`} />
+                            <Tooltip contentStyle={{
+                              backgroundColor: '#374151',
+                              border: '1px solid #4b5563',
+                              borderRadius: '8px',
+                              color: '#f9fafb'
+                            }} />
+                            
+                            <Line type="monotone" dataKey="bb_upper" stroke="#6b7280" strokeWidth={1} strokeDasharray="5,5" dot={false} name="BB Upper" />
+                            <Line type="monotone" dataKey="bb_middle" stroke="#9ca3af" strokeWidth={1} strokeDasharray="3,3" dot={false} name="BB Middle" />
+                            <Line type="monotone" dataKey="bb_lower" stroke="#6b7280" strokeWidth={1} strokeDasharray="5,5" dot={false} name="BB Lower" />
+                            <Line type="monotone" dataKey="close" stroke="#f9fafb" strokeWidth={2} dot={false} name="Close" />
+                            <Line type="monotone" dataKey="ma5" stroke="#10b981" strokeWidth={1.5} dot={false} name="MA5" />
+                            <Line type="monotone" dataKey="ma20" stroke="#3b82f6" strokeWidth={1.5} dot={false} name="MA20" />
+                            <Line type="monotone" dataKey="ma60" stroke="#ef4444" strokeWidth={1} dot={false} name="MA60" />
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
                     </div>
 
-                    {/* RSI 차트만 단독으로 */}
                     <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
                       <h3 className="text-lg font-bold text-gray-100 mb-4 flex items-center text-gray-400">
                         <Activity />
@@ -1049,14 +946,12 @@ export default function OneStockAnalyzer(): JSX.Element {
                             <CartesianGrid strokeDasharray="3 3" stroke="#4b5563" />
                             <XAxis dataKey="date" stroke="#9ca3af" fontSize={10} />
                             <YAxis domain={[0, 100]} stroke="#9ca3af" fontSize={10} />
-                            <Tooltip 
-                              contentStyle={{
-                                backgroundColor: '#374151',
-                                border: '1px solid #4b5563',
-                                borderRadius: '8px',
-                                color: '#f9fafb'
-                              }}
-                            />
+                            <Tooltip contentStyle={{
+                              backgroundColor: '#374151',
+                              border: '1px solid #4b5563',
+                              borderRadius: '8px',
+                              color: '#f9fafb'
+                            }} />
                             <Line type="monotone" dataKey="rsi" stroke="#8b5cf6" strokeWidth={2} dot={false} name="RSI" />
                           </LineChart>
                         </ResponsiveContainer>
@@ -1066,7 +961,6 @@ export default function OneStockAnalyzer(): JSX.Element {
                 )}
               </AnimatePresence>
 
-              {/* 매수매도 신호 상세 보기 - 하단으로 이동하고 즉시 표시 */}
               <AnimatePresence>
                 {Object.keys(analysisResults).length > 0 && (
                   <motion.div
@@ -1079,7 +973,7 @@ export default function OneStockAnalyzer(): JSX.Element {
                       <Eye />
                       <span className="ml-2">매수매도 신호 상세 내역</span>
                     </h2>
-
+                    
                     <div className="space-y-4">
                       {Object.entries(analysisResults).map(([strategyId, result]) => {
                         const strategy = strategies.find(s => s.id === strategyId);
@@ -1088,7 +982,7 @@ export default function OneStockAnalyzer(): JSX.Element {
                         
                         return (
                           <div key={strategyId} className="bg-gray-700 border border-gray-600 rounded-xl p-4">
-                            <div 
+                            <div
                               className="flex items-center justify-between cursor-pointer"
                               onClick={() => toggleSignalExpansion(strategyId)}
                             >
@@ -1097,8 +991,8 @@ export default function OneStockAnalyzer(): JSX.Element {
                                 <div>
                                   <h3 className="font-semibold text-gray-100 text-sm">{strategy?.name}</h3>
                                   <p className="text-gray-400 text-xs">
-                                    총 {signals.length}개 신호 
-                                    (매수: {signals.filter(s => s.type === 'BUY').length}개, 
+                                    총 {signals.length}개 신호
+                                    (매수: {signals.filter(s => s.type === 'BUY').length}개,
                                      매도: {signals.filter(s => s.type === 'SELL').length}개)
                                   </p>
                                 </div>
@@ -1107,7 +1001,7 @@ export default function OneStockAnalyzer(): JSX.Element {
                                 animate={{ rotate: isExpanded ? 180 : 0 }}
                                 transition={{ duration: 0.2 }}
                               >
-                                <ChevronDown className="w-3 h-4 text-gray-400" />
+                                <ChevronDown className="w-4 h-4 text-gray-400" />
                               </motion.div>
                             </div>
 
@@ -1175,7 +1069,6 @@ export default function OneStockAnalyzer(): JSX.Element {
                 )}
               </AnimatePresence>
 
-              {/* 초기 상태 안내 */}
               {Object.keys(analysisResults).length === 0 && !stockData && analysisSteps.length === 0 && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -1185,17 +1078,27 @@ export default function OneStockAnalyzer(): JSX.Element {
                   <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
                     <BarChart3 />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-100 mb-2">단일 종목 기술적 분석 준비 완료</h3>
+                  <h3 className="text-xl font-semibold text-gray-100 mb-2">CSV 주가 데이터 기술적 분석 준비 완료</h3>
                   <p className="text-gray-400 mb-6">
-                    종목과 전략을 선택하여 상세한 기술적 분석을 시작하세요
+                    CSV 파일에서 주가 데이터를 로드하여 상세한 기술적 분석을 시작하세요
                     <br />
                     4가지 핵심 전략으로 매매 신호와 백테스트 결과를 제공합니다
                   </p>
                   
+                  <div className="bg-gray-700 rounded-lg p-4 mb-6">
+                    <h4 className="text-gray-100 font-semibold mb-2">CSV 파일 형식 요구사항:</h4>
+                    <div className="text-gray-300 text-sm space-y-1">
+                      <p>• 필수 컬럼: date, close</p>
+                      <p>• 권장 컬럼: open, high, low, volume</p>
+                      <p>• 파일 형식: date,year,ticker,name,market,open,high,low,close,volume</p>
+                      <p>• 파일 위치: /public/data/stock.csv</p>
+                    </div>
+                  </div>
+                  
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-gray-700 rounded-lg p-4 text-center">
-                      <div className="text-2xl mb-2">📈</div>
-                      <p className="text-gray-100 font-semibold">주가 데이터</p>
+                      <div className="text-2xl mb-2">📄</div>
+                      <p className="text-gray-100 font-semibold">CSV 데이터</p>
                       <p className="text-gray-400 text-sm">OHLCV + 기술지표</p>
                     </div>
                     <div className="bg-gray-700 rounded-lg p-4 text-center">
@@ -1225,21 +1128,21 @@ export default function OneStockAnalyzer(): JSX.Element {
               </div>
               <div>
                 <p className="text-gray-100 font-semibold">Single Stock Technical Analysis</p>
-                <p className="text-gray-400 text-sm">Single Stock Focus - 4 Core Strategies</p>
+                <p className="text-gray-400 text-sm">CSV Data Analysis - 4 Core Strategies</p>
               </div>
             </div>
             
             <div className="flex items-center space-x-6 text-sm text-gray-400">
-              <p>📊 4가지 핵심 전략</p>
+              <p>📄 CSV 데이터</p>
               <p>⚡ 실시간 분석</p>
-              <p>🎯 단일 종목 집중</p>
+              <p>🎯 4가지 전략</p>
               <p>🔍 상세 백테스트</p>
             </div>
           </div>
           
           <div className="border-t border-gray-700 mt-6 pt-6 text-center">
             <p className="text-gray-500 text-sm">
-              © 2025 Single Stock Technical Analysis. 본 시스템의 분석 결과는 과거 데이터를 기반으로 하며, 
+              © 2025 CSV Stock Technical Analysis. 본 시스템의 분석 결과는 과거 데이터를 기반으로 하며,
               미래 수익을 보장하지 않습니다. 투자 결정 시 신중하게 검토하시기 바랍니다.
             </p>
           </div>
@@ -1248,4 +1151,3 @@ export default function OneStockAnalyzer(): JSX.Element {
     </div>
   );
 }
-
