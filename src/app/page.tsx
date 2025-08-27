@@ -12,9 +12,10 @@ const QuantStrategyMain = () => {
     { name: 'Backtesting', icon: '', path: '/backtesting' },
     { name: '종목별 분석', icon: '', path: '/onestock' },
     { name: 'My 전략', icon: '', path: '/quant-strategy' },
-    { name: '주식실거래', icon: '', path: '/actual-trading' },
-    { name: 'Algorithm Lab', icon: '', path: '/algorithm-lab' },
-    { name: '고객지원', icon: '', path: '/support' }
+    { name: '모의거래', icon: '', path: '/mock_trading' },
+    { name: '실제거래', icon: '', path: '/actual_trading' },
+    { name: 'Membership', icon: '', path: '/member_payment' },
+    { name: 'Community', icon: '', path: '/community' }    
   ];
 
   const handleMenuClick = (path) => {
