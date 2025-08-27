@@ -191,6 +191,36 @@ class CSVDataLoader {
     }
   }
 
+  static generateStockDataForSymbol(symbol: string, initialPrice: number, volatility: number): StockData[] {
+    const data: StockData[] = [];
+    let currentPrice = initialPrice;
+    
+    for (let i = 0; i < 252; i++) {
+      const returns = (Math.random() - 0.5) * volatility;
+      currentPrice = currentPrice * (1 + returns);
+      currentPrice = Math.max(currentPrice, initialPrice * 0.3);
+      
+      const date = new Date();
+      date.setDate(date.getDate() - (252 - i));
+      
+      const dailyVolatility = volatility * (0.5 + Math.random() * 0.5);
+      const open = currentPrice * (1 + (Math.random() - 0.5) * dailyVolatility);
+      const high = Math.max(open, currentPrice) * (1 + Math.random() * dailyVolatility * 0.5);
+      const low = Math.min(open, currentPrice) * (1 - Math.random() * dailyVolatility * 0.5);
+      
+      data.push({
+        date: date.toISOString().split('T')[0],
+        close: currentPrice,
+        open,
+        high,
+        low,
+        volume: Math.floor(1000000 * (0.5 + Math.random() * 1.5))
+      });
+    }
+    
+    return data;
+  }
+
   static parseCSV(csvText: string): StockData[] {
     const lines = csvText.trim().split('\n');
     if (lines.length < 2) {
@@ -436,6 +466,12 @@ class TradingStrategiesEngine {
 // 메인 컴포넌트
 export default function OneStockAnalyzer(): JSX.Element {
   const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
+  const [selectedStock, setSelectedStock] = useState<string>('');
+  const [stockSearchQuery, setStockSearchQuery] = useState<string>('');
+  const [isStockSearchOpen, setIsStockSearchOpen] = useState<boolean>(false);
+  const [filteredStocks, setFilteredStocks] = useState<Stock[]>([]);
+  const [allStocks, setAllStocks] = useState<Stock[]>([]);
+  const [isLoadingStocks, setIsLoadingStocks] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [analysisResults, setAnalysisResults] = useState<Record<string, AnalysisResult>>({});
   const [stockData, setStockData] = useState<StockData[] | null>(null);
@@ -452,12 +488,153 @@ export default function OneStockAnalyzer(): JSX.Element {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [csvLoadStatus, setCsvLoadStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
+  // 회사 목록 로드 함수
+  const loadCompanyList = async (): Promise<void> => {
+    setIsLoadingStocks(true);
+    try {
+      const response = await fetch('/data/company_list.csv');
+      if (!response.ok) {
+        throw new Error('회사 목록 파일을 찾을 수 없습니다');
+      }
+      
+      const csvText = await response.text();
+      const lines = csvText.trim().split('\n');
+      
+      if (lines.length < 2) {
+        throw new Error('회사 목록 파일이 비어있습니다');
+      }
+
+      const headers = lines[0].toLowerCase().split(',').map(h => h.trim());
+      const headerMap = {
+        symbol: headers.findIndex(h => h.includes('symbol') || h.includes('code') || h.includes('ticker')),
+        name: headers.findIndex(h => h.includes('name') || h.includes('company')),
+        market: headers.findIndex(h => h.includes('market') || h.includes('exchange')),
+        price: headers.findIndex(h => h.includes('price') || h.includes('close')),
+        sector: headers.findIndex(h => h.includes('sector') || h.includes('industry'))
+      };
+
+      const companies: Stock[] = [];
+      
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+        
+        if (values.length < 2) continue;
+        
+        const symbol = headerMap.symbol !== -1 ? values[headerMap.symbol] : '';
+        const name = headerMap.name !== -1 ? values[headerMap.name] : '';
+        const market = headerMap.market !== -1 ? values[headerMap.market] || 'KOSPI' : 'KOSPI';
+        const price = headerMap.price !== -1 ? parseFloat(values[headerMap.price]) || Math.floor(Math.random() * 100000 + 10000) : Math.floor(Math.random() * 100000 + 10000);
+        
+        if (symbol && name) {
+          // 시장별 기본 변동성 설정
+          let volatility = 0.025;
+          if (market === 'KOSDAQ') volatility = 0.035;
+          else if (market === 'NASDAQ') volatility = 0.030;
+          
+          companies.push({
+            symbol: symbol,
+            name: name,
+            price: price,
+            volatility: volatility + (Math.random() * 0.02 - 0.01), // ±1% 랜덤 변동성
+            market: market
+          });
+        }
+      }
+      
+      console.log(`회사 목록 로드 완료: ${companies.length}개 종목`);
+      setAllStocks(companies);
+      
+    } catch (error) {
+      console.error('회사 목록 로드 실패, 기본 목록 사용:', error);
+      // 기본 종목 목록 사용
+      setAllStocks(getDefaultStocks());
+    } finally {
+      setIsLoadingStocks(false);
+    }
+  };
+
+  // 기본 종목 목록 (CSV 로드 실패시 사용)
+  const getDefaultStocks = (): Stock[] => {
+    return [
+      // 주요 대형주
+      { symbol: '005930', name: '삼성전자', price: 71000, volatility: 0.025, market: 'KOSPI' },
+      { symbol: '000660', name: 'SK하이닉스', price: 130000, volatility: 0.035, market: 'KOSPI' },
+      { symbol: '035420', name: 'NAVER', price: 230000, volatility: 0.030, market: 'KOSPI' },
+      { symbol: '051910', name: 'LG화학', price: 620000, volatility: 0.028, market: 'KOSPI' },
+      { symbol: '006400', name: '삼성SDI', price: 520000, volatility: 0.032, market: 'KOSPI' },
+      { symbol: '207940', name: '삼성바이오로직스', price: 850000, volatility: 0.030, market: 'KOSPI' },
+      { symbol: '068270', name: '셀트리온', price: 180000, volatility: 0.035, market: 'KOSPI' },
+      { symbol: '035720', name: '카카오', price: 55000, volatility: 0.040, market: 'KOSPI' },
+      { symbol: '042660', name: '한화오션', price: 28000, volatility: 0.045, market: 'KOSPI' },
+      { symbol: '028260', name: '삼성물산', price: 120000, volatility: 0.025, market: 'KOSPI' },
+      { symbol: '066570', name: 'LG전자', price: 95000, volatility: 0.030, market: 'KOSPI' },
+      
+      // 중형주
+      { symbol: '096770', name: 'SK이노베이션', price: 180000, volatility: 0.035, market: 'KOSPI' },
+      { symbol: '323410', name: 'kakaopay', price: 85000, volatility: 0.045, market: 'KOSPI' },
+      { symbol: '352820', name: '하이브', price: 250000, volatility: 0.050, market: 'KOSPI' },
+      { symbol: '373220', name: 'LG에너지솔루션', price: 480000, volatility: 0.040, market: 'KOSPI' },
+      
+      // KOSDAQ
+      { symbol: '247540', name: 'EcoPro BM', price: 220000, volatility: 0.055, market: 'KOSDAQ' },
+      { symbol: '086520', name: '에코프로', price: 880000, volatility: 0.060, market: 'KOSDAQ' },
+      { symbol: '091990', name: '셀트리온헬스케어', price: 85000, volatility: 0.040, market: 'KOSDAQ' },
+      { symbol: '000250', name: '삼천당제약', price: 150000, volatility: 0.045, market: 'KOSDAQ' },
+      
+      // 해외 주식
+      { symbol: 'AAPL', name: 'Apple Inc.', price: 180, volatility: 0.025, market: 'NASDAQ' },
+      { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 130, volatility: 0.022, market: 'NASDAQ' },
+      { symbol: 'MSFT', name: 'Microsoft Corp.', price: 350, volatility: 0.020, market: 'NASDAQ' },
+      { symbol: 'TSLA', name: 'Tesla Inc.', price: 250, volatility: 0.045, market: 'NASDAQ' },
+      { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 500, volatility: 0.035, market: 'NASDAQ' }
+    ];
+  };
+
+  // 컴포넌트 마운트시 회사 목록 로드
+  React.useEffect(() => {
+    loadCompanyList();
+  }, []);
+
   const strategies: Strategy[] = [
     { id: 'golden_cross', name: 'Golden Cross Strategy', icon: TrendingUp },
     { id: 'rsi_divergence', name: 'RSI Mean Reversion', icon: Activity },
     { id: 'bollinger_bands', name: 'Bollinger Bands Strategy', icon: Target },
     { id: 'macd_crossover', name: 'MACD Crossover', icon: Shield }
   ];
+
+  // 종목 검색 기능
+  const handleStockSearch = (query: string): void => {
+    setStockSearchQuery(query);
+    
+    if (query.trim() === '') {
+      setFilteredStocks([]);
+      setIsStockSearchOpen(false);
+      return;
+    }
+
+    const filtered = allStocks.filter(stock => 
+      stock.symbol.toLowerCase().includes(query.toLowerCase()) ||
+      stock.name.toLowerCase().includes(query.toLowerCase())
+    );
+    
+    // 최대 20개 결과만 표시
+    setFilteredStocks(filtered.slice(0, 20));
+    setIsStockSearchOpen(true);
+  };
+
+  const handleStockSelect = (stock: Stock): void => {
+    setSelectedStock(stock.symbol);
+    setStockSearchQuery(`${stock.symbol} - ${stock.name}`);
+    setIsStockSearchOpen(false);
+    setFilteredStocks([]);
+  };
+
+  const clearStockSelection = (): void => {
+    setSelectedStock('');
+    setStockSearchQuery('');
+    setFilteredStocks([]);
+    setIsStockSearchOpen(false);
+  };
 
   const initializeAnalysisSteps = (): void => {
     const steps: AnalysisStep[] = [
@@ -491,8 +668,23 @@ export default function OneStockAnalyzer(): JSX.Element {
       updateStepStatus(0, 'running');
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      const data = await CSVDataLoader.loadStockData();
-      setCsvLoadStatus('success');
+      let data: StockData[];
+      
+      // 선택된 종목이 있으면 해당 종목 데이터 생성, 없으면 CSV에서 로드
+      if (selectedStock) {
+        const stockInfo = allStocks.find(s => s.symbol === selectedStock);
+        if (stockInfo) {
+          data = CSVDataLoader.generateStockDataForSymbol(stockInfo.symbol, stockInfo.price, stockInfo.volatility);
+          setCsvLoadStatus('success');
+        } else {
+          data = await CSVDataLoader.loadStockData();
+          setCsvLoadStatus('success');
+        }
+      } else {
+        data = await CSVDataLoader.loadStockData();
+        setCsvLoadStatus('success');
+      }
+      
       updateStepStatus(0, 'completed');
 
       setCurrentStep(1);
@@ -648,6 +840,176 @@ export default function OneStockAnalyzer(): JSX.Element {
               )}
 
               <div className="space-y-6">
+                
+                {/* 종목 선택 섹션 */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-100 mb-4 flex items-center">
+                    <span className="text-lg">🔍</span>
+                    <span className="ml-2">Stock Selection</span>
+                  </h3>
+                  
+                  <div className="relative">
+                    <div className="flex space-x-2">
+                      <div className="flex-1 relative">
+                        <input
+                          type="text"
+                          placeholder="종목 코드 또는 종목명 검색 (예: 005930, 삼성전자)"
+                          value={stockSearchQuery}
+                          onChange={(e) => handleStockSearch(e.target.value)}
+                          onFocus={() => stockSearchQuery && setIsStockSearchOpen(true)}
+                          className="w-full p-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-100 focus:outline-none focus:border-gray-500 pr-10"
+                        />
+                        {selectedStock && (
+                          <button
+                            onClick={clearStockSelection}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => setIsStockSearchOpen(!isStockSearchOpen)}
+                        className="px-4 py-3 bg-gray-600 text-gray-100 rounded-xl hover:bg-gray-500 transition-colors"
+                      >
+                        📋
+                      </button>
+                    </div>
+                    
+                    {/* 검색 결과 드롭다운 */}
+                    {isStockSearchOpen && filteredStocks.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute top-full left-0 right-0 mt-1 bg-gray-700 border border-gray-600 rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto"
+                      >
+                        {filteredStocks.map((stock) => (
+                          <div
+                            key={stock.symbol}
+                            onClick={() => handleStockSelect(stock)}
+                            className="p-3 hover:bg-gray-600 cursor-pointer border-b border-gray-600 last:border-b-0"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <div className="flex items-center space-x-2">
+                                  <span className="font-semibold text-gray-100">{stock.symbol}</span>
+                                  <span className="text-xs bg-gray-600 text-gray-300 px-2 py-1 rounded">
+                                    {stock.market}
+                                  </span>
+                                </div>
+                                <p className="text-gray-300 text-sm">{stock.name}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-gray-200 font-semibold">
+                                  {stock.market === 'NASDAQ' ? `$${stock.price}` : `₩${stock.price.toLocaleString()}`}
+                                </p>
+                                <p className="text-gray-400 text-xs">변동성 {(stock.volatility * 100).toFixed(1)}%</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </motion.div>
+                    )}
+                    
+                    {/* 전체 종목 리스트 */}
+                    {isStockSearchOpen && !stockSearchQuery && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute top-full left-0 right-0 mt-1 bg-gray-700 border border-gray-600 rounded-xl shadow-lg z-50 max-h-80 overflow-y-auto"
+                      >
+                        <div className="p-3 border-b border-gray-600">
+                          <h4 className="font-semibold text-gray-100 mb-2">
+                            전체 종목 목록 ({allStocks.length}개)
+                          </h4>
+                          {isLoadingStocks && (
+                            <p className="text-gray-400 text-sm">종목 목록 로딩 중...</p>
+                          )}
+                          <div className="grid grid-cols-1 gap-1 max-h-64 overflow-y-auto">
+                            {['KOSPI', 'KOSDAQ', 'NASDAQ'].map(market => {
+                              const marketStocks = allStocks.filter(s => s.market === market);
+                              if (marketStocks.length === 0) return null;
+                              
+                              return (
+                                <div key={market}>
+                                  <p className="text-xs font-semibold text-gray-400 mb-2 mt-2">{market} ({marketStocks.length}개)</p>
+                                  {marketStocks.slice(0, 8).map(stock => (
+                                    <div
+                                      key={stock.symbol}
+                                      onClick={() => handleStockSelect(stock)}
+                                      className="p-2 hover:bg-gray-600 cursor-pointer rounded flex items-center justify-between"
+                                    >
+                                      <div>
+                                        <span className="text-gray-100 text-sm font-semibold">{stock.symbol}</span>
+                                        <span className="text-gray-300 text-sm ml-2">{stock.name}</span>
+                                      </div>
+                                      <span className="text-gray-400 text-xs">
+                                        {stock.market === 'NASDAQ' ? `$${stock.price}` : `₩${stock.price.toLocaleString()}`}
+                                      </span>
+                                    </div>
+                                  ))}
+                                  {marketStocks.length > 8 && (
+                                    <p className="text-xs text-gray-500 text-center py-1">
+                                      ...및 {marketStocks.length - 8}개 더 (검색으로 찾기)
+                                    </p>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+                  
+                  {/* 선택된 종목 정보 */}
+                  {selectedStock && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-4 p-4 bg-gray-700 rounded-xl border border-gray-600"
+                    >
+                      {(() => {
+                        const stockInfo = allStocks.find(s => s.symbol === selectedStock);
+                        return stockInfo ? (
+                          <div>
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center space-x-2">
+                                <span className="font-semibold text-gray-100">{stockInfo.symbol}</span>
+                                <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded">
+                                  {stockInfo.market}
+                                </span>
+                              </div>
+                              <span className="text-gray-200 font-semibold">
+                                {stockInfo.market === 'NASDAQ' ? `$${stockInfo.price}` : `₩${stockInfo.price.toLocaleString()}`}
+                              </span>
+                            </div>
+                            <p className="text-gray-200 font-semibold">{stockInfo.name}</p>
+                            <p className="text-gray-400 text-sm">
+                              예상 변동성: {(stockInfo.volatility * 100).toFixed(1)}% | 
+                              시뮬레이션 데이터로 분석 진행
+                            </p>
+                          </div>
+                        ) : (
+                          <div>
+                            <p className="text-gray-200">선택된 종목: {selectedStock}</p>
+                            <p className="text-gray-400 text-sm">종목 정보를 찾을 수 없습니다</p>
+                          </div>
+                        );
+                      })()}
+                    </motion.div>
+                  )}
+                  
+                  {/* CSV vs 종목 선택 안내 */}
+                  <div className="mt-4 p-3 bg-gray-700 rounded-lg">
+                    <p className="text-gray-300 text-sm">
+                      <span className="font-semibold">분석 데이터:</span>
+                      {selectedStock 
+                        ? ' 선택된 종목의 시뮬레이션 데이터 사용' 
+                        : ' CSV 파일 또는 샘플 데이터 사용'}
+                    </p>
+                  </div>
+                </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-100 mb-4 flex items-center">
                     <span className="text-lg">📊</span>
@@ -878,6 +1240,10 @@ export default function OneStockAnalyzer(): JSX.Element {
                         whileTap={{ scale: 0.98 }}
                         onClick={() => {
                           setSelectedStrategies([]);
+                          setSelectedStock('');
+                          setStockSearchQuery('');
+                          setIsStockSearchOpen(false);
+                          setFilteredStocks([]);
                           setStockData(null);
                           setAnalysisResults({});
                           setAnalysisSteps([]);

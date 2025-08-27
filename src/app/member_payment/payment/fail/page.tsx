@@ -10,7 +10,7 @@ export default function PaymentFailPage() {
   const errorCode = searchParams.get('code')
 
   const getErrorDescription = (message: string, code: string | null) => {
-    const errorMap = {
+    const errorMap: { [key: string]: string } = {
       'CARD_COMPANY_NOT_AVAILABLE': '카드사 서비스가 일시적으로 중단되었습니다',
       'EXCEED_MAX_CARD_INSTALLMENT_PLAN': '설정 가능한 할부 개월 수를 초과했습니다',
       'INVALID_CARD_EXPIRATION': '카드 유효기간이 잘못되었습니다',
@@ -20,8 +20,8 @@ export default function PaymentFailPage() {
       'INVALID_CARD_NUMBER': '카드번호가 잘못되었습니다'
     }
 
-    if (code && errorMap[code as keyof typeof errorMap]) {
-      return errorMap[code as keyof typeof errorMap]
+    if (code && errorMap[code]) {
+      return errorMap[code]
     }
 
     if (message.includes('한도')) return '카드 한도를 확인해 주세요'
@@ -97,14 +97,14 @@ export default function PaymentFailPage() {
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <Link href="/payment" className="flex-1">
+            <Link href="/member_payment/payment" className="flex-1">
               <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center">
                 <RefreshCw className="w-4 h-4 mr-2" />
                 다시 결제하기
               </button>
             </Link>
             
-            <Link href="/membership" className="flex-1">
+            <Link href="/member_payment" className="flex-1">
               <button className="w-full bg-gray-600 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 멤버십으로 돌아가기

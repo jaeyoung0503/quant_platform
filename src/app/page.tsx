@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import link from 'next/link';
 
 const QuantStrategyMain = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -28,25 +27,33 @@ const QuantStrategyMain = () => {
       {/* Header */}
       <div className="bg-black text-white p-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <button 
-              onClick={() => setShowMenu(false)}
-              className="text-white text-xl"
-            >
-              ×
-            </button>
-            <span className="text-sm text-gray-400">quantmaster.com</span>
-          </div>
+          <span className="text-sm text-gray-400">quantmaster.com</span>
         </div>
         
         <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center space-x-2">
-            <span className="text-blue-400 font-bold text-lg">QUANT</span>
-            <span className="text-white font-bold text-lg">MASTER</span>
-            <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-              <div className="w-3 h-3 bg-white rounded-full"></div>
+          <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-2">
+              <span className="text-blue-400 font-bold text-lg">QUANT</span>
+              <span className="text-white font-bold text-lg">MASTER</span>
+              <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-white rounded-full"></div>
+              </div>
+            </div>
+            
+            {/* Navigation Menu */}
+            <div className="hidden lg:flex items-center gap-6">
+              {menuItems.map((item, index) => (
+                <button 
+                  key={index}
+                  onClick={() => handleMenuClick(item.path)}
+                  className="text-white hover:text-blue-400 transition-colors text-lg font-medium"
+                >
+                  {item.name}
+                </button>
+              ))}
             </div>
           </div>
+          
           <button 
             onClick={() => setShowMenu(true)}
             className="text-white"
@@ -57,6 +64,19 @@ const QuantStrategyMain = () => {
               <div className="w-6 h-0.5 bg-white"></div>
             </div>
           </button>
+        </div>
+
+        {/* Mobile Menu - 작은 화면에서만 보이는 메뉴 */}
+        <div className="lg:hidden mt-4 flex flex-wrap gap-3 justify-center">
+          {menuItems.map((item, index) => (
+            <button 
+              key={index}
+              onClick={() => handleMenuClick(item.path)}
+              className="text-white py-2 px-3 hover:bg-gray-800 rounded-lg transition-colors text-lg font-medium"
+            >
+              {item.name}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -114,7 +134,7 @@ const QuantStrategyMain = () => {
         </div>
       </div>
 
-      {/* Menu Overlay */}
+      {/* Side Menu Overlay */}
       {showMenu && (
         <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
           <div className="bg-gray-900 w-80 max-w-sm mx-4 rounded-2xl border border-gray-700 p-6">

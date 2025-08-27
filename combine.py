@@ -2,7 +2,7 @@ import os
 
 # 설정
 input_dirs = [
-    r"C:\Aproject\quant_platform\src\app\actual_trading"
+    r"C:\Aproject\quant_platform\src\app\member_payment",
     # r"C:\Aproject\quant-platform\quant-trading-platform\backend",
     # r"C:\Aproject\quant-platform\src",
     # r"C:\Aproject\quant-platform\backtester"

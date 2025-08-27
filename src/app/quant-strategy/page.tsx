@@ -1,3 +1,6 @@
+//file: src/app/quant-strategy/page.tsx
+//my strategy page
+
 'use client';
 
 import React, { useState } from 'react';
