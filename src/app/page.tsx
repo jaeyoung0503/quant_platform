@@ -8,7 +8,7 @@ const QuantStrategyMain = () => {
   const router = useRouter();
 
   const menuItems = [
-    { name: 'Backtesting', icon: '', path: '/backtesting' },
+    { name: 'Portfolio 분석', icon: '', path: '/backtesting' },
     { name: '종목별 분석', icon: '', path: '/onestock' },
     { name: 'My 전략', icon: '', path: '/quant-strategy' },
     { name: '모의거래', icon: '', path: '/mock_trading' },
@@ -115,7 +115,7 @@ const QuantStrategyMain = () => {
           {/* CTA Buttons */}
           <div className="space-y-4">
             <button 
-              onClick={() => router.push('/signin')}
+              onClick={() => router.push('/member_page')}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-colors"
             >
               로그인
@@ -125,7 +125,7 @@ const QuantStrategyMain = () => {
               onClick={() => router.push('/member_page')}
               className="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-xl transition-colors border border-gray-600"
             >
-              Create Free Account
+              회원가입
             </button>
           </div>
 
@@ -209,9 +209,9 @@ const QuantStrategyMain = () => {
       {/* Navigation Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-black h-12 flex items-center justify-center">
         <div className="flex space-x-8">
-          <div className="w-8 h-1 bg-white"></div>
+          {/* <div className="w-8 h-1 bg-white"></div>
           <div className="w-8 h-8 border-2 border-white rounded"></div>
-          <div className="w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-b-8 border-b-white"></div>
+          <div className="w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-b-8 border-b-white"></div> */}
         </div>
       </div>
     </div>
