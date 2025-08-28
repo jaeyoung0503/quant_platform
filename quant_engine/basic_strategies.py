@@ -1,4 +1,5 @@
 """
+file: strategy_engine/basic_strategies.py
 Basic Investment Strategies - 10가지
 개인투자자용 기본 전략들
 """

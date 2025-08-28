@@ -1,4 +1,5 @@
 """
+file: strategy_engine/portfolio_utils.py
 Portfolio Utilities Module - 포트폴리오 관리 유틸리티
 리밸런싱, 가중치 계산, 포트폴리오 최적화 관련 함수들 250여 라인
 """

@@ -1,4 +1,5 @@
 """
+file: strategy_engine/strategy_factory.py
 Strategy Factory Module - 전략 객체 생성 팩토리 패턴
 전략 이름으로 해당 클래스 반환, 전략 관리 및 유틸리티 함수들
 """

@@ -198,7 +198,7 @@ async def change_trading_mode(request: TradingModeRequest):
         CURRENT_TRADING_MODE = new_mode
         
         # 트레이딩 엔진에 새로운 클라이언트 적용
-        from main import get_trading_engine
+        from backtester.main import get_trading_engine
         trading_engine = get_trading_engine()
         trading_engine.kiwoom_client = KIWOOM_CLIENT_INSTANCE
         

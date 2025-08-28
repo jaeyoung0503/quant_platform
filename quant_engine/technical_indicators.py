@@ -1,4 +1,5 @@
 """
+file: strategy_engine/technical_indicators.py
 Technical Indicators Module - 기술적 지표 계산 함수들
 RSI, MACD, 볼린저밴드, 이동평균 등 200여 라인
 """

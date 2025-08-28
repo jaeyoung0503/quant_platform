@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "setup-python": "cd python && pip install -r requirements.txt",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -25,6 +26,7 @@
     "lucide-react": "^0.263.1",
     "next": "^15.0.0",
     "next-auth": "^4.24.11",
+    "papaparse": "^5.5.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.62.0",
@@ -39,17 +41,19 @@
     "@tailwindcss/typography": "^0.5.16",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.19.11",
+    "@types/papaparse": "^5.3.16",
     "@types/react": "^18.2.25",
     "@types/react-dom": "^18.2.11",
     "autoprefixer": "^10.4.21",
     "eslint": "^8.51.0",
     "eslint-config-next": "^15.0.0",
+    "papaparse": "^5.4.1",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "uuid": "^9.0.0"
   },
-  
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"

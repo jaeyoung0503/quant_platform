@@ -68,7 +68,7 @@ def start_application():
     try:
         print("\n애플리케이션 시작 중...")
         
-        from main import main
+        from backtester.main import main
         return main()
         
     except Exception as e:

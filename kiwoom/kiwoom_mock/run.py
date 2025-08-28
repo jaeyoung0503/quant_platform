@@ -34,7 +34,7 @@ def main():
         
         # 메인 시스템 실행
         print("시스템 시작 중...")
-        from main import main as main_func
+        from backtester.main import main as main_func
         
         return main_func()
         

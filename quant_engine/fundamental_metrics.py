@@ -1,4 +1,5 @@
 """
+file: strategy_engine/fundamental_metrics.py
 Fundamental Metrics Module - 재무비율 계산 함수들
 PER, PBR, ROE, 부채비율 등 펀더멘털 지표들 200여 라인
 """
