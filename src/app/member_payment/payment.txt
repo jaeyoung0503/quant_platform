@@ -1,470 +1,284 @@
-## 구현된 전체 시스템 요약:
+# 토스페이먼츠 연결 가이드
 
-### 1. **결제 페이지 업데이트**
-- 토스페이먼츠 SDK 연동
-- 간소화된 UI (고객 정보만 입력)
-- 실시간 결제 요청 처리
+## 📋 연결 과정
 
-### 2. **결제 성공 페이지** (`/payment/success`)
-- 결제 상세 정보 표시
-- 영수증 링크 제공
-- 서비스 이용 안내
+### 1. 토스페이먼츠 계정 설정
+1. [토스페이먼츠 개발자센터](https://developers.tosspayments.com/) 접속
+2. 계정 생성 및 로그인
+3. **내 앱 관리** → **앱 생성**
+4. 다음 정보 확인/설정:
+   - **클라이언트 키** (공개키)
+   - **시크릿 키** (비밀키) 
+   - **웹훅 URL**: `https://yourdomain.com/api/payment/webhook`
+   - **성공 URL**: `https://yourdomain.com/member_payment/payment/success`
+   - **실패 URL**: `https://yourdomain.com/member_payment/payment/fail`
 
-### 3. **결제 실패 페이지** (`/payment/fail`)
-- 오류 원인 분석 및 설명
-- 해결방법 제시
-- 재시도 옵션 제공
+### 2. 환경 변수 설정
+`.env.local` 파일에 다음 내용 추가:
 
-### 4. **서버 API** (`/api/payment/confirm`)
-- 토스페이먼츠 결제 승인 처리
-- 데이터베이스 저장 로직
-- 구독 정보 업데이트
-- 결제 취소 기능 포함
+```env
+# 토스페이먼츠 설정
+NEXT_PUBLIC_TOSS_CLIENT_KEY=test_ck_xxxxxxxxxxxxxxxx
+TOSS_SECRET_KEY=test_sk_xxxxxxxxxxxxxxxx
+TOSS_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxx
 
-### 5. **완전한 설정 가이드**
-- 환경 변수 설정
-- TypeScript 타입 정의
-- 데이터베이스 스키마
-- 보안 고려사항
-- 운영 환경 설정
+# 데이터베이스 (선택사항)
+DATABASE_URL=your_database_url
 
-## 주요 특징:
+# 앱 URL
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
 
-✅ **안전한 결제**: 토스페이먼츠의 PCI-DSS 준수 시스템  
-✅ **다양한 결제수단**: 신용카드, 계좌이체, 가상계좌 등  
-✅ **실시간 처리**: 결제 즉시 서비스 이용 가능  
-✅ **오류 처리**: 상세한 오류 분석 및 해결방법 제시  
-✅ **반응형 디자인**: 데스크탑/모바일 최적화  
-✅ **보안**: 서버사이드 결제 검증 및 데이터 암호화  
-
-이제 실제 프로젝트에 적용하기 위해:
-
-1. **패키지 설치**: `npm install @tosspayments/payment-sdk`
-2. **환경 변수 설정**: 토스페이먼츠에서 발급받은 API 키 추가
-3. **데이터베이스 설정**: 결제 및 구독 테이블 생성
-4. **테스트**: 테스트 환경에서 결제 플로우 검증
-5. **운영 배포**: 실제 API 키로 교체 후 배포
-
-추가로 구현하고 싶은 기능이나 질문이 있으시면 언제든지 말씀해 주세요!
-
-# 토스페이먼츠 결제 시스템 설정 가이드
-
-## 1. 필수 패키지 설치
+### 3. 의존성 설치
 
 ```bash
 npm install @tosspayments/payment-sdk
+npm install uuid
+npm install @types/uuid
+```
+
+### 4. 필요한 파일들
+
+아래 파일들을 순서대로 생성해주세요:
+
+1. `lib/toss.ts` - 토스페이먼츠 유틸리티
+2. `app/api/payment/prepare/route.ts` - 결제 준비 API
+3. `app/api/payment/confirm/route.ts` - 결제 승인 API  
+4. `app/api/payment/webhook/route.ts` - 웹훅 처리 API
+5. `app/member_payment/payment/page.tsx` - 토스 연동 결제 페이지
+6. `components/TossPayment.tsx` - 토스 결제 컴포넌트
+
+### 5. 테스트 카드 정보
+
+**테스트용 카드번호:**
+- 4300000000000000 (일반 신용카드)
+- 5500000000000000 (해외 신용카드)
+
+**유효기간:** 아무 미래 날짜
+**CVC:** 아무 3자리 숫자
+**비밀번호:** 아무 2자리 숫자
+
+### 6. 배포 시 주의사항
+
+1. **도메인 등록**: 토스페이먼츠 콘솔에서 실제 도메인 등록
+2. **HTTPS 필수**: 실제 결제는 HTTPS에서만 동작
+3. **웹훅 보안**: 웹훅 서명 검증 필수
+4. **에러 처리**: 모든 결제 단계에서 적절한 에러 처리
+
+## 🔄 결제 플로우
+
+1. **사용자가 "결제하기" 클릭**
+2. **결제 준비 API 호출** (`/api/payment/prepare`)
+   - 주문 정보 생성 및 DB 저장
+   - 결제 고유 ID 생성
+3. **토스페이먼츠 결제창 호출**
+   - 사용자 카드 정보 입력
+4. **결제 승인 요청** (`/api/payment/confirm`)  
+   - 토스페이먼츠 서버에서 최종 승인
+5. **웹훅 처리** (`/api/payment/webhook`)
+   - 결제 상태 변경 알림 처리
+6. **성공/실패 페이지로 리디렉션**
+
+## 🛡️ 보안 고려사항
+
+- **시크릿 키는 절대 클라이언트에 노출하지 말 것**
+- **모든 결제 승인은 서버에서 처리**
+- **웹훅 서명 검증으로 위조 요청 차단**
+- **결제 금액은 서버에서 재검증**
+
+# 🚀 토스페이먼츠 연동 설정 가이드
+
+## 1. 패키지 설치
+
+```bash
+# 토스페이먼츠 SDK 설치
+npm install @tosspayments/payment-sdk
+
+# 유틸리티 패키지
+npm install uuid
+npm install @types/uuid
+
+# UI 패키지 (이미 설치되어 있다면 생략)
+npm install lucide-react
 ```
 
 ## 2. 환경 변수 설정
 
-`.env.local` 파일을 생성하고 다음 내용을 추가:
-
-```env
-# 토스페이먼츠 API 키 (테스트용)
-NEXT_PUBLIC_TOSS_CLIENT_KEY=test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq
-TOSS_SECRET_KEY=test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R
-
-# 운영환경에서는 실제 키로 변경
-# NEXT_PUBLIC_TOSS_CLIENT_KEY=live_ck_your_client_key
-# TOSS_SECRET_KEY=live_sk_your_secret_key
-
-# 앱 기본 URL
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
-```
-
-## 3. TypeScript 타입 정의
-
-`types/payment.ts` 파일 생성:
-
-```typescript
-export interface TossPaymentsInstance {
-  requestPayment(method: string, options: PaymentRequest): Promise<void>
-}
-
-export interface PaymentRequest {
-  amount: number
-  orderId: string
-  orderName: string
-  customerName: string
-  customerEmail: string
-  successUrl: string
-  failUrl: string
-}
-
-export interface PaymentResult {
-  paymentKey: string
-  orderId: string
-  orderName: string
-  method: string
-  totalAmount: number
-  status: string
-  approvedAt: string
-  receipt?: {
-    url: string
-  }
-  card?: {
-    company: string
-    number: string
-    installmentPlanMonths: number
-  }
-}
-```
-
-## 4. 데이터베이스 스키마 (Prisma 예시)
-
-`prisma/schema.prisma`:
-
-```prisma
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql" // 또는 "mysql", "sqlite"
-  url      = env("DATABASE_URL")
-}
-
-model Payment {
-  id            String   @id @default(cuid())
-  paymentKey    String   @unique
-  orderId       String   @unique
-  orderName     String
-  customerId    String
-  amount        Int
-  method        String
-  status        String   // READY, IN_PROGRESS, WAITING_FOR_DEPOSIT, DONE, CANCELED, PARTIAL_CANCELED, ABORTED, EXPIRED
-  approvedAt    DateTime?
-  canceledAt    DateTime?
-  receiptUrl    String?
-  cardCompany   String?
-  cardNumber    String?
-  cancelReason  String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@map("payments")
-}
-
-model Subscription {
-  id           String   @id @default(cuid())
-  customerId   String   @unique
-  planType     String   // 'advanced', 'premium'
-  billingCycle String   // 'monthly', 'quarterly'
-  status       String   // 'active', 'canceled', 'expired'
-  startDate    DateTime
-  endDate      DateTime
-  amount       Int
-  paymentKey   String?
-  autoRenew    Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  @@map("subscriptions")
-}
-
-model User {
-  id           String       @id @default(cuid())
-  email        String       @unique
-  name         String
-  phone        String?
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  subscription Subscription?
-
-  @@map("users")
-}
-```
-
-## 5. 데이터베이스 설정
+`.env.local` 파일 생성:
 
 ```bash
-# Prisma 설치
-npm install prisma @prisma/client
-
-# Prisma 초기화
-npx prisma init
-
-# 데이터베이스 URL 설정 (.env에 추가)
-DATABASE_URL="postgresql://username:password@localhost:5432/mydb"
-# 또는 MySQL: "mysql://username:password@localhost:3306/mydb"
-
-# 마이그레이션 실행
-npx prisma migrate dev --name init
-
-# Prisma Client 생성
-npx prisma generate
+# .env.local 파일 복사
+cp .env.example .env.local
 ```
 
-## 6. 실제 운영환경 설정
+토스페이먼츠 개발자센터에서 발급받은 키로 수정:
 
-### 6.1 토스페이먼츠 계정 생성
+```bash
+NEXT_PUBLIC_TOSS_CLIENT_KEY=test_ck_xxxxxxxxxxxxxxxx
+TOSS_SECRET_KEY=test_sk_xxxxxxxxxxxxxxxx
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+## 3. 파일 구조 생성
+
+다음 파일들을 생성해주세요:
+
+```
+src/
+├── lib/
+│   └── toss.ts                    # 토스페이먼츠 유틸리티
+├── components/
+│   └── TossPayment.tsx            # 토스 결제 컴포넌트
+└── app/
+    ├── api/
+    │   └── payment/
+    │       ├── prepare/
+    │       │   └── route.ts       # 결제 준비 API
+    │       ├── confirm/
+    │       │   └── route.ts       # 결제 승인 API
+    │       └── webhook/
+    │           └── route.ts       # 웹훅 처리 API
+    └── member_payment/
+        ├── layout.tsx             # 기존 파일
+        ├── page.tsx               # 수정된 멤버십 페이지
+        └── payment/
+            ├── page.tsx           # 토스 연동 결제 페이지
+            ├── success/
+            │   └── page.tsx       # 결제 성공 페이지
+            └── fail/
+                └── page.tsx       # 결제 실패 페이지
+```
+
+## 4. 토스페이먼츠 개발자센터 설정
+
+### 4.1 앱 생성 및 키 발급
 1. [토스페이먼츠 개발자센터](https://developers.tosspayments.com/) 접속
-2. 회원가입 및 상점 정보 등록
-3. 사업자등록증, 통장사본 등 서류 제출
-4. 상점 승인 후 실제 API 키 발급
+2. 로그인 후 "내 앱 관리" → "앱 생성"
+3. 앱 이름, 카테고리 설정
+4. **클라이언트 키**와 **시크릿 키** 확인
 
-### 6.2 운영 환경 변수 교체
-```env
-# 운영용 실제 키로 교체
-NEXT_PUBLIC_TOSS_CLIENT_KEY=live_ck_your_actual_client_key
-TOSS_SECRET_KEY=live_sk_your_actual_secret_key
-NEXT_PUBLIC_BASE_URL=https://yourdomain.com
-
-# 데이터베이스 URL (운영 환경)
-DATABASE_URL="postgresql://username:password@your-db-host:5432/production_db"
+### 4.2 결제 환경 설정
+**결제 성공 URL:**
+```
+http://localhost:3000/member_payment/payment/success
 ```
 
-## 7. 보안 고려사항
-
-### 7.1 서버 사이드 검증 필수
-```typescript
-// api/payment/confirm/route.ts에서 반드시 검증
-const validatePayment = async (paymentKey: string, orderId: string, amount: number) => {
-  // 1. 데이터베이스에서 주문 정보 확인
-  const order = await db.order.findUnique({ where: { orderId } })
-  if (!order || order.amount !== amount) {
-    throw new Error('주문 정보가 일치하지 않습니다')
-  }
-  
-  // 2. 중복 결제 확인
-  const existingPayment = await db.payment.findUnique({ where: { orderId } })
-  if (existingPayment && existingPayment.status === 'DONE') {
-    throw new Error('이미 처리된 결제입니다')
-  }
-}
+**결제 실패 URL:**
+```
+http://localhost:3000/member_payment/payment/fail
 ```
 
-### 7.2 환경 변수 보안
+**웹훅 URL:** (선택사항)
+```
+http://localhost:3000/api/payment/webhook
+```
+
+### 4.3 테스트 카드 정보
+```
+카드번호: 4300000000000000
+유효기간: 아무 미래 날짜 (예: 12/25)
+CVC: 아무 3자리 숫자 (예: 123)
+비밀번호: 아무 2자리 숫자 (예: 00)
+```
+
+## 5. 개발 서버 실행
+
 ```bash
-# .gitignore에 추가
-.env
-.env.local
-.env.production
-.env.staging
+npm run dev
 ```
 
-### 7.3 HTTPS 필수
-```javascript
-// next.config.js
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains'
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
-          }
-        ]
-      }
-    ]
-  }
-}
+## 6. 테스트 시나리오
 
-module.exports = nextConfig
+### 6.1 정상 결제 테스트
+1. `http://localhost:3000/member_payment` 접속
+2. Advanced 또는 Premium 플랜 "선택하기" 클릭
+3. 결제 페이지에서 카드 정보 입력
+4. 테스트 카드로 결제 진행
+5. 성공 페이지 확인
+
+### 6.2 결제 실패 테스트
+1. 잘못된 카드 정보 입력
+2. 실패 페이지 확인
+
+### 6.3 API 테스트
+```bash
+# 결제 준비 테스트
+curl -X POST http://localhost:3000/api/payment/prepare \
+  -H "Content-Type: application/json" \
+  -d '{
+    "planName": "premium",
+    "period": "monthly", 
+    "amount": 19900
+  }'
+
+# 주문 조회 테스트  
+curl "http://localhost:3000/api/payment/prepare?orderId=order_xxxxxxx"
 ```
 
-## 8. 테스트 환경 설정
+## 7. 운영 배포 시 체크리스트
 
-### 8.1 테스트 카드 정보
-```javascript
-// 토스페이먼츠 테스트 카드
-const TEST_CARDS = {
-  success: {
-    number: '4000-0000-0000-0004',
-    expiry: '12/25',
-    cvc: '123'
-  },
-  failure: {
-    number: '4000-0000-0000-0002', // 잔액 부족
-    expiry: '12/25',
-    cvc: '123'
-  }
-}
+### 7.1 환경 변수 업데이트
+```bash
+NEXT_PUBLIC_TOSS_CLIENT_KEY=live_ck_xxxxxxxxxxxxxxxx  # 운영 키로 변경
+TOSS_SECRET_KEY=live_sk_xxxxxxxxxxxxxxxx              # 운영 키로 변경
+NEXT_PUBLIC_APP_URL=https://yourdomain.com            # 실제 도메인으로 변경
 ```
 
-### 8.2 테스트 스크립트
-```javascript
-// __tests__/payment.test.js
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import PaymentPage from '../pages/payment'
+### 7.2 토스페이먼츠 콘솔 설정
+- 실제 도메인으로 결제 URL 업데이트
+- 웹훅 URL을 HTTPS로 설정
+- 라이브 키 활성화
 
-describe('Payment Flow', () => {
-  test('should complete payment successfully', async () => {
-    render(<PaymentPage />)
-    
-    // 폼 입력
-    fireEvent.change(screen.getByLabelText('이름'), { target: { value: '홍길동' } })
-    fireEvent.change(screen.getByLabelText('이메일'), { target: { value: 'test@test.com' } })
-    
-    // 약관 동의
-    fireEvent.click(screen.getByRole('checkbox', { name: /이용약관/ }))
-    fireEvent.click(screen.getByRole('checkbox', { name: /개인정보/ }))
-    
-    // 결제 버튼 클릭
-    fireEvent.click(screen.getByRole('button', { name: /결제하기/ }))
-    
-    await waitFor(() => {
-      expect(screen.getByText('결제가 완료되었습니다')).toBeInTheDocument()
-    })
-  })
-})
+### 7.3 보안 체크
+- [ ] 시크릿 키가 클라이언트에 노출되지 않는지 확인
+- [ ] 웹훅 서명 검증 활성화
+- [ ] HTTPS 사용 확인
+- [ ] 결제 금액 서버 검증 로직 확인
+
+### 7.4 데이터베이스 연동 (선택사항)
+실제 운영시에는 메모리 저장소 대신 데이터베이스 사용 권장:
+
+```sql
+-- 주문 테이블 예시
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    order_id VARCHAR(255) UNIQUE NOT NULL,
+    user_id INT,
+    plan_name VARCHAR(50) NOT NULL,
+    period VARCHAR(20) NOT NULL,
+    amount INTEGER NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending',
+    payment_key VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
-## 9. 웹훅 설정 (선택사항)
+## 8. 문제 해결
 
-### 9.1 웹훅 엔드포인트 구현
-```typescript
-// app/api/webhooks/toss/route.ts
-import { NextRequest, NextResponse } from 'next/server'
-import crypto from 'crypto'
+### 8.1 일반적인 오류들
+- **"토스페이먼츠 키가 설정되지 않았습니다"**: 환경 변수 확인
+- **"결제 모듈을 불러올 수 없습니다"**: 클라이언트 키 확인
+- **"CORS 오류"**: Next.js에서는 일반적으로 발생하지 않음
+- **"웹훅 서명 검증 실패"**: 웹훅 시크릿 키 확인
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.text()
-    const signature = request.headers.get('toss-signature')
-    
-    // 웹훅 서명 검증
-    if (!verifyWebhookSignature(body, signature)) {
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
-    }
-    
-    const data = JSON.parse(body)
-    await handlePaymentWebhook(data)
-    
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Webhook error:', error)
-    return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 })
-  }
-}
+### 8.2 디버깅 팁
+- 브라우저 개발자 도구 콘솔 확인
+- 서버 로그 확인 (`npm run dev` 터미널)
+- 토스페이먼츠 개발자센터의 결제 로그 확인
 
-function verifyWebhookSignature(body: string, signature: string | null): boolean {
-  if (!signature) return false
-  
-  const expectedSignature = crypto
-    .createHmac('sha256', process.env.TOSS_WEBHOOK_SECRET!)
-    .update(body)
-    .digest('base64')
-    
-  return crypto.timingSafeEqual(
-    Buffer.from(signature, 'base64'),
-    Buffer.from(expectedSignature, 'base64')
-  )
-}
-```
+## 9. 추가 기능 구현 가이드
 
-## 10. 오류 처리 및 로깅
+### 9.1 정기 결제 (구독)
+토스페이먼츠의 정기결제 API 사용
 
-### 10.1 구조화된 로깅
-```typescript
-// utils/logger.ts
-export const paymentLogger = {
-  info: (message: string, data?: any) => {
-    console.log(`[PAYMENT-INFO] ${new Date().toISOString()} - ${message}`, data)
-  },
-  error: (message: string, error?: any) => {
-    console.error(`[PAYMENT-ERROR] ${new Date().toISOString()} - ${message}`, error)
-  },
-  warn: (message: string, data?: any) => {
-    console.warn(`[PAYMENT-WARN] ${new Date().toISOString()} - ${message}`, data)
-  }
-}
-```
+### 9.2 결제 내역 조회
+사용자별 결제 히스토리 페이지
 
-### 10.2 오류 처리 유틸리티
-```typescript
-// utils/payment-errors.ts
-export const PAYMENT_ERRORS = {
-  'CARD_COMPANY_NOT_AVAILABLE': {
-    message: '카드사 서비스가 일시 중단되었습니다.',
-    solution: '다른 카드를 이용하시거나 잠시 후 다시 시도해 주세요.'
-  },
-  'LIMIT_EXCEEDED': {
-    message: '카드 한도를 초과했습니다.',
-    solution: '카드사에 한도 증액을 요청하시거나 다른 카드를 이용해 주세요.'
-  },
-  'INVALID_CARD_EXPIRATION': {
-    message: '카드 유효기간이 잘못되었습니다.',
-    solution: '카드 유효기간을 다시 확인해 주세요.'
-  }
-  // ... 더 많은 오류 케이스
-}
+### 9.3 환불 처리
+결제 취소 API 연동
 
-export const getPaymentError = (code: string) => {
-  return PAYMENT_ERRORS[code] || {
-    message: '결제 처리 중 오류가 발생했습니다.',
-    solution: '잠시 후 다시 시도하시거나 고객지원팀에 문의해 주세요.'
-  }
-}
-```
+### 9.4 이메일 알림
+결제 완료/실패 이메일 발송
 
-## 11. 배포 전 체크리스트
-
-### 11.1 개발 환경 체크
-- [ ] 토스페이먼츠 테스트 키로 결제 테스트 완료
-- [ ] 결제 성공/실패 플로우 테스트
-- [ ] 데이터베이스 연결 및 저장 확인
-- [ ] 오류 처리 테스트
-- [ ] 웹훅 처리 테스트 (설정한 경우)
-
-### 11.2 운영 환경 체크
-- [ ] 실제 API 키로 교체
-- [ ] HTTPS 설정 완료
-- [ ] 운영 데이터베이스 연결
-- [ ] 도메인 설정 완료
-- [ ] 보안 헤더 설정
-- [ ] 로그 모니터링 시스템 구축
-
-### 11.3 법적/규정 준수
-- [ ] 개인정보 처리방침 업데이트
-- [ ] 이용약관에 결제 관련 조항 추가
-- [ ] PCI DSS 요구사항 검토
-- [ ] 전자상거래법 준수 확인
-
-## 12. 운영 및 모니터링
-
-### 12.1 주요 모니터링 지표
-```typescript
-// 모니터링해야 할 지표들
-const MONITORING_METRICS = {
-  paymentSuccessRate: '결제 성공률',
-  averagePaymentTime: '평균 결제 처리 시간',
-  failuresByErrorCode: '오류 코드별 실패 건수',
-  dailyRevenue: '일일 매출',
-  refundRate: '환불율'
-}
-```
-
-### 12.2 알림 설정
-```typescript
-// 중요 이벤트 알림
-const sendAlert = async (event: string, data: any) => {
-  if (event === 'PAYMENT_FAILURE_SPIKE') {
-    // Slack, Discord, 이메일 등으로 알림
-    await notificationService.send({
-      channel: '#payments',
-      message: `결제 실패율이 급증했습니다: ${data.failureRate}%`
-    })
-  }
-}
-```
-
-## 13. 추가 리소스
-
-### 13.1 공식 문서
-- [토스페이먼츠 개발자 가이드](https://docs.tosspayments.com/)
-- [결제창 연동 가이드](https://docs.tosspayments.com/guides/payment-widget/integration)
-- [서버 연동 가이드](https://docs.tosspayments.com/guides/server-integration)
-
-### 13.2 샘플 코드
-- [토스페이먼츠 공식 샘플](https://github.com/tosspayments)
-- [Next.js 연동 예제](https://github.com/tosspayments/tosspayments-sample)
-
-이 가이드를 따라 설정하시면 안전하고 완전한 결제 시스템을 구축할 수 있습니다! 🚀
+이제 토스페이먼츠가 완전히 연동된 결제 시스템이 준비되었습니다! 🎉

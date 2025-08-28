@@ -88,27 +88,15 @@ export default function MembershipPage() {
     const finalPrice = isMonthly ? basePrice : getDiscountedPrice(basePrice)
     const period = isMonthly ? 'monthly' : 'quarterly'
     
-    // 결제 모듈로 이동 (실제 구현에서는 결제 서비스 API 연동)
-    const paymentData = {
-      planName,
-      period,
-      price: finalPrice,
-      billingCycle: isMonthly ? 1 : 3
-    }
-    
-    // 방법 1: 쿼리 파라미터로 결제 정보 전달
+    // 결제 페이지로 이동하기 위한 파라미터 생성
     const searchParams = new URLSearchParams({
       plan: planName.toLowerCase(),
       period: period,
       price: finalPrice.toString()
     })
     
-    // 결제 페이지로 이동
-    window.location.href = `/payment?${searchParams.toString()}`
-    
-    // 방법 2: 외부 결제 서비스 (예: 토스페이먼츠, 아임포트 등)
-    // 실제 결제 모듈 연동시 사용
-    // window.open(`https://payment-service.com/checkout?${searchParams.toString()}`, '_blank')
+    // 결제 페이지로 이동 (경로 수정)
+    window.location.href = `/member_payment/payment?${searchParams.toString()}`
   }
 
   return (
@@ -176,10 +164,7 @@ export default function MembershipPage() {
                     {plan.price === 0 ? (
                       <span>Free</span>
                     ) : (
-                      <button
-                        onClick={() => handlePayment(plan.name, isMonthly, plan.price)}
-                        className="hover:bg-white/10 rounded-lg px-3 py-2 transition-colors duration-200 cursor-pointer"
-                      >
+                      <div className="hover:bg-white/10 rounded-lg px-3 py-2 transition-colors duration-200">
                         {isMonthly ? (
                           `${plan.price.toLocaleString()}원/월`
                         ) : (
@@ -190,7 +175,7 @@ export default function MembershipPage() {
                             <div>{getDiscountedPrice(plan.price).toLocaleString()}원/월</div>
                           </>
                         )}
-                      </button>
+                      </div>
                     )}
                   </div>
                 </div>

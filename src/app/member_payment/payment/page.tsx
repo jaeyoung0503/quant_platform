@@ -3,128 +3,124 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { CheckCircle, ArrowRight, Home, CreditCard } from 'lucide-react'
+import { ArrowLeft, Shield, CheckCircle, Loader } from 'lucide-react'
+import TossPaymentComponent from '@/components/TossPayment'
 
-interface PaymentResult {
-  orderId: string
-  orderName: string
-  totalAmount: number
-  method: string
-  approvedAt: string
-  card?: {
-    company: string
-    number: string
-  }
-  receipt?: {
-    url: string
-  }
+interface PaymentInfo {
+  plan: string
+  period: string
+  price: number
 }
 
-export default function PaymentSuccessPage() {
+interface PreparedPayment {
+  orderId: string
+  orderName: string
+  amount: number
+  customerEmail: string
+  customerName: string
+}
+
+export default function TossPaymentPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [paymentResult, setPaymentResult] = useState<PaymentResult | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | null>(null)
+  const [preparedPayment, setPreparedPayment] = useState<PreparedPayment | null>(null)
+  const [preparing, setPreparing] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const paymentKey = searchParams.get('paymentKey')
-    const orderId = searchParams.get('orderId')
-    const amount = searchParams.get('amount')
+    const plan = searchParams.get('plan')
+    const period = searchParams.get('period')
+    const price = searchParams.get('price')
 
-    if (paymentKey && orderId && amount) {
-      confirmPayment(paymentKey, orderId, amount)
+    if (plan && period && price) {
+      const paymentInfo = {
+        plan,
+        period,
+        price: parseInt(price)
+      }
+      setPaymentInfo(paymentInfo)
+      preparePayment(paymentInfo)
     } else {
-      // URL 파라미터가 없는 경우 모의 데이터로 처리
-      setPaymentResult({
-        orderId: 'order_1234567890',
-        orderName: 'Premium 플랜 - 월간',
-        totalAmount: 21890,
-        method: '카드',
-        approvedAt: new Date().toISOString(),
-        card: {
-          company: '신한',
-          number: '**** **** **** 1234'
-        }
-      })
-      setLoading(false)
+      router.push('/member_payment')
     }
-  }, [searchParams])
+  }, [searchParams, router])
 
-  const confirmPayment = async (paymentKey: string, orderId: string, amount: string) => {
+  const preparePayment = async (info: PaymentInfo) => {
+    setPreparing(true)
+    setError(null)
+
     try {
-      // 실제 환경에서는 서버 API를 호출해야 함
-      const response = await fetch('/api/payment/confirm', {
+      const response = await fetch('/api/payment/prepare', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          paymentKey,
-          orderId,
-          amount: parseInt(amount)
+          planName: info.plan,
+          period: info.period,
+          amount: info.price,
+          customerEmail: 'user@example.com', // 실제 환경에서는 로그인 사용자 정보
+          customerName: '홍길동' // 실제 환경에서는 로그인 사용자 정보
         })
       })
 
-      if (response.ok) {
-        const result = await response.json()
-        if (result.success) {
-          setPaymentResult(result.data)
-        } else {
-          console.error('결제 승인 실패:', result.error)
-          router.push('/member_payment/payment/fail?error=' + encodeURIComponent(result.error))
-        }
+      const result = await response.json()
+
+      if (result.success) {
+        setPreparedPayment(result.data)
       } else {
-        throw new Error('서버 응답 오류')
+        setError(result.error || '결제 준비 중 오류가 발생했습니다.')
       }
-    } catch (error) {
-      console.error('결제 승인 요청 실패:', error)
-      
-      // API가 없는 경우 모의 성공 데이터 사용
-      setPaymentResult({
-        orderId: orderId,
-        orderName: 'Premium 플랜 - 월간',
-        totalAmount: parseInt(amount),
-        method: '카드',
-        approvedAt: new Date().toISOString(),
-        card: {
-          company: '신한',
-          number: '**** **** **** 1234'
-        }
-      })
+
+    } catch (err) {
+      console.error('결제 준비 오류:', err)
+      setError('결제 준비 중 네트워크 오류가 발생했습니다.')
     } finally {
-      setLoading(false)
+      setPreparing(false)
     }
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    })
-  }
-
-  const getPaymentMethodName = (method: string) => {
-    const methods: { [key: string]: string } = {
-      '카드': '신용/체크카드',
-      '가상계좌': '가상계좌',
-      '계좌이체': '실시간 계좌이체',
-      '휴대폰': '휴대폰 소액결제'
+  const getPlanName = (plan: string) => {
+    const plans = {
+      'basic': 'Basic',
+      'advanced': 'Advanced', 
+      'premium': 'Premium'
     }
-    return methods[method] || method
+    return plans[plan as keyof typeof plans] || plan
   }
 
-  if (loading) {
+  const getPlanDescription = (plan: string) => {
+    const descriptions = {
+      'basic': 'Free',
+      'advanced': '실전 퀀트 투자를 위한 핵심 기능',
+      'premium': '프리미엄 투자 전략과 고급 분석'
+    }
+    return descriptions[plan as keyof typeof descriptions] || ''
+  }
+
+  const getPeriodText = (period: string) => {
+    return period === 'monthly' ? '월간 결제' : '3개월 결제'
+  }
+
+  const handlePaymentSuccess = (data: any) => {
+    console.log('결제 성공:', data)
+    // 토스페이먼츠에서 자동으로 successUrl로 리디렉션됨
+  }
+
+  const handlePaymentError = (error: any) => {
+    console.error('결제 오류:', error)
+    // 토스페이먼츠에서 자동으로 failUrl로 리디렉션되거나
+    // 여기서 에러 처리
+    setError(error.message)
+  }
+
+  if (!paymentInfo) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-white text-lg">결제를 승인하는 중입니다...</p>
-          <p className="text-gray-400 text-sm mt-2">잠시만 기다려주세요</p>
+          <Loader className="animate-spin h-8 w-8 text-blue-500 mx-auto mb-4" />
+          <p className="text-white text-lg">결제 정보를 불러오는 중...</p>
         </div>
       </div>
     )
@@ -132,108 +128,145 @@ export default function PaymentSuccessPage() {
 
   return (
     <div className="min-h-screen bg-gray-900 py-12">
-      <div className="max-w-2xl mx-auto px-6">
-        <div className="bg-gray-800 rounded-xl p-8 text-center">
-          {/* Success Icon */}
-          <div className="mb-6">
-            <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-white mb-2">결제가 완료되었습니다!</h1>
-            <p className="text-gray-300">
-              Intelliquant 서비스를 이용해 주셔서 감사합니다.
-            </p>
-          </div>
-
-          {/* Payment Details */}
-          {paymentResult && (
-            <div className="bg-gray-700 rounded-lg p-6 mb-8 text-left">
-              <h3 className="text-white font-semibold text-lg mb-4 flex items-center">
-                <CreditCard className="w-5 h-5 mr-2" />
-                결제 상세내역
-              </h3>
-              
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-300">주문번호</span>
-                  <span className="text-white font-mono text-sm">{paymentResult.orderId}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-300">결제상품</span>
-                  <span className="text-white">{paymentResult.orderName}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-300">결제금액</span>
-                  <span className="text-white font-semibold">{paymentResult.totalAmount?.toLocaleString()}원</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-300">결제수단</span>
-                  <span className="text-white">
-                    {getPaymentMethodName(paymentResult.method)}
-                    {paymentResult.card && ` (${paymentResult.card.company} ${paymentResult.card.number})`}
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* 주문 정보 */}
+          <div className="bg-gray-800 rounded-xl p-6">
+            <h2 className="text-2xl font-bold text-white mb-6">주문 정보</h2>
+            
+            <div className="space-y-4">
+              <div className="bg-gray-700 rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  {getPlanName(paymentInfo.plan)} 플랜
+                </h3>
+                <p className="text-gray-300 text-sm mb-3">
+                  {getPlanDescription(paymentInfo.plan)}
+                </p>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-300">{getPeriodText(paymentInfo.period)}</span>
+                  <span className="text-xl font-bold text-white">
+                    {paymentInfo.price.toLocaleString()}원
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-300">결제일시</span>
-                  <span className="text-white">{formatDate(paymentResult.approvedAt)}</span>
-                </div>
-                {paymentResult.receipt && (
-                  <div className="pt-3 border-t border-gray-600">
-                    <a 
-                      href={paymentResult.receipt.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-400 hover:text-blue-300 text-sm underline"
-                    >
-                      영수증 확인하기 →
-                    </a>
+              </div>
+
+              {paymentInfo.period === 'quarterly' && (
+                <div className="bg-green-600/10 border border-green-600/20 rounded-lg p-4">
+                  <div className="flex items-center text-green-400 mb-2">
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    <span className="font-medium">3개월 결제 할인 적용</span>
                   </div>
-                )}
+                  <p className="text-sm text-gray-300">
+                    월간 결제 대비 10% 할인된 금액입니다
+                  </p>
+                </div>
+              )}
+
+              <div className="border-t border-gray-600 pt-4">
+                <div className="flex justify-between items-center text-lg">
+                  <span className="text-white font-semibold">총 결제금액</span>
+                  <span className="text-2xl font-bold text-green-400">
+                    {paymentInfo.price.toLocaleString()}원
+                  </span>
+                </div>
+              </div>
+
+              {/* 혜택 안내 */}
+              <div className="bg-blue-600/10 border border-blue-600/20 rounded-lg p-4">
+                <h4 className="text-blue-400 font-medium mb-2">플랜 혜택</h4>
+                <ul className="text-sm text-gray-300 space-y-1">
+                  {paymentInfo.plan === 'advanced' && (
+                    <>
+                      <li>• 백테스트 기간: 2000년~현재 (한국), 2010년~현재 (미국)</li>
+                      <li>• 1일 백테스트 100회</li>
+                      <li>• 실행 개수: 3개</li>
+                      <li>• 자동매매 연동</li>
+                    </>
+                  )}
+                  {paymentInfo.plan === 'premium' && (
+                    <>
+                      <li>• 백테스트 기간: 2000년~현재 (한국), 2010년~현재 (미국)</li>
+                      <li>• 1일 백테스트 100회</li>
+                      <li>• 실행 개수: 3개</li>
+                      <li>• 자동매매 연동</li>
+                      <li>• 프리미엄 투자 전략</li>
+                    </>
+                  )}
+                </ul>
               </div>
             </div>
-          )}
-
-          {/* Service Information */}
-          <div className="bg-green-600/10 border border-green-600/20 rounded-lg p-6 mb-8">
-            <h3 className="text-green-400 font-semibold mb-3">🎉 서비스 이용 안내</h3>
-            <ul className="text-gray-300 text-sm space-y-2 text-left">
-              <li>• 결제 완료와 동시에 선택하신 플랜으로 업그레이드되었습니다</li>
-              <li>• 추가된 기능들을 지금 바로 이용하실 수 있습니다</li>
-              <li>• 구독 관리는 마이페이지에서 확인 가능합니다</li>
-              <li>• 문의사항이 있으시면 고객지원팀으로 연락해 주세요</li>
-            </ul>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link href="/dashboard" className="flex-1">
-              <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center">
-                <ArrowRight className="w-4 h-4 mr-2" />
-                서비스 이용하기
-              </button>
-            </Link>
-            
-            <Link href="/member_payment" className="flex-1">
-              <button className="w-full bg-gray-600 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center">
-                <Home className="w-4 h-4 mr-2" />
-                멤버십 관리
-              </button>
-            </Link>
-          </div>
+          {/* 결제 수단 */}
+          <div className="space-y-6">
+            {preparing && (
+              <div className="bg-gray-800 rounded-xl p-6 text-center">
+                <Loader className="animate-spin h-8 w-8 text-blue-500 mx-auto mb-4" />
+                <p className="text-white text-lg">결제를 준비하는 중입니다...</p>
+                <p className="text-gray-400 text-sm mt-2">잠시만 기다려주세요</p>
+              </div>
+            )}
 
-          {/* Support Information */}
-          <div className="mt-8 pt-6 border-t border-gray-600 text-center">
-            <p className="text-gray-400 text-sm mb-2">
-              결제 관련 문의사항이 있으시면 언제든지 연락해 주세요
-            </p>
-            <div className="flex justify-center space-x-6 text-sm">
-              <a href="mailto:support@intelliquant.ai" className="text-blue-400 hover:text-blue-300">
-                support@intelliquant.ai
-              </a>
-              <span className="text-gray-500">|</span>
-              <a href="tel:02-1234-5678" className="text-blue-400 hover:text-blue-300">
-                02-1234-5678
-              </a>
+            {error && (
+              <div className="bg-red-600/10 border border-red-600/20 rounded-lg p-4">
+                <h3 className="text-red-400 font-semibold mb-2">오류 발생</h3>
+                <p className="text-gray-300 text-sm">{error}</p>
+                <button 
+                  onClick={() => paymentInfo && preparePayment(paymentInfo)}
+                  className="mt-3 px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-sm rounded transition-colors"
+                >
+                  다시 시도
+                </button>
+              </div>
+            )}
+
+            {preparedPayment && !preparing && !error && (
+              <TossPaymentComponent
+                orderId={preparedPayment.orderId}
+                orderName={preparedPayment.orderName}
+                amount={preparedPayment.amount}
+                customerEmail={preparedPayment.customerEmail}
+                customerName={preparedPayment.customerName}
+                onSuccess={handlePaymentSuccess}
+                onError={handlePaymentError}
+              />
+            )}
+
+            {/* 보안 정보 */}
+            <div className="bg-gray-800 rounded-xl p-6">
+              <div className="flex items-center text-green-400 mb-4">
+                <Shield className="w-5 h-5 mr-2" />
+                <span className="font-medium">안전한 결제</span>
+              </div>
+              <ul className="text-gray-300 text-sm space-y-2">
+                <li>• SSL 암호화 통신으로 결제 정보 보호</li>
+                <li>• PCI DSS 인증받은 토스페이먼츠 사용</li>
+                <li>• 카드 정보는 저장되지 않습니다</li>
+                <li>• 24시간 결제 모니터링 시스템 운영</li>
+              </ul>
+            </div>
+
+            {/* 결제 안내 */}
+            <div className="bg-gray-700/50 rounded-lg p-4">
+              <h4 className="text-white font-medium mb-2">결제 안내사항</h4>
+              <ul className="text-gray-300 text-xs space-y-1">
+                <li>• 결제 완료 후 즉시 서비스 이용이 가능합니다</li>
+                <li>• 구독 취소는 언제든지 가능하며, 잔여 기간까지 서비스 이용 가능합니다</li>
+                <li>• 결제 영수증은 이메일로 자동 발송됩니다</li>
+                <li>• 문의사항은 고객센터(support@intelliquant.ai)로 연락주세요</li>
+              </ul>
             </div>
           </div>
+        </div>
+
+        {/* 돌아가기 버튼 */}
+        <div className="mt-8 text-center">
+          <Link href="/member_payment">
+            <button className="inline-flex items-center px-6 py-2 text-gray-400 hover:text-white transition-colors">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              멤버십 선택으로 돌아가기
+            </button>
+          </Link>
         </div>
       </div>
     </div>
