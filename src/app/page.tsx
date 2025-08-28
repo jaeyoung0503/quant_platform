@@ -30,7 +30,7 @@ const QuantStrategyMain = () => {
           <span className="text-sm text-gray-400">quantmaster.com</span>
         </div>
         
-        <div className="flex items-center justify-between mt-4">
+        <div className="flex items-center justify-center mt-4">  {/*menu 중앙정렬*/}
           <div className="flex items-center space-x-8">
             <div className="flex items-center space-x-2">
               <span className="text-blue-400 font-bold text-lg">QUANT</span>
@@ -53,7 +53,7 @@ const QuantStrategyMain = () => {
               ))}
             </div>
           </div>
-          
+{/*     hamburger menu      
           <button 
             onClick={() => setShowMenu(true)}
             className="text-white"
@@ -63,7 +63,7 @@ const QuantStrategyMain = () => {
               <div className="w-6 h-0.5 bg-white"></div>
               <div className="w-6 h-0.5 bg-white"></div>
             </div>
-          </button>
+          </button> */}
         </div>
 
         {/* Mobile Menu - 작은 화면에서만 보이는 메뉴 */}
@@ -81,7 +81,8 @@ const QuantStrategyMain = () => {
       </div>
 
       {/* Main Content */}
-      <div className="p-8 max-w-2xl mx-auto">
+      {/* <div className="p-8 max-w-2xl mx-auto"> */}
+      <div className="min-h-screen bg-gray-900 relative flex flex-col items-center justify-startter p-8 mt-12">
         {/* Branding Section */}
         <div className="bg-gray-800 rounded-2xl border border-gray-700 p-8 text-center mb-8">
           <h1 className="text-3xl lg:text-4xl font-bold text-gray-100 mb-4">
@@ -90,24 +91,25 @@ const QuantStrategyMain = () => {
             <span className="text-blue-400">QuantMaster</span>
           </h1>
           
-          <div className="flex justify-center gap-8 mt-6 text-gray-300">
+          {/* <div className="flex justify-center gap-8 mt-6 text-gray-300">
             <span>고급 차트 및 시각화</span>
             <span>맞춤형 대시보드</span>
-          </div>
+          </div> */}
         </div>
 
         {/* Auth Section */}
-        <div className="bg-gray-800 rounded-2xl border border-gray-700 p-8">
+        <div className="bg-gray-800 rounded-2xl border border-gray-700 p-8  ">
           <h2 className="text-2xl font-bold text-gray-100 mb-6 text-center">
-            Quantitative Trading<br />
+            {/* Quantitative Trading<br /> */}
             <span className="text-blue-400">Beginner to Expert</span>
           </h2>
 
           {/* Description */}
-          <p className="text-gray-300 text-lg mb-8 leading-relaxed text-center">
-            Power your quantitative research with a cutting-edge, unified API 
+          <p className="text-gray-300 text-lg mb-8 leading-relaxed text-center ">
+            퀀트 전략부터 백테스팅 까지 하나의 플랫폼으로 완성하세요
+            {/* Power your quantitative research with a cutting-edge, unified API 
             for research, backtesting, and live trading on the world's 
-            leading algorithmic trading platform.
+            leading algorithmic trading platform. */}
           </p>
 
           {/* CTA Buttons */}
