@@ -473,35 +473,35 @@ export default function QuantStrategyPage() {
     loadData();
   }, []);
 
-  // 샘플 데이터 생성 함수
-  const generateSampleData = () => {
-    const data = [];
-    const symbols = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA'];
-    const startDate = new Date('2024-01-01');
+  // // 샘플 데이터 생성 함수
+  // const generateSampleData = () => {
+  //   const data = [];
+  //   const symbols = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA'];
+  //   const startDate = new Date('2024-01-01');
     
-    for (let i = 0; i < 100; i++) {
-      const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
-      symbols.forEach(symbol => {
-        const basePrice = 100 + Math.random() * 200;
-        data.push({
-          date: date.toISOString().split('T')[0],
-          symbol,
-          open: basePrice,
-          high: basePrice * (1 + Math.random() * 0.05),
-          low: basePrice * (1 - Math.random() * 0.05),
-          close: basePrice * (0.95 + Math.random() * 0.1),
-          volume: Math.floor(1000000 + Math.random() * 5000000),
-          pe_ratio: 15 + Math.random() * 20,
-          pb_ratio: 1 + Math.random() * 5,
-          market_cap: 1000 + Math.random() * 2000,
-          dividend_yield: Math.random() * 0.05,
-          roe: 0.1 + Math.random() * 0.3,
-          debt_to_equity: Math.random() * 0.5
-        });
-      });
-    }
-    return data;
-  };
+  //   for (let i = 0; i < 100; i++) {
+  //     const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
+  //     symbols.forEach(symbol => {
+  //       const basePrice = 100 + Math.random() * 200;
+  //       data.push({
+  //         date: date.toISOString().split('T')[0],
+  //         symbol,
+  //         open: basePrice,
+  //         high: basePrice * (1 + Math.random() * 0.05),
+  //         low: basePrice * (1 - Math.random() * 0.05),
+  //         close: basePrice * (0.95 + Math.random() * 0.1),
+  //         volume: Math.floor(1000000 + Math.random() * 5000000),
+  //         pe_ratio: 15 + Math.random() * 20,
+  //         pb_ratio: 1 + Math.random() * 5,
+  //         market_cap: 1000 + Math.random() * 2000,
+  //         dividend_yield: Math.random() * 0.05,
+  //         roe: 0.1 + Math.random() * 0.3,
+  //         debt_to_equity: Math.random() * 0.5
+  //       });
+  //     });
+  //   }
+  //   return data;
+  // };
 
   const filteredStrategies = strategies.filter(strategy => 
     categoryFilter === 'all' || strategy.category === categoryFilter

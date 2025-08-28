@@ -81,7 +81,7 @@ class BaseStrategy(ABC):
     
     @abstractmethod
     def calculate_weights(self, signals: List[Signal], 
-                         current_portfolio: Optional[Dict[str, float]] = None) -> List[PortfolioWeight]:
+                        current_portfolio: Optional[Dict[str, float]] = None) -> List[PortfolioWeight]:
         """포트폴리오 가중치 계산"""
         pass
     
