@@ -131,26 +131,85 @@ export default function QuantBacktestPage() {
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
-          <div className="text-gray-300">전략 데이터를 불러오는 중...</div>
+          <div className="text-gray-300">백엔드에서 전략 데이터를 불러오는 중...</div>
+          <div className="text-sm text-gray-500 mt-2">API 연결: /backend/quant_engine</div>
         </div>
       </div>
     );
   }
 
-  // 전략 로딩 에러
-  if (strategiesError) {
+  // 전략 로딩 에러 또는 데이터 없음
+  if (strategiesError || strategies.length === 0) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <div className="text-xl font-semibold text-gray-100 mb-2">전략 로딩 실패</div>
-          <div className="text-gray-300 mb-4">{strategiesError}</div>
-          <button 
-            onClick={() => window.location.reload()}
-            className="bg-gray-600 text-gray-100 px-4 py-2 rounded-xl hover:bg-gray-500"
-          >
-            다시 시도
-          </button>
+        <div className="text-center max-w-2xl">
+          <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-6" />
+          <div className="text-2xl font-bold text-gray-100 mb-4">
+            {strategiesError ? '백엔드 연결 실패' : '전략 데이터 없음'}
+          </div>
+          
+          <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-6">
+            <div className="text-left space-y-4">
+              <div>
+                <h3 className="font-semibold text-gray-200 mb-2">필요한 백엔드 설정:</h3>
+                <div className="text-sm text-gray-400 space-y-1">
+                  <div>• 백엔드 서버: http://localhost:8000</div>
+                  <div>• API 엔드포인트: /backend/quant_engine/strategies</div>
+                  <div>• 데이터 소스: /public/data/*.csv 파일</div>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-semibold text-gray-200 mb-2">전략 데이터 형식:</h3>
+                <div className="text-xs text-gray-400 bg-gray-700 p-3 rounded font-mono">
+                  {`{
+  "success": true,
+  "strategies": [
+    {
+      "id": "strategy_name",
+      "name": "전략 표시명",
+      "description": "전략 설명",
+      "defaultParams": {
+        "param1": 15,
+        "param2": 30
+      }
+    }
+  ]
+}`}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-gray-200 mb-2">CSV 데이터 형식:</h3>
+                <div className="text-xs text-gray-400 bg-gray-700 p-3 rounded font-mono">
+                  {`date,year,ticker,name,market,open,high,low,close,volume
+2024-01-02,2024,005930,삼성전자,KOSPI,71000,72000,70500,71500,1000000`}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-gray-300 mb-4">
+            {strategiesError ? `오류: ${strategiesError}` : '백엔드에서 전략 데이터를 불러올 수 없습니다'}
+          </div>
+          
+          <div className="flex gap-4 justify-center">
+            <button 
+              onClick={() => window.location.reload()}
+              className="bg-gray-600 text-gray-100 px-6 py-3 rounded-xl hover:bg-gray-500 transition-colors"
+            >
+              다시 시도
+            </button>
+            <button 
+              onClick={() => {
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
+                window.open(`${apiUrl}/strategies`, '_blank');
+              }}
+              className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors"
+            >
+              API 직접 테스트
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -226,10 +285,25 @@ export default function QuantBacktestPage() {
                     className="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     disabled={backtestLoading}
                   >
+
+                    <option value={2025}>2025년</option>
                     <option value={2024}>2024년</option>
                     <option value={2023}>2023년</option>
                     <option value={2022}>2022년</option>
                     <option value={2021}>2021년</option>
+                    <option value={2020}>2020년</option>
+                    <option value={2019}>2019년</option>
+                    <option value={2018}>2018년</option>
+                    <option value={2017}>2017년</option>
+                    <option value={2016}>2016년</option>
+                    <option value={2015}>2015년</option>
+                    <option value={2014}>2014년</option>
+                    <option value={2013}>2013년</option>
+                    <option value={2012}>2012년</option>
+                    <option value={2011}>2011년</option>
+                    <option value={2010}>2010년</option>
+
+
                   </select>
                 </div>
                 
@@ -252,19 +326,25 @@ export default function QuantBacktestPage() {
 
             {/* 전략 선택 */}
             <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-6">
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 text-gray-100">
-                <span>📊</span> 투자 전략 선택
+              <h2 className="text-xl font-semibold mb-4 flex items-center justify-between text-gray-100">
+                <span className="flex items-center gap-2">
+                  <span>📊</span> 투자 전략 선택
+                </span>
+                <span className="text-sm text-gray-400">
+                  {strategies.filter(s => s.selected).length}/{strategies.length}개 선택
+                </span>
               </h2>
               
-              <div className="space-y-4">
+              {/* 스크롤 가능한 전략 리스트 - 높이 제한 */}
+              <div className="max-h-80 overflow-y-auto space-y-3 pr-2">
                 {strategies.map((strategy) => (
                   <div 
                     key={strategy.id} 
-                    className={`border rounded-lg p-4 transition-all ${
+                    className={`border rounded-lg p-3 transition-all ${
                       strategy.selected ? 'border-blue-500 bg-blue-900/20' : 'border-gray-600 hover:border-gray-500'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-3">
                         <input 
                           type="checkbox" 
@@ -273,21 +353,26 @@ export default function QuantBacktestPage() {
                           className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                           disabled={backtestLoading}
                         />
-                        <div>
-                          <div className="font-semibold text-gray-100">{strategy.name}</div>
-                          <div className="text-sm text-gray-400">{strategy.description}</div>
+                        <div className="flex-1">
+                          <div className="font-semibold text-gray-100 text-sm">{strategy.name}</div>
+                          <div className="text-xs text-gray-400 leading-relaxed">{strategy.description}</div>
                         </div>
                       </div>
+                      {strategy.selected && (
+                        <div className="text-xs text-blue-400 font-medium">
+                          {strategy.weight.toFixed(0)}%
+                        </div>
+                      )}
                     </div>
                     
                     {strategy.selected && (
-                      <div className="space-y-4">
+                      <div className="space-y-3 mt-3 pt-3 border-t border-gray-600">
                         <div>
-                          <label className="text-sm font-medium text-gray-300 mb-2 block">
+                          <label className="text-xs font-medium text-gray-300 mb-1 block">
                             비율: {strategy.weight.toFixed(1)}%
                           </label>
                           <div className="relative">
-                            <div className="h-2 bg-gray-600 rounded-full">
+                            <div className="h-1.5 bg-gray-600 rounded-full">
                               <div 
                                 className="h-full bg-blue-600 rounded-full transition-all duration-300"
                                 style={{ width: `${Math.min(100, strategy.weight)}%` }}
@@ -305,24 +390,28 @@ export default function QuantBacktestPage() {
                           </div>
                         </div>
                         
-                        <div className="space-y-3">
-                          <div className="text-sm font-medium text-gray-300">세부 파라미터</div>
-                          {Object.entries(strategy.params).map(([key, value]) => (
-                            <div key={key} className="flex items-center gap-3">
-                              <label className="text-xs text-gray-400 min-w-0 flex-1">
-                                {key}:
-                              </label>
-                              <input 
-                                type="number"
-                                value={value}
-                                onChange={(e) => updateParam(strategy.id, key, Number(e.target.value))}
-                                className="w-20 p-2 text-xs bg-gray-700 border border-gray-600 rounded text-gray-100 focus:ring-1 focus:ring-blue-500"
-                                disabled={backtestLoading}
-                                step={key.includes('rate') || key.includes('Level') ? 0.1 : 1}
-                              />
+                        {Object.keys(strategy.params).length > 0 && (
+                          <div className="space-y-2">
+                            <div className="text-xs font-medium text-gray-300">세부 파라미터</div>
+                            <div className="grid grid-cols-1 gap-2">
+                              {Object.entries(strategy.params).map(([key, value]) => (
+                                <div key={key} className="flex items-center gap-2">
+                                  <label className="text-xs text-gray-400 text-left flex-1 truncate">
+                                    {key}:
+                                  </label>
+                                  <input 
+                                    type="number"
+                                    value={value}
+                                    onChange={(e) => updateParam(strategy.id, key, Number(e.target.value))}
+                                    className="w-16 p-1 text-xs bg-gray-700 border border-gray-600 rounded text-gray-100 focus:ring-1 focus:ring-blue-500"
+                                    disabled={backtestLoading}
+                                    step={key.includes('rate') || key.includes('Level') ? 0.1 : 1}
+                                  />
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

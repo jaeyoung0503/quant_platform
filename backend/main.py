@@ -242,11 +242,11 @@ class QuantBacktestManager:
             self.strategies = {}
     
     def load_stock_data(self):
-        """주식 데이터 로딩 (실제로는 CSV 파일에서)"""
+        """주식 데이터 로딩 (실제로는 CSV 파일에서) """
         try:
             # 실제 구현에서는 CSV 파일 로딩
             # import pandas as pd
-            # self.stock_data = pd.read_csv('./data/stock_data.csv')
+            # self.stock_data = pd.read_csv('./data/stock_analysis.csv')
             print("✓ 주식 데이터 로딩 완료 (모의)")
             
         except Exception as e:

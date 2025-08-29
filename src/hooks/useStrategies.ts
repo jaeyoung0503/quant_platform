@@ -1,6 +1,6 @@
-// ===== 4. 전략 Hook (hooks/useStrategies.ts) =====
+// hooks/useStrategies.ts
 import { useState, useEffect, useCallback } from 'react';
-import { backtestAPI } from '../services/api'; // 이 줄 추가
+import { backtestAPI } from '../services/api';
 import type { Strategy } from '../types/api';
 
 export function useStrategies() {
@@ -12,10 +12,20 @@ export function useStrategies() {
     const loadStrategies = async () => {
       try {
         setIsLoading(true);
-        const response = await backtestAPI.getStrategies();
+        setError(null);
         
-        if (response.success && response.strategies) {
-          const mappedStrategies = response.strategies.map(s => ({
+        console.log('전략 로딩 시작');
+        
+        // 직접 fetch 사용하여 우회
+        const response = await fetch('/api/strategies');
+        const data = await response.json();
+        
+        console.log('API 응답:', data);
+        console.log('전략 데이터:', data.strategies);
+        console.log('전략 개수:', data.strategies?.length);
+        
+        if (data.success && Array.isArray(data.strategies) && data.strategies.length > 0) {
+          const mappedStrategies: Strategy[] = data.strategies.map((s: any) => ({
             id: s.id,
             name: s.name,
             description: s.description,
@@ -23,13 +33,27 @@ export function useStrategies() {
             weight: 0,
             params: { ...s.defaultParams },
             defaultParams: { ...s.defaultParams },
-            paramSchema: s.paramSchema,
+            paramSchema: s.paramSchema || {},
           }));
+          
+          console.log('매핑된 전략:', mappedStrategies);
+          
+          // React 상태 업데이트
           setStrategies(mappedStrategies);
+          
+          // 상태 업데이트 확인
+          setTimeout(() => {
+            console.log('상태 업데이트 후 확인 - strategies.length:', strategies.length);
+          }, 100);
+          
         } else {
-          setError(response.error || '전략 로딩 실패');
+          const errorMsg = `API 응답 형식 오류: ${JSON.stringify(data)}`;
+          console.error(errorMsg);
+          setError(errorMsg);
         }
+        
       } catch (err) {
+        console.error('전략 로딩 에러:', err);
         setError(err instanceof Error ? err.message : '전략 로딩 실패');
       } finally {
         setIsLoading(false);
@@ -61,8 +85,7 @@ export function useStrategies() {
     });
   }, []);
 
-  console.log('전략 개수:', strategies.length);
-  console.log('전략 데이터:', strategies);
+  console.log('현재 상태:', { isLoading, error, strategiesCount: strategies.length });
 
   return { 
     strategies, 
@@ -72,6 +95,4 @@ export function useStrategies() {
     isLoading, 
     error 
   };
-  
 }
-

@@ -1,0 +1,126 @@
+# 20개 퀀트 전략 분석용 CSV 데이터 형식
+
+## 1. 기본 주가 데이터 (stock_prices.csv)
+
+```csv
+date,ticker,name,market,open,high,low,close,volume,adj_close
+2024-01-02,005930,삼성전자,KOSPI,71000,72000,70500,71500,1000000,71500
+2024-01-02,000660,SK하이닉스,KOSPI,130000,132000,129000,131000,800000,131000
+2024-01-02,035420,NAVER,KOSPI,230000,235000,228000,232000,500000,232000
+```
+
+## 2. 재무 데이터 (financial_data.csv)
+
+```csv
+ticker,name,market_cap,pe_ratio,pb_ratio,roe,roa,debt_to_equity,current_ratio,operating_margin,net_margin,revenue_growth,eps_growth,dividend_yield,peg_ratio,quick_ratio
+005930,삼성전자,400000000,12.5,1.2,22.1,8.5,0.3,1.8,15.2,12.1,8.5,15.2,2.1,0.8,1.5
+000660,SK하이닉스,95000000,8.9,1.1,18.9,12.2,0.4,2.1,25.8,18.5,12.3,22.1,1.8,0.4,1.8
+035420,NAVER,38000000,18.2,2.5,16.2,11.8,0.1,3.2,18.9,14.2,9.8,12.5,0.5,1.5,3.1
+```
+
+## 3. 기술적 지표 데이터 (technical_indicators.csv)
+
+```csv
+date,ticker,rsi_14,rsi_30,ma_5,ma_20,ma_60,ma_200,bb_upper,bb_middle,bb_lower,macd,macd_signal,volume_ma_20,relative_strength
+2024-01-02,005930,28.5,32.1,71200,69800,68500,66000,73000,70000,67000,1.2,0.8,950000,85.2
+2024-01-02,000660,31.2,29.8,131500,128000,125000,120000,135000,130000,125000,2.1,1.5,750000,88.7
+2024-01-02,035420,35.8,38.2,232000,228000,225000,220000,240000,230000,220000,3.5,2.8,450000,82.3
+```
+
+## 4. 배당 데이터 (dividend_data.csv)
+
+```csv
+ticker,name,dividend_yield,dividend_per_share,payout_ratio,dividend_growth_5y,consecutive_dividend_years,ex_dividend_date,payment_date
+005930,삼성전자,2.1,1500,25.5,8.2,15,2024-12-29,2025-01-15
+000660,SK하이닉스,1.8,2400,18.9,12.5,10,2024-12-28,2025-01-14
+035420,NAVER,0.5,1200,8.7,15.8,8,2024-12-27,2025-01-13
+```
+
+## 5. 섹터/업종 데이터 (sector_data.csv)
+
+```csv
+ticker,name,sector,industry,sector_pe,industry_pe,market_cap_rank,sector_rank
+005930,삼성전자,기술,반도체,15.2,13.8,1,1
+000660,SK하이닉스,기술,반도체,15.2,13.8,2,2
+035420,NAVER,기술,인터넷서비스,22.5,20.1,3,1
+051910,LG화학,소재,화학,12.8,11.5,4,1
+```
+
+## 6. 통합 분석용 데이터 (combined_stock_data.csv)
+
+```csv
+date,ticker,name,market,open,high,low,close,volume,market_cap,pe_ratio,pb_ratio,roe,roa,debt_ratio,current_ratio,operating_margin,dividend_yield,rsi_14,ma_20,bb_upper,bb_lower,relative_strength,eps_growth,revenue_growth,peg_ratio
+2024-01-02,005930,삼성전자,KOSPI,71000,72000,70500,71500,1000000,400000000,12.5,1.2,22.1,8.5,23.5,1.8,15.2,2.1,28.5,69800,73000,67000,85.2,15.2,8.5,0.8
+2024-01-02,000660,SK하이닉스,KOSPI,130000,132000,129000,131000,800000,95000000,8.9,1.1,18.9,12.2,28.8,2.1,25.8,1.8,31.2,128000,135000,125000,88.7,22.1,12.3,0.4
+2024-01-02,035420,NAVER,KOSPI,230000,235000,228000,232000,500000,38000000,18.2,2.5,16.2,11.8,8.5,3.2,18.9,0.5,35.8,228000,240000,220000,82.3,12.5,9.8,1.5
+```
+
+## 필수 컬럼 설명
+
+### 기본 정보
+- **date**: 날짜 (YYYY-MM-DD)
+- **ticker**: 종목코드
+- **name**: 종목명
+- **market**: 시장구분 (KOSPI/KOSDAQ)
+
+### 주가 데이터
+- **open/high/low/close**: 시가/고가/저가/종가
+- **volume**: 거래량
+
+### 재무 지표 (가치투자 전략용)
+- **market_cap**: 시가총액 (억원)
+- **pe_ratio**: 주가수익비율
+- **pb_ratio**: 주가순자산비율  
+- **roe**: 자기자본이익률 (%)
+- **debt_ratio**: 부채비율 (%)
+- **current_ratio**: 유동비율
+- **operating_margin**: 영업이익률 (%)
+- **dividend_yield**: 배당수익률 (%)
+
+### 성장성 지표
+- **eps_growth**: 주당순이익 증가율 (%)
+- **revenue_growth**: 매출 증가율 (%)
+- **peg_ratio**: PEG 비율
+
+### 기술적 지표
+- **rsi_14**: 14일 RSI
+- **ma_20**: 20일 이동평균
+- **bb_upper/bb_lower**: 볼린저밴드 상단/하단
+- **relative_strength**: 상대강도
+
+## 파일 저장 위치
+```
+public/
+  data/
+    stock_prices.csv          # 기본 주가 데이터
+    financial_data.csv        # 재무 데이터
+    technical_indicators.csv  # 기술적 지표
+    combined_stock_data.csv   # 통합 데이터 (권장)
+```
+
+## 20개 전략별 필요 데이터
+
+| 전략명 | 주요 필요 컬럼 |
+|--------|----------------|
+| 저PER 전략 | pe_ratio, market_cap |
+| RSI 평균회귀 | rsi_14, close |
+| 버핏 해자 전략 | pe_ratio, roe, debt_ratio |
+| 피터 린치 PEG | peg_ratio, eps_growth |
+| CAN SLIM | eps_growth, relative_strength |
+| 볼린저 밴드 | close, bb_upper, bb_lower |
+| 배당 귀족주 | dividend_yield, consecutive_years |
+| 마법공식 | roe, market_cap |
+| 그레이엄 방어적 | pe_ratio, dividend_yield, debt_ratio |
+| 모멘텀 성장 | close, eps_growth |
+| 역발상 가치 | pb_ratio, roe |
+| 합리적 우량주 | roe, pe_ratio, current_ratio |
+| 소형주 가치 | market_cap, pb_ratio |
+| 배당 성장 | dividend_yield, revenue_growth |
+| Net-Net | market_cap, current_ratio |
+| 실적 모멘텀 | eps_growth |
+| 저부채 고ROE | debt_ratio, roe |
+| 턴어라운드 | eps_growth, pe_ratio |
+| 고마진 비즈니스 | operating_margin |
+| 자산 성장 모멘텀 | revenue_growth |
+
+가장 간단한 방법은 **combined_stock_data.csv** 파일 하나로 모든 필요한 데이터를 포함하는 것입니다.
