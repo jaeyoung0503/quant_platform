@@ -9,6 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "setup-python": "cd python && pip install -r requirements.txt",
+    "backend": "cd backend && python main.py",
+    "dev:all": "concurrently \"npm run dev\" \"npm run backend\"",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -52,6 +54,8 @@
     "postcss-cli": "^11.0.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.2.2",
+    "concurrently": "^8.2.0",
+ 
     "uuid": "^9.0.0"
   },
   "engines": {

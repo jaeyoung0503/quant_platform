@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { Play, Plus, Save, BarChart3, FileText, TrendingUp, AlertCircle, CheckCircle, RefreshCw, Target, Activity, Shield, Eye, ChevronDown } from 'lucide-react';
+import { Play, Plus, Save, BarChart3, FileText, TrendingUp, AlertCircle, CheckCircle } from 'lucide-react';
 import { useBacktest } from '../../hooks/useBacktest';
 import { useStrategies } from '../../hooks/useStrategies';
 import { usePortfolio } from '../../hooks/usePortfolio';
@@ -13,7 +13,7 @@ export default function QuantBacktestPage() {
   const [outputCount, setOutputCount] = useState(20);
   const [selectedStock, setSelectedStock] = useState<BacktestResult | null>(null);
   
-  // API Hooks
+  // API Hooks - 백엔드에서 20개 전략 불러오기
   const { strategies, updateStrategy, normalizeWeights, isLoading: strategiesLoading, error: strategiesError } = useStrategies();
   const { 
     isLoading: backtestLoading, 
@@ -29,8 +29,6 @@ export default function QuantBacktestPage() {
   
   const {
     portfolioStocks,
-    portfolioName,
-    setPortfolioName,
     addStock,
     removeStock,
     savePortfolio,
@@ -69,7 +67,7 @@ export default function QuantBacktestPage() {
     });
   }, [strategies, updateStrategy]);
 
-  // 백테스트 실행
+  // 백테스트 실행 - CSV 데이터 처리
   const handleRunBacktest = useCallback(async () => {
     const selectedStrategies = strategies.filter(s => s.selected);
     
@@ -149,7 +147,7 @@ export default function QuantBacktestPage() {
           <div className="text-gray-300 mb-4">{strategiesError}</div>
           <button 
             onClick={() => window.location.reload()}
-            className="bg-gray-600 text-gray-100 px-4 py-2 rounded-xl hover:bg-gray-500 transition-colors"
+            className="bg-gray-600 text-gray-100 px-4 py-2 rounded-xl hover:bg-gray-500"
           >
             다시 시도
           </button>
@@ -160,7 +158,7 @@ export default function QuantBacktestPage() {
 
   return (
     <div className="min-h-screen bg-gray-900">
-      {/* Header */}
+      {/* 헤더 */}
       <header className="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center space-x-3">
@@ -214,7 +212,7 @@ export default function QuantBacktestPage() {
           {/* 왼쪽 사이드바 - 전략 설정 */}
           <div className="col-span-4 space-y-6">
             {/* 백테스트 설정 */}
-            <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
+            <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-6">
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 text-gray-100">
                 <span>⚙️</span> 백테스트 설정
               </h2>
@@ -225,7 +223,7 @@ export default function QuantBacktestPage() {
                   <select 
                     value={backtestYear} 
                     onChange={(e) => setBacktestYear(Number(e.target.value))}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-100 focus:outline-none focus:border-gray-500"
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     disabled={backtestLoading}
                   >
                     <option value={2024}>2024년</option>
@@ -243,7 +241,7 @@ export default function QuantBacktestPage() {
                     type="number" 
                     value={outputCount}
                     onChange={(e) => setOutputCount(Math.min(100, Math.max(1, Number(e.target.value))))}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-xl text-gray-100 focus:outline-none focus:border-gray-500"
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     min={1}
                     max={100}
                     disabled={backtestLoading}
@@ -253,7 +251,7 @@ export default function QuantBacktestPage() {
             </div>
 
             {/* 전략 선택 */}
-            <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
+            <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-6">
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 text-gray-100">
                 <span>📊</span> 투자 전략 선택
               </h2>
@@ -262,8 +260,8 @@ export default function QuantBacktestPage() {
                 {strategies.map((strategy) => (
                   <div 
                     key={strategy.id} 
-                    className={`border rounded-xl p-4 transition-all ${
-                      strategy.selected ? 'border-gray-500 bg-gray-700' : 'border-gray-600 bg-gray-800 hover:border-gray-500 hover:bg-gray-700'
+                    className={`border rounded-lg p-4 transition-all ${
+                      strategy.selected ? 'border-blue-500 bg-blue-900/20' : 'border-gray-600 hover:border-gray-500'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-3">
@@ -272,7 +270,7 @@ export default function QuantBacktestPage() {
                           type="checkbox" 
                           checked={strategy.selected}
                           onChange={() => toggleStrategy(strategy.id)}
-                          className="w-4 h-4 text-gray-600 rounded focus:ring-2 focus:ring-gray-500 bg-gray-700 border-gray-600"
+                          className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                           disabled={backtestLoading}
                         />
                         <div>
@@ -291,7 +289,7 @@ export default function QuantBacktestPage() {
                           <div className="relative">
                             <div className="h-2 bg-gray-600 rounded-full">
                               <div 
-                                className="h-full bg-gray-400 rounded-full transition-all duration-300"
+                                className="h-full bg-blue-600 rounded-full transition-all duration-300"
                                 style={{ width: `${Math.min(100, strategy.weight)}%` }}
                               />
                             </div>
@@ -318,7 +316,7 @@ export default function QuantBacktestPage() {
                                 type="number"
                                 value={value}
                                 onChange={(e) => updateParam(strategy.id, key, Number(e.target.value))}
-                                className="w-20 p-2 text-xs bg-gray-700 border border-gray-600 rounded text-gray-100 focus:outline-none focus:border-gray-500"
+                                className="w-20 p-2 text-xs bg-gray-700 border border-gray-600 rounded text-gray-100 focus:ring-1 focus:ring-blue-500"
                                 disabled={backtestLoading}
                                 step={key.includes('rate') || key.includes('Level') ? 0.1 : 1}
                               />
@@ -331,24 +329,15 @@ export default function QuantBacktestPage() {
                 ))}
               </div>
 
-              {/* 백테스트 실행 버튼을 전략 선택 아래로 이동 */}
-              <div className="mt-6 pt-4 border-t border-gray-700 space-y-4">
+              <div className="mt-6 pt-4 border-t border-gray-600 space-y-4">
+                {/* 백테스트 실행 버튼을 전략 선택 아래로 이동 */}
                 <button 
                   onClick={handleRunBacktest}
                   disabled={backtestLoading || Math.abs(totalWeight - 100) > 1 || strategies.filter(s => s.selected).length === 0}
-                  className="w-full bg-gray-600 text-gray-100 py-3 px-4 rounded-xl hover:bg-gray-500 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-semibold transition-colors"
+                  className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-semibold transition-colors"
                 >
-                  {backtestLoading ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                      분석 실행 중...
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-4 h-4" />
-                      🚀 백테스트 실행
-                    </>
-                  )}
+                  <Play className={`w-4 h-4 ${backtestLoading ? 'animate-spin' : ''}`} />
+                  {backtestLoading ? '분석 실행 중...' : '🚀 백테스트 실행'}
                 </button>
                 
                 {strategies.filter(s => s.selected).length === 0 && (
@@ -358,7 +347,7 @@ export default function QuantBacktestPage() {
                 )}
 
                 <button 
-                  className="w-full py-3 px-4 border border-dashed border-gray-600 rounded-xl text-gray-400 hover:bg-gray-700 hover:border-gray-500 flex items-center justify-center gap-2 transition-colors"
+                  className="w-full py-3 px-4 border border-dashed border-gray-600 rounded-md text-gray-400 hover:bg-gray-700 flex items-center justify-center gap-2 transition-colors"
                   disabled={backtestLoading}
                 >
                   <Plus className="w-4 h-4" />
@@ -383,13 +372,13 @@ export default function QuantBacktestPage() {
           {/* 오른쪽 메인 영역 - 백테스트 결과 */}
           <div className="col-span-8 space-y-6">
             {/* 분석 결과 테이블 */}
-            <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
+            <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-6">
               <h2 className="text-xl font-semibold mb-4 flex items-center justify-between text-gray-100">
                 <span className="flex items-center gap-2">
                   <span>📈</span> 백테스트 분석 결과
                 </span>
                 {totalAnalyzed > 0 && (
-                  <span className="text-sm text-gray-400 bg-gray-700 px-3 py-1 rounded-lg">
+                  <span className="text-sm text-gray-400">
                     총 {totalAnalyzed.toLocaleString()}개 → 조건만족 {conditionMet}개 ({((conditionMet/totalAnalyzed)*100).toFixed(1)}%)
                   </span>
                 )}
@@ -398,7 +387,7 @@ export default function QuantBacktestPage() {
               {backtestLoading ? (
                 <div className="flex items-center justify-center py-16">
                   <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
                     <div className="text-gray-200 font-medium">AI가 시장을 분석하고 있습니다...</div>
                     <div className="text-sm text-gray-400 mt-2">
                       {backtestYear}년 데이터 기준으로 {strategies.filter(s => s.selected).length}개 전략 실행 중
@@ -407,7 +396,7 @@ export default function QuantBacktestPage() {
                 </div>
               ) : results.length > 0 ? (
                 <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
+                  <table className="w-full border-collapse border border-gray-600">
                     <thead>
                       <tr className="bg-gray-700">
                         <th className="border border-gray-600 p-3 text-sm font-semibold text-gray-200">순위</th>
@@ -424,7 +413,7 @@ export default function QuantBacktestPage() {
                         <tr 
                           key={result.stockCode} 
                           className={`hover:bg-gray-700 cursor-pointer transition-colors ${
-                            selectedStock?.stockCode === result.stockCode ? 'bg-gray-700 border-gray-500' : 'bg-gray-800'
+                            selectedStock?.stockCode === result.stockCode ? 'bg-blue-900/30 border-blue-500' : 'bg-gray-800'
                           }`}
                           onClick={() => setSelectedStock(result)}
                         >
@@ -493,12 +482,12 @@ export default function QuantBacktestPage() {
 
             {/* 선택된 종목 상세보기 */}
             {selectedStock && (
-              <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
+              <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-6">
                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-100">
                   <span>🔍</span> 종목 상세 분석
                 </h3>
                 
-                <div className="bg-gradient-to-r from-gray-700 to-gray-600 rounded-xl p-6 border border-gray-600">
+                <div className="bg-gradient-to-r from-blue-900/30 to-indigo-900/30 rounded-lg p-6 border border-blue-600/50">
                   <div className="flex items-center gap-4 mb-4">
                     <span className="text-3xl">
                       {selectedStock.rank === 1 ? '🥇' : 
@@ -565,14 +554,14 @@ export default function QuantBacktestPage() {
             )}
 
             {/* 포트폴리오 생성 */}
-            <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
+            <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-6">
               <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-gray-100">
                 <span>💼</span> 나만의 포트폴리오
               </h3>
               
               {portfolioStocks.length > 0 ? (
                 <div className="space-y-6">
-                  <div className="bg-gray-700 rounded-xl p-5">
+                  <div className="bg-gray-700 rounded-lg p-5">
                     <h4 className="font-semibold mb-4 flex items-center gap-2 text-gray-200">
                       <span>📋</span> 선택된 종목 ({portfolioStocks.length}개)
                     </h4>
@@ -580,7 +569,7 @@ export default function QuantBacktestPage() {
                       {portfolioStocks.map((stock, index) => (
                         <div key={stock.stockCode} className="flex justify-between items-center p-3 bg-gray-800 rounded border border-gray-600">
                           <div className="flex items-center gap-3">
-                            <span className="font-medium text-gray-100">{stock.stockName}</span>
+                            <span className="font-medium text-gray-200">{stock.stockName}</span>
                             <span className="text-sm text-gray-400">({stock.stockCode})</span>
                           </div>
                           <div className="flex items-center gap-4">
@@ -598,7 +587,7 @@ export default function QuantBacktestPage() {
                                 const result = results.find(r => r.stockCode === stock.stockCode);
                                 if (result) toggleStockSelection(result);
                               }}
-                              className="text-red-400 hover:text-red-300 text-xs"
+                              className="text-red-500 hover:text-red-700 text-xs"
                             >
                               제거
                             </button>
@@ -608,7 +597,7 @@ export default function QuantBacktestPage() {
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-r from-gray-700 to-gray-600 rounded-xl p-5 border border-gray-600">
+                  <div className="bg-gradient-to-r from-green-900/20 to-blue-900/20 rounded-lg p-5 border border-green-600/30">
                     <h4 className="font-semibold mb-4 flex items-center gap-2 text-gray-200">
                       <span>📊</span> 포트폴리오 분석
                     </h4>
@@ -647,17 +636,17 @@ export default function QuantBacktestPage() {
                     <button 
                       onClick={handleSavePortfolio}
                       disabled={isSaving || portfolioStocks.length === 0}
-                      className="w-full bg-green-700 text-gray-100 py-3 px-4 rounded-xl hover:bg-green-600 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-semibold transition-colors"
+                      className="w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-semibold transition-colors"
                     >
                       {isSaving ? (
                         <>
-                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                           저장 중...
                         </>
                       ) : (
                         <>
                           <Save className="w-4 h-4" />
-                          포트폴리오 저장
+                          저장
                         </>
                       )}
                     </button>
@@ -676,13 +665,13 @@ export default function QuantBacktestPage() {
 
         {/* 하단 시스템 정보 */}
         {reliability && (
-          <div className="mt-6 bg-gray-800 rounded-2xl border border-gray-700 p-6">
+          <div className="mt-6 bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-6">
             <div className="flex flex-wrap justify-between items-center gap-4 text-sm">
               <div className="flex items-center gap-6">
                 <span className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <CheckCircle className="w-4 h-4 text-green-500" />
                   <strong className="text-gray-300">분석 신뢰성:</strong> 
-                  <span className="font-bold text-green-400">{reliability.dataQuality}/100점</span>
+                  <span className="font-bold text-green-600">{reliability.dataQuality}/100점</span>
                 </span>
                 <span className="text-gray-300">
                   <strong>데이터 커버리지:</strong> {reliability.coverage}%

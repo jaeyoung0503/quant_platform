@@ -14,6 +14,7 @@ const QuantStrategyMain = () => {
     { name: '모의거래', icon: '', path: '/mock_trading' },
     { name: '실제거래', icon: '', path: '/actual_trading' },
     { name: 'Membership', icon: '', path: '/member_payment' },
+    { name: '종목리스트', icon: '', path: '/stock_sorting' },
     { name: 'Backtester(refactor)', icon: '', path: '/backrefactor' },
     { name: 'Community', icon: '', path: '/community' }    
   ];

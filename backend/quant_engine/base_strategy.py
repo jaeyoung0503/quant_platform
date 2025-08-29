@@ -1,5 +1,5 @@
 """
-file: strategy_engine/base_strategy.py
+file: backend/quant_engine/base_strategy.py
 Base Strategy Class and Common Interfaces
 전략 기본 클래스 및 공통 인터페이스
 """
