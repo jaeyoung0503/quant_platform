@@ -1,0 +1,1891 @@
+
+==================================================
+File: C:\Aproject\quant_backend\combine.py
+==================================================
+import os
+
+# 설정
+input_dirs = [
+    r"C:\Aproject\quant_backend",
+    # r"C:\Aproject\quant-platform\quant-trading-platform\backend",
+    # r"C:\Aproject\quant-platform\src",
+    # r"C:\Aproject\quant-platform\backtester"
+]  # 입력 디렉토리 목록
+output_file = r"C:\Aproject\quant_backend\combined_output.txt"  # 출력 파일
+file_extensions = [".py", ".ts", ".tsx", ".js", ".json"]  # 포함할 파일 확장자
+
+def combine_files():
+    # 출력 파일 초기화
+    with open(output_file, 'w', encoding='utf-8') as outfile:
+        # 각 입력 디렉토리 순회
+        for dir_path in input_dirs:
+            if not os.path.exists(dir_path):
+                outfile.write(f"\n{'='*50}\n")
+                outfile.write(f"Directory not found: {dir_path}\n")
+                outfile.write(f"{'='*50}\n")
+                continue
+
+            # 디렉토리 내 파일 순회
+            for root, dirs, files in os.walk(dir_path):
+                # node_modules 및 .next 디렉토리 제외
+                if 'node_modules' in dirs:
+                    dirs.remove('node_modules')  # node_modules 제외
+                if '.next' in dirs:
+                    dirs.remove('.next')  # .next 디렉토리 제외
+                for file in files:
+                    if any(file.endswith(ext) for ext in file_extensions):  # 지정된 확장자 확인
+                        file_path = os.path.join(root, file)
+                        try:
+                            # 파일 내용 읽기
+                            with open(file_path, 'r', encoding='utf-8') as infile:
+                                content = infile.read()
+                            # 출력 파일에 파일 경로와 내용 기록
+                            outfile.write(f"\n{'='*50}\n")
+                            outfile.write(f"File: {file_path}\n")
+                            outfile.write(f"{'='*50}\n")
+                            outfile.write(content)
+                            outfile.write("\n\n")  # 파일 간 구분을 위한 빈 줄
+                        except UnicodeDecodeError:
+                            # 인코딩 오류 시 cp949 시도
+                            try:
+                                with open(file_path, 'r', encoding='cp949') as infile:
+                                    content = infile.read()
+                                outfile.write(f"\n{'='*50}\n")
+                                outfile.write(f"File: {file_path} (encoded in cp949)\n")
+                                outfile.write(f"{'='*50}\n")
+                                outfile.write(content)
+                                outfile.write("\n\n")
+                            except Exception as e:
+                                outfile.write(f"\n{'='*50}\n")
+                                outfile.write(f"Error reading {file_path}: {str(e)}\n")
+                                outfile.write(f"{'='*50}\n")
+                        except Exception as e:
+                            outfile.write(f"\n{'='*50}\n")
+                            outfile.write(f"Error reading {file_path}: {str(e)}\n")
+                            outfile.write(f"{'='*50}\n")
+
+if __name__ == "__main__":
+    combine_files()
+    print(f"모든 파일이 {output_file}로 합쳐졌습니다.")
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\config.py
+==================================================
+# config.py - 환경 선택 기능 추가
+import os
+from typing import Optional
+from dataclasses import dataclass
+
+try:
+    from pydantic_settings import BaseSettings
+except ImportError:
+    from pydantic import BaseSettings
+
+@dataclass
+class KISEnvironment:
+    """KIS API 환경 설정"""
+    name: str
+    app_key: str
+    app_secret: str
+    base_url: str
+    ws_url: str
+    account_number: str
+    account_product_code: str = "01"
+
+class KISSettings(BaseSettings):
+    """KIS API 설정 (환경별 분리)"""
+    
+    # 모의투자 환경
+    MOCK_APP_KEY: str = ""
+    MOCK_APP_SECRET: str = ""
+    MOCK_ACCOUNT_NUMBER: str = ""
+    MOCK_BASE_URL: str = "https://openapi.koreainvestment.com:9443"
+    MOCK_WS_URL: str = "wss://openapi.koreainvestment.com:9443"
+    
+    # 실전투자 환경
+    REAL_APP_KEY: str = ""
+    REAL_APP_SECRET: str = ""
+    REAL_ACCOUNT_NUMBER: str = ""
+    REAL_BASE_URL: str = "https://openapi.koreainvestment.com:9443"
+    REAL_WS_URL: str = "wss://openapi.koreainvestment.com:9443"
+    
+    # 공통 설정
+    ACCOUNT_PRODUCT_CODE: str = "01"
+    
+    # 현재 선택된 환경
+    CURRENT_ENVIRONMENT: str = "mock"  # "mock" 또는 "real"
+    
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
+
+class EnvironmentSelector:
+    """환경 선택 및 관리 클래스"""
+    
+    def __init__(self):
+        self.settings = KISSettings()
+        self.current_env: Optional[KISEnvironment] = None
+    
+    def get_available_environments(self) -> dict:
+        """사용 가능한 환경 목록 반환"""
+        environments = {}
+        
+        # 모의투자 환경 체크
+        if self.settings.MOCK_APP_KEY and self.settings.MOCK_APP_SECRET:
+            environments["mock"] = KISEnvironment(
+                name="모의투자",
+                app_key=self.settings.MOCK_APP_KEY,
+                app_secret=self.settings.MOCK_APP_SECRET,
+                base_url=self.settings.MOCK_BASE_URL,
+                ws_url=self.settings.MOCK_WS_URL,
+                account_number=self.settings.MOCK_ACCOUNT_NUMBER,
+                account_product_code=self.settings.ACCOUNT_PRODUCT_CODE
+            )
+        
+        # 실전투자 환경 체크
+        if self.settings.REAL_APP_KEY and self.settings.REAL_APP_SECRET:
+            environments["real"] = KISEnvironment(
+                name="실전투자",
+                app_key=self.settings.REAL_APP_KEY,
+                app_secret=self.settings.REAL_APP_SECRET,
+                base_url=self.settings.REAL_BASE_URL,
+                ws_url=self.settings.REAL_WS_URL,
+                account_number=self.settings.REAL_ACCOUNT_NUMBER,
+                account_product_code=self.settings.ACCOUNT_PRODUCT_CODE
+            )
+        
+        return environments
+    
+    def select_environment_interactive(self) -> KISEnvironment:
+        """대화형 환경 선택"""
+        environments = self.get_available_environments()
+        
+        if not environments:
+            print("❌ 설정된 환경이 없습니다. .env 파일을 확인하세요.")
+            print("\n필요한 환경변수:")
+            print("MOCK_APP_KEY, MOCK_APP_SECRET, MOCK_ACCOUNT_NUMBER")
+            print("REAL_APP_KEY, REAL_APP_SECRET, REAL_ACCOUNT_NUMBER")
+            raise ValueError("사용 가능한 환경이 없습니다")
+        
+        print(f"\n" + "="*60)
+        print(f"🎯 KIS API 환경 선택")
+        print(f"="*60)
+        
+        # 환경 목록 출력
+        env_list = list(environments.items())
+        for i, (key, env) in enumerate(env_list, 1):
+            key_preview = f"{env.app_key[:4]}****{env.app_key[-4:]}" if len(env.app_key) >= 8 else "****"
+            account_preview = f"{env.account_number[:4]}****" if len(env.account_number) >= 8 else "****"
+            
+            print(f"{i}. {env.name}")
+            print(f"   ├─ 앱키: {key_preview}")
+            print(f"   ├─ 계좌: {account_preview}")
+            print(f"   └─ URL: {env.base_url}")
+        
+        # 사용자 선택 입력
+        while True:
+            try:
+                print(f"\n환경을 선택하세요 (1-{len(env_list)}): ", end="")
+                choice = input().strip()
+                
+                if choice.isdigit() and 1 <= int(choice) <= len(env_list):
+                    selected_key, selected_env = env_list[int(choice) - 1]
+                    
+                    # 확인 메시지
+                    print(f"\n✅ '{selected_env.name}' 환경 선택됨")
+                    print(f"계속 진행하시겠습니까? (y/N): ", end="")
+                    confirm = input().strip().lower()
+                    
+                    if confirm in ['y', 'yes', 'ㅇ']:
+                        self.current_env = selected_env
+                        self.settings.CURRENT_ENVIRONMENT = selected_key
+                        return selected_env
+                    else:
+                        print("선택을 취소합니다.")
+                        continue
+                        
+                else:
+                    print(f"❌ 잘못된 선택입니다. 1-{len(env_list)} 중에서 선택하세요.")
+                    
+            except KeyboardInterrupt:
+                print("\n\n❌ 사용자가 취소했습니다.")
+                exit(1)
+            except Exception as e:
+                print(f"❌ 입력 오류: {e}")
+    
+    def select_environment_auto(self, env_type: str = "mock") -> KISEnvironment:
+        """자동 환경 선택 (명령행 인수용)"""
+        environments = self.get_available_environments()
+        
+        if env_type not in environments:
+            available = list(environments.keys())
+            raise ValueError(f"환경 '{env_type}'를 찾을 수 없습니다. 사용 가능: {available}")
+        
+        selected_env = environments[env_type]
+        self.current_env = selected_env
+        self.settings.CURRENT_ENVIRONMENT = env_type
+        
+        print(f"🎯 자동 선택: {selected_env.name} 환경")
+        return selected_env
+    
+    def get_current_environment(self) -> Optional[KISEnvironment]:
+        """현재 선택된 환경 반환"""
+        return self.current_env
+    
+    def print_environment_info(self):
+        """현재 환경 정보 출력"""
+        if not self.current_env:
+            print("❌ 선택된 환경이 없습니다.")
+            return
+        
+        env = self.current_env
+        print(f"\n" + "="*50)
+        print(f"🌍 현재 KIS API 환경")
+        print(f"="*50)
+        print(f"환경: {env.name}")
+        print(f"URL: {env.base_url}")
+        print(f"WebSocket: {env.ws_url}")
+        print(f"계좌: {env.account_number}")
+        print(f"앱키: {env.app_key[:4]}****{env.app_key[-4:]}")
+        print(f"="*50)
+
+
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\main.py
+==================================================
+# main.py 수정 - 환경 선택 기능 통합
+import asyncio
+import sys
+import argparse
+from typing import Optional
+from datetime import datetime
+
+from config import EnvironmentSelector  # 새로 추가한 클래스
+from services.kis_auth import KISAuth
+from services.kis_websocket import KISWebSocket  # 기존 파일명 사용
+
+
+# 전역 변수
+env_selector: Optional[EnvironmentSelector] = None
+kis_auth: Optional[KISAuth] = None
+kis_ws: Optional[KISWebSocketStrategy] = None
+
+def parse_arguments():
+    """명령행 인수 파싱"""
+    parser = argparse.ArgumentParser(description='KIS 실시간 퀀트 전략 시스템')
+    parser.add_argument(
+        '--env', 
+        choices=['mock', 'real', 'interactive'], 
+        default='interactive',
+        help='실행 환경 선택 (mock: 모의투자, real: 실전투자, interactive: 대화형 선택)'
+    )
+    parser.add_argument(
+        '--stocks',
+        nargs='+',
+        default=['005930', '000660'],
+        help='모니터링할 종목 코드 (예: --stocks 005930 000660 035720)'
+    )
+    parser.add_argument(
+        '--auto-execute',
+        action='store_true',
+        help='자동 실행 모드 활성화'
+    )
+    
+    return parser.parse_args()
+
+async def initialize_environment(env_type: str = "interactive"):
+    """환경 초기화"""
+    global env_selector, kis_auth, kis_ws
+    
+    try:
+        print(f"\n🚀 KIS 퀀트 전략 시스템 시작")
+        print(f"시작 시간: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        
+        # 환경 선택
+        env_selector = EnvironmentSelector()
+        
+        if env_type == "interactive":
+            selected_env = env_selector.select_environment_interactive()
+        else:
+            selected_env = env_selector.select_environment_auto(env_type)
+        
+        # 선택된 환경 정보 출력
+        env_selector.print_environment_info()
+        
+        # 인증 서비스 초기화
+        print(f"\n🔑 {selected_env.name} 인증 서비스 초기화 중...")
+        kis_auth = KISAuth(
+            app_key=selected_env.app_key,
+            app_secret=selected_env.app_secret,
+            base_url=selected_env.base_url,
+            account_number=selected_env.account_number
+        )
+        
+        # 토큰 발급 테스트
+        await kis_auth.get_access_token()
+        print(f"✅ {selected_env.name} 인증 완료")
+        
+        # WebSocket 전략 서비스 초기화
+        print(f"📡 실시간 전략 시스템 초기화 중...")
+        kis_ws = KISWebSocketStrategy(kis_auth, selected_env.ws_url)
+        
+        print(f"✅ {selected_env.name} 환경 초기화 완료!")
+        return selected_env
+        
+    except Exception as e:
+        print(f"❌ 환경 초기화 실패: {e}")
+        raise
+
+async def main():
+    """메인 실행 함수"""
+    try:
+        # 명령행 인수 파싱
+        args = parse_arguments()
+        
+        print("="*80)
+        print("🎯 KIS 실시간 퀀트 전략 시스템")
+        print("="*80)
+        
+        # 환경 초기화
+        selected_env = await initialize_environment(args.env)
+        
+        # 전략 설정
+        if args.auto_execute:
+            kis_ws.auto_execute = True
+            print(f"⚡ 자동 실행 모드 활성화")
+        else:
+            print(f"📋 수동 확인 모드 활성화")
+        
+        # 모니터링 시작
+        print(f"\n🎬 실시간 모니터링 시작")
+        print(f"대상 종목: {', '.join(args.stocks)}")
+        print(f"환경: {selected_env.name}")
+        
+        await kis_ws.start_strategy_monitoring(args.stocks)
+        
+        # 사용자 명령 대기
+        await handle_user_commands()
+        
+    except KeyboardInterrupt:
+        print(f"\n\n⏹️  사용자가 중단했습니다.")
+    except Exception as e:
+        print(f"❌ 시스템 오류: {e}")
+    finally:
+        if kis_ws:
+            await kis_ws.disconnect()
+
+async def handle_user_commands():
+    """사용자 명령 처리"""
+    print(f"\n" + "="*60)
+    print("📋 사용 가능한 명령어:")
+    print("  status  - 시스템 상태 확인")
+    print("  perf    - 전략 성과 출력")
+    print("  dash    - 실시간 대시보드")
+    print("  add     - 종목 추가 모니터링")
+    print("  switch  - 환경 변경")
+    print("  quit    - 종료")
+    print("="*60)
+    
+    while True:
+        try:
+            print(f"\n명령 입력 (또는 Ctrl+C 종료): ", end="")
+            command = input().strip().lower()
+            
+            if command == "status":
+                kis_ws.print_connection_status()
+                
+            elif command == "perf":
+                kis_ws.print_strategy_performance()
+                
+            elif command == "dash":
+                kis_ws.print_real_time_dashboard()
+                
+            elif command == "add":
+                print("추가할 종목코드 입력: ", end="")
+                stock_code = input().strip()
+                if stock_code:
+                    await kis_ws.subscribe_realtime_price(stock_code)
+                    print(f"✅ {stock_code} 모니터링 추가됨")
+                    
+            elif command == "switch":
+                await switch_environment()
+                
+            elif command in ["quit", "exit", "q"]:
+                break
+                
+            else:
+                print(f"❌ 알 수 없는 명령: {command}")
+                
+        except KeyboardInterrupt:
+            break
+        except Exception as e:
+            print(f"❌ 명령 처리 오류: {e}")
+
+async def switch_environment():
+    """실행 중 환경 변경"""
+    global env_selector, kis_auth, kis_ws
+    
+    try:
+        print(f"\n🔄 환경 변경 중...")
+        
+        # 기존 연결 종료
+        if kis_ws:
+            await kis_ws.disconnect()
+        
+        # 새 환경 선택
+        new_env = env_selector.select_environment_interactive()
+        
+        # 새 인증 서비스 초기화
+        kis_auth = KISAuth(
+            app_key=new_env.app_key,
+            app_secret=new_env.app_secret,
+            base_url=new_env.base_url,
+            account_number=new_env.account_number
+        )
+        
+        await kis_auth.get_access_token()
+        
+        # 새 WebSocket 서비스 초기화
+        kis_ws = KISWebSocketStrategy(kis_auth, new_env.ws_url)
+        
+        print(f"✅ {new_env.name} 환경으로 변경 완료!")
+        env_selector.print_environment_info()
+        
+    except Exception as e:
+        print(f"❌ 환경 변경 실패: {e}")
+
+def print_startup_banner():
+    """시작 배너 출력"""
+    print("""
+    ╔══════════════════════════════════════════════════════════════╗
+    ║                 KIS 실시간 퀀트 전략 시스템                   ║
+    ║                                                              ║
+    ║  🎯 실시간 모멘텀/역모멘텀 전략                               ║
+    ║  📊 기술적 지표: RSI, 볼린저밴드, 이동평균                    ║
+    ║  🔄 자동 재연결 및 안정성 보장                               ║
+    ║  🌍 모의투자/실전투자 환경 선택                              ║
+    ║                                                              ║
+    ╚══════════════════════════════════════════════════════════════╝
+    """)
+
+if __name__ == "__main__":
+    print_startup_banner()
+    
+    # 명령행 사용법 안내
+    if len(sys.argv) == 1:
+        print("📖 사용법:")
+        print("  python main.py                           # 대화형 환경 선택")
+        print("  python main.py --env mock                # 모의투자 자동 선택")
+        print("  python main.py --env real                # 실전투자 자동 선택") 
+        print("  python main.py --env mock --auto-execute # 모의투자 + 자동실행")
+        print("  python main.py --stocks 005930 000660    # 특정 종목 모니터링")
+        print()
+    
+    # 메인 실행
+    asyncio.run(main())
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\__init__.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\api\dependencies.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\api\__init__.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\api\routes\stocks.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\api\routes\websocket.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\api\routes\__init__.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\core\database.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\core\exceptions.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\core\redis_client.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\core\__init__.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\models\stock.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\models\user.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\models\__init__.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\services\chart_service.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\services\data_processor.py
+==================================================
+# services/data_processor.py - 실시간 데이터 처리 및 틱차트 서비스
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional
+import asyncio
+import json
+from collections import deque
+import logging
+
+logger = logging.getLogger(__name__)
+
+class TickDataProcessor:
+    """실시간 틱 데이터 처리기"""
+    
+    def __init__(self, redis_client=None):
+        self.redis = redis_client
+        self.tick_buffers: Dict[str, deque] = {}
+        self.chart_data: Dict[str, Dict] = {}
+        self.max_ticks = 1000  # 최대 저장 틱 수
+        
+    async def process_tick(self, tick_data: Dict) -> Dict:
+        """틱 데이터 처리"""
+        stock_code = tick_data['code']
+        
+        # 틱 버퍼 초기화
+        if stock_code not in self.tick_buffers:
+            self.tick_buffers[stock_code] = deque(maxlen=self.max_ticks)
+            self.chart_data[stock_code] = {
+                'minute_bars': [],
+                'volume_profile': {},
+                'tick_stats': {}
+            }
+        
+        # 틱 데이터 추가
+        self.tick_buffers[stock_code].append(tick_data)
+        
+        # 분봉 데이터 업데이트
+        await self._update_minute_bar(stock_code, tick_data)
+        
+        # 볼륨 프로파일 업데이트
+        self._update_volume_profile(stock_code, tick_data)
+        
+        # 틱 통계 업데이트
+        self._update_tick_stats(stock_code)
+        
+        # Redis에 저장
+        if self.redis:
+            await self._save_to_redis(stock_code, tick_data)
+        
+        # 실시간 출력
+        self._print_realtime_analysis(stock_code, tick_data)
+        
+        return tick_data
+    
+    async def _update_minute_bar(self, stock_code: str, tick_data: Dict):
+        """1분봉 데이터 업데이트"""
+        current_minute = tick_data['timestamp'].replace(second=0, microsecond=0)
+        chart_data = self.chart_data[stock_code]
+        
+        # 현재 분봉이 없거나 새로운 분이면 생성
+        if not chart_data['minute_bars'] or chart_data['minute_bars'][-1]['timestamp'] != current_minute:
+            new_bar = {
+                'timestamp': current_minute,
+                'open': tick_data['price'],
+                'high': tick_data['price'],
+                'low': tick_data['price'],
+                'close': tick_data['price'],
+                'volume': tick_data['volume'],
+                'tick_count': 1
+            }
+            chart_data['minute_bars'].append(new_bar)
+            
+            # 최대 480개 (8시간) 분봉 유지
+            if len(chart_data['minute_bars']) > 480:
+                chart_data['minute_bars'] = chart_data['minute_bars'][-480:]
+        else:
+            # 기존 분봉 업데이트
+            current_bar = chart_data['minute_bars'][-1]
+            current_bar['high'] = max(current_bar['high'], tick_data['price'])
+            current_bar['low'] = min(current_bar['low'], tick_data['price'])
+            current_bar['close'] = tick_data['price']
+            current_bar['volume'] += tick_data['volume']
+            current_bar['tick_count'] += 1
+    
+    def _update_volume_profile(self, stock_code: str, tick_data: Dict):
+        """볼륨 프로파일 업데이트"""
+        price = tick_data['price']
+        volume = tick_data['volume']
+        
+        volume_profile = self.chart_data[stock_code]['volume_profile']
+        
+        # 100원 단위로 그룹핑
+        price_level = (price // 100) * 100
+        
+        if price_level not in volume_profile:
+            volume_profile[price_level] = 0
+        volume_profile[price_level] += volume
+    
+    def _update_tick_stats(self, stock_code: str):
+        """틱 통계 업데이트"""
+        ticks = list(self.tick_buffers[stock_code])
+        if len(ticks) < 2:
+            return
+        
+        # 최근 1분간 데이터
+        now = datetime.now()
+        recent_ticks = [t for t in ticks if (now - t['timestamp']).seconds <= 60]
+        
+        if recent_ticks:
+            prices = [t['price'] for t in recent_ticks]
+            volumes = [t['volume'] for t in recent_ticks]
+            
+            stats = {
+                'tick_count_1min': len(recent_ticks),
+                'avg_price_1min': np.mean(prices),
+                'price_volatility_1min': np.std(prices),
+                'total_volume_1min': sum(volumes),
+                'avg_volume_1min': np.mean(volumes),
+                'max_tick_volume': max(volumes) if volumes else 0,
+                'last_update': now
+            }
+            
+            self.chart_data[stock_code]['tick_stats'] = stats
+    
+    def _print_realtime_analysis(self, stock_code: str, tick_data: Dict):
+        """실시간 분석 결과 출력"""
+        stats = self.chart_data[stock_code].get('tick_stats', {})
+        timestamp = tick_data['timestamp'].strftime('%H:%M:%S')
+        
+        # 기본 틱 정보
+        print(f"\n╔═══ 실시간 틱 분석 [{stock_code}] {timestamp} ═══╗")
+        print(f"║ 현재가: {tick_data['price']:,}원                            ║")
+        print(f"║ 거래량: {tick_data['volume']:,}주                             ║")
+        print(f"║ 전일대비: {tick_data['change']:+,}원 ({tick_data['change_rate']:+.2f}%)        ║")
+        print(f"╠═══════════════════════════════════════════════════════════╣")
+        
+        # 1분간 통계 (있는 경우)
+        if stats:
+            print(f"║ [1분간 통계]                                           ║")
+            print(f"║ 틱 수: {stats.get('tick_count_1min', 0):,}개                                    ║")
+            print(f"║ 평균가: {stats.get('avg_price_1min', 0):,.0f}원                              ║")
+            print(f"║ 변동성: {stats.get('price_volatility_1min', 0):.1f}                                 ║")
+            print(f"║ 거래량: {stats.get('total_volume_1min', 0):,}주                             ║")
+            print(f"║ 최대틱: {stats.get('max_tick_volume', 0):,}주                             ║")
+        
+        print(f"╚═══════════════════════════════════════════════════════════╝")
+        
+        # 거래량 분석
+        if stats and stats.get('max_tick_volume', 0) > stats.get('avg_volume_1min', 0) * 3:
+            print(f"🚨 대량 거래 감지! (평균 대비 {stats['max_tick_volume'] / max(stats['avg_volume_1min'], 1):.1f}배)")
+    
+    async def _save_to_redis(self, stock_code: str, tick_data: Dict):
+        """Redis에 틱 데이터 저장"""
+        try:
+            key = f"ticks:{stock_code}"
+            tick_json = json.dumps(tick_data, default=str)
+            
+            # 리스트에 추가 (최신이 앞쪽)
+            await self.redis.lpush(key, tick_json)
+            # 최대 1000개만 유지
+            await self.redis.ltrim(key, 0, 999)
+            # 1일 TTL 설정
+            await self.redis.expire(key, 86400)
+            
+        except Exception as e:
+            logger.error(f"Redis 저장 실패: {e}")
+    
+    def get_tick_chart_data(self, stock_code: str, minutes: int = 60) -> List[Dict]:
+        """틱차트 데이터 반환"""
+        if stock_code not in self.tick_buffers:
+            return []
+        
+        # 지정된 시간만큼의 틱 데이터 필터링
+        cutoff_time = datetime.now() - timedelta(minutes=minutes)
+        ticks = [
+            tick for tick in self.tick_buffers[stock_code] 
+            if tick['timestamp'] >= cutoff_time
+        ]
+        
+        return ticks
+    
+    def get_minute_chart_data(self, stock_code: str) -> List[Dict]:
+        """분봉 차트 데이터 반환"""
+        if stock_code not in self.chart_data:
+            return []
+        return self.chart_data[stock_code]['minute_bars']
+    
+    def get_volume_profile(self, stock_code: str) -> Dict[int, int]:
+        """볼륨 프로파일 반환"""
+        if stock_code not in self.chart_data:
+            return {}
+        return self.chart_data[stock_code]['volume_profile']
+    
+    def print_tick_summary(self, stock_code: str):
+        """틱 데이터 요약 출력"""
+        if stock_code not in self.tick_buffers:
+            print(f"❌ {stock_code} 데이터가 없습니다")
+            return
+        
+        ticks = list(self.tick_buffers[stock_code])
+        if not ticks:
+            return
+        
+        # 통계 계산
+        prices = [t['price'] for t in ticks]
+        volumes = [t['volume'] for t in ticks]
+        
+        print(f"\n============ {stock_code} 틱 데이터 요약 ============")
+        print(f"데이터 기간: {ticks[0]['timestamp'].strftime('%H:%M:%S')} ~ {ticks[-1]['timestamp'].strftime('%H:%M:%S')}")
+        print(f"총 틱 수: {len(ticks):,}개")
+        print(f"가격 범위: {min(prices):,}원 ~ {max(prices):,}원")
+        print(f"평균 가격: {np.mean(prices):,.0f}원")
+        print(f"총 거래량: {sum(volumes):,}주")
+        print(f"평균 틱 거래량: {np.mean(volumes):,.0f}주")
+        print(f"최대 틱 거래량: {max(volumes):,}주")
+        print("=" * 48)
+
+class TechnicalIndicators:
+    """기술적 지표 계산"""
+    
+    @staticmethod
+    def calculate_sma(prices: List[float], period: int) -> float:
+        """단순이동평균"""
+        if len(prices) < period:
+            return 0
+        return sum(prices[-period:]) / period
+    
+    @staticmethod
+    def calculate_ema(prices: List[float], period: int) -> float:
+        """지수이동평균"""
+        if len(prices) < period:
+            return prices[-1] if prices else 0
+        
+        multiplier = 2 / (period + 1)
+        ema = prices[0]
+        
+        for price in prices[1:]:
+            ema = (price * multiplier) + (ema * (1 - multiplier))
+        
+        return ema
+    
+    @staticmethod
+    def calculate_rsi(prices: List[float], period: int = 14) -> float:
+        """RSI 계산"""
+        if len(prices) < period + 1:
+            return 50
+        
+        deltas = np.diff(prices)
+        gains = np.where(deltas > 0, deltas, 0)
+        losses = np.where(deltas < 0, -deltas, 0)
+        
+        avg_gain = np.mean(gains[-period:])
+        avg_loss = np.mean(losses[-period:])
+        
+        if avg_loss == 0:
+            return 100
+        
+        rs = avg_gain / avg_loss
+        rsi = 100 - (100 / (1 + rs))
+        
+        return rsi
+    
+    @staticmethod
+    def print_indicators(stock_code: str, prices: List[float]):
+        """기술적 지표 출력"""
+        if len(prices) < 20:
+            return
+        
+        sma5 = TechnicalIndicators.calculate_sma(prices, 5)
+        sma20 = TechnicalIndicators.calculate_sma(prices, 20)
+        ema12 = TechnicalIndicators.calculate_ema(prices, 12)
+        ema26 = TechnicalIndicators.calculate_ema(prices, 26)
+        rsi = TechnicalIndicators.calculate_rsi(prices, 14)
+        
+        current_price = prices[-1]
+        
+        print(f"\n[기술적 지표] {stock_code}")
+        print(f"├─ 현재가: {current_price:,.0f}원")
+        print(f"├─ SMA5: {sma5:,.0f}원 ({'상승' if current_price > sma5 else '하락'})")
+        print(f"├─ SMA20: {sma20:,.0f}원 ({'상승' if current_price > sma20 else '하락'})")
+        print(f"├─ EMA12: {ema12:,.0f}원")
+        print(f"├─ EMA26: {ema26:,.0f}원")
+        print(f"└─ RSI(14): {rsi:.1f} ({'과매수' if rsi > 70 else '과매도' if rsi < 30 else '중립'})")
+        
+        # MACD 계산
+        macd = ema12 - ema26
+        signal = TechnicalIndicators.calculate_ema([macd], 9)
+        
+        if macd > signal:
+            print(f"📈 MACD 매수 신호 (MACD: {macd:.1f} > Signal: {signal:.1f})")
+        elif macd < signal:
+            print(f"📉 MACD 매도 신호 (MACD: {macd:.1f} < Signal: {signal:.1f})")
+
+class RealTimeChartManager:
+    """실시간 차트 매니저"""
+    
+    def __init__(self, data_processor: TickDataProcessor):
+        self.processor = data_processor
+        self.chart_subscribers: Dict[str, List] = {}
+        
+    async def add_chart_subscriber(self, stock_code: str, websocket):
+        """차트 구독자 추가"""
+        if stock_code not in self.chart_subscribers:
+            self.chart_subscribers[stock_code] = []
+        self.chart_subscribers[stock_code].append(websocket)
+        
+        print(f"📊 차트 구독자 추가: {stock_code}")
+    
+    async def remove_chart_subscriber(self, stock_code: str, websocket):
+        """차트 구독자 제거"""
+        if stock_code in self.chart_subscribers:
+            try:
+                self.chart_subscribers[stock_code].remove(websocket)
+                if not self.chart_subscribers[stock_code]:
+                    del self.chart_subscribers[stock_code]
+                print(f"📊 차트 구독자 제거: {stock_code}")
+            except ValueError:
+                pass
+    
+    async def broadcast_chart_update(self, stock_code: str, tick_data: Dict):
+        """차트 업데이트 브로드캐스트"""
+        if stock_code not in self.chart_subscribers:
+            return
+        
+        # 차트 데이터 준비
+        chart_update = {
+            'type': 'tick_update',
+            'code': stock_code,
+            'timestamp': tick_data['timestamp'].isoformat(),
+            'price': tick_data['price'],
+            'volume': tick_data['volume'],
+            'change': tick_data['change'],
+            'change_rate': tick_data['change_rate']
+        }
+        
+        # 기술적 지표 추가
+        if len(self.processor.tick_buffers.get(stock_code, [])) >= 20:
+            prices = [t['price'] for t in list(self.processor.tick_buffers[stock_code])[-20:]]
+            chart_update['indicators'] = {
+                'sma5': TechnicalIndicators.calculate_sma(prices, 5),
+                'sma20': TechnicalIndicators.calculate_sma(prices, 20),
+                'rsi': TechnicalIndicators.calculate_rsi(prices, 14)
+            }
+        
+        # 구독자들에게 전송
+        message = json.dumps(chart_update, default=str)
+        disconnected = []
+        
+        for websocket in self.chart_subscribers[stock_code]:
+            try:
+                await websocket.send_text(message)
+            except:
+                disconnected.append(websocket)
+        
+        # 끊어진 연결 제거
+        for ws in disconnected:
+            await self.remove_chart_subscriber(stock_code, ws)
+    
+    def print_chart_status(self):
+        """차트 상태 출력"""
+        print(f"\n================== 실시간 차트 상태 ==================")
+        print(f"활성 차트 수: {len(self.chart_subscribers)}개")
+        
+        for stock_code, subscribers in self.chart_subscribers.items():
+            tick_count = len(self.processor.tick_buffers.get(stock_code, []))
+            minute_bars = len(self.processor.chart_data.get(stock_code, {}).get('minute_bars', []))
+            
+            print(f"\n[{stock_code}]")
+            print(f"├─ 구독자: {len(subscribers)}명")
+            print(f"├─ 틱 데이터: {tick_count:,}개")
+            print(f"├─ 분봉 데이터: {minute_bars}개")
+            print(f"└─ 마지막 업데이트: {datetime.now().strftime('%H:%M:%S')}")
+        
+        print("=" * 54)
+    
+    async def generate_tick_chart_json(self, stock_code: str, minutes: int = 30) -> Dict:
+        """틱차트 JSON 데이터 생성"""
+        tick_data = self.processor.get_tick_chart_data(stock_code, minutes)
+        minute_data = self.processor.get_minute_chart_data(stock_code)
+        volume_profile = self.processor.get_volume_profile(stock_code)
+        
+        return {
+            'stock_code': stock_code,
+            'timestamp': datetime.now().isoformat(),
+            'tick_data': [
+                {
+                    'time': tick['timestamp'].isoformat(),
+                    'price': tick['price'],
+                    'volume': tick['volume']
+                } for tick in tick_data
+            ],
+            'minute_bars': [
+                {
+                    'time': bar['timestamp'].isoformat(),
+                    'open': bar['open'],
+                    'high': bar['high'],
+                    'low': bar['low'],
+                    'close': bar['close'],
+                    'volume': bar['volume']
+                } for bar in minute_data
+            ],
+            'volume_profile': volume_profile,
+            'stats': self.processor.chart_data.get(stock_code, {}).get('tick_stats', {})
+        } 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\services\kis_api.py
+==================================================
+# services/kis_api.py - KIS REST API 클라이언트 완성본
+import aiohttp
+import asyncio
+from typing import Dict, List, Optional
+import logging
+from datetime import datetime, timedelta
+import json
+
+logger = logging.getLogger(__name__)
+
+class KISAPI:
+    """KIS REST API 클라이언트 완성본"""
+    
+    def __init__(self, auth_service, base_url: str):
+        self.auth = auth_service
+        self.base_url = base_url
+        self.session: Optional[aiohttp.ClientSession] = None
+        self.call_count = 0
+        self.last_call_time = datetime.now()
+        self.daily_call_count = 0
+        self.last_reset_date = datetime.now().date()
+    
+    async def __aenter__(self):
+        if not self.session or self.session.closed:
+            self.session = aiohttp.ClientSession(
+                timeout=aiohttp.ClientTimeout(total=30),
+                headers={"User-Agent": "KIS-Quant-Backend/1.0"}
+            )
+        return self
+    
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if self.session and not self.session.closed:
+            await self.session.close()
+    
+    async def _rate_limit_check(self):
+        """API 호출 제한 관리"""
+        now = datetime.now()
+        
+        # 일일 카운터 리셋
+        if now.date() > self.last_reset_date:
+            self.daily_call_count = 0
+            self.last_reset_date = now.date()
+            print(f"\n[API 제한] 일일 카운터 리셋 - 새로운 날: {now.date()}")
+        
+        # 분당 제한 체크
+        time_since_last = (now - self.last_call_time).total_seconds()
+        if time_since_last < 60:
+            if self.call_count >= 18:  # 분당 20회 제한, 안전 마진 2회
+                wait_time = 60 - time_since_last
+                print(f"⏳ API 분당 제한 도달 - {wait_time:.1f}초 대기 중...")
+                print(f"   현재: {self.call_count}/20회")
+                await asyncio.sleep(wait_time)
+                self.call_count = 0
+        else:
+            self.call_count = 0
+        
+        # 일일 제한 체크
+        if self.daily_call_count >= 9500:  # 일일 10,000회 제한, 안전 마진 500회
+            print(f"⚠️  일일 API 호출 제한 근접: {self.daily_call_count}/10,000회")
+            if self.daily_call_count >= 9900:
+                raise Exception("일일 API 호출 제한 초과")
+        
+        self.call_count += 1
+        self.daily_call_count += 1
+        self.last_call_time = now
+    
+    async def _make_request(self, method: str, url: str, headers: Dict, params: Dict = None, data: Dict = None) -> Dict:
+        """공통 API 요청 메서드"""
+        await self._rate_limit_check()
+        
+        try:
+            if method.upper() == "GET":
+                async with self.session.get(url, headers=headers, params=params) as response:
+                    return await self._handle_response(response)
+            elif method.upper() == "POST":
+                async with self.session.post(url, headers=headers, json=data) as response:
+                    return await self._handle_response(response)
+                    
+        except aiohttp.ClientError as e:
+            logger.error(f"HTTP 요청 실패: {e}")
+            raise Exception(f"네트워크 오류: {e}")
+        except asyncio.TimeoutError:
+            logger.error("API 요청 타임아웃")
+            raise Exception("API 요청 타임아웃")
+    
+    async def _handle_response(self, response: aiohttp.ClientResponse) -> Dict:
+        """응답 처리"""
+        if response.status == 200:
+            return await response.json()
+        elif response.status == 401:
+            # 토큰 만료 - 재발급 시도
+            print("🔑 토큰 만료 감지 - 자동 갱신 중...")
+            await self.auth._refresh_token()
+            raise Exception("토큰 만료 - 재시도 필요")
+        elif response.status == 429:
+            print("⏳ API 호출 제한 - 1분 대기 중...")
+            await asyncio.sleep(60)
+            raise Exception("API 호출 제한 - 재시도 필요")
+        else:
+            error_text = await response.text()
+            logger.error(f"API 오류: {response.status} - {error_text}")
+            raise Exception(f"API 오류: {response.status} - {error_text}")
+    
+    async def get_current_price(self, stock_code: str) -> Dict:
+        """현재가 상세 조회"""
+        url = f"{self.base_url}/uapi/domestic-stock/v1/quotations/inquire-price"
+        headers = self.auth.get_headers("FHKST01010100")
+        params = {
+            "fid_cond_mrkt_div_code": "J",
+            "fid_input_iscd": stock_code
+        }
+        
+        try:
+            result = await self._make_request("GET", url, headers, params)
+            data = result.get("output", {})
+            
+            # 상세 정보 출력
+            self._print_detailed_price_info(stock_code, data)
+            
+            return data
+            
+        except Exception as e:
+            logger.error(f"현재가 조회 실패 {stock_code}: {e}")
+            print(f"❌ {stock_code} 현재가 조회 실패: {e}")
+            raise e
+    
+    def _print_detailed_price_info(self, stock_code: str, data: Dict):
+        """상세 가격 정보 출력"""
+        print(f"\n╔══════════ {stock_code} 상세 정보 ══════════╗")
+        print(f"║ 종목명: {data.get('hts_kor_isnm', 'N/A'):15s}                    ║")
+        print(f"║ 현재가: {int(data.get('stck_prpr', 0)):>10,}원                     ║")
+        print(f"║ 전일대비: {int(data.get('prdy_vrss', 0)):>8,}원 ({float(data.get('prdy_vrss_rate', 0)):>6.2f}%)    ║")
+        print(f"║                                                  ║")
+        print(f"║ 시가: {int(data.get('stck_oprc', 0)):>12,}원   고가: {int(data.get('stck_hgpr', 0)):>10,}원     ║")
+        print(f"║ 저가: {int(data.get('stck_lwpr', 0)):>12,}원   거래량: {int(data.get('acml_vol', 0)):>8,}주    ║")
+        print(f"║                                                  ║")
+        print(f"║ 거래대금: {int(data.get('acml_tr_pbmn', 0))//100000000:>8,}억원                           ║")
+        print(f"║ 시가총액: {int(data.get('mrkt_tot_amt', 0))//100000000:>8,}억원                           ║")
+        print(f"╚══════════════════════════════════════════════════╝")
+        
+        # 상한가/하한가 체크
+        upper_limit = int(data.get('stck_mxpr', 0))
+        lower_limit = int(data.get('stck_llmr', 0))
+        current_price = int(data.get('stck_prpr', 0))
+        
+        if current_price >= upper_limit:
+            print("🔴 상한가 도달!")
+        elif current_price <= lower_limit:
+            print("🔵 하한가 도달!")
+        elif current_price >= upper_limit * 0.95:
+            print("🟡 상한가 근접 (95% 이상)")
+        elif current_price <= lower_limit * 1.05:
+            print("🟡 하한가 근접 (105% 이하)")
+    
+    async def get_daily_chart(self, stock_code: str, period: int = 30) -> List[Dict]:
+        """일봉 차트 데이터 조회"""
+        url = f"{self.base_url}/uapi/domestic-stock/v1/quotations/inquire-daily-price"
+        headers = self.auth.get_headers("FHKST01010400")
+        params = {
+            "fid_cond_mrkt_div_code": "J",
+            "fid_input_iscd": stock_code,
+            "fid_period_div_code": "D",
+            "fid_org_adj_prc": "1"
+        }
+        
+        try:
+            result = await self._make_request("GET", url, headers, params)
+            data = result.get("output", [])
+            
+            # 차트 분석 출력
+            self._print_chart_analysis(stock_code, data[:period])
+            
+            return data[:period]
+            
+        except Exception as e:
+            logger.error(f"일봉 조회 실패 {stock_code}: {e}")
+            raise e
+    
+    def _print_chart_analysis(self, stock_code: str, chart_data: List[Dict]):
+        """차트 분석 결과 출력"""
+        if not chart_data:
+            return
+        
+        print(f"\n[차트 분석] {stock_code} - 최근 {len(chart_data)}일")
+        print("=" * 65)
+        
+        # 최근 5일 데이터 출력
+        print("날짜       │ 시가     │ 고가     │ 저가     │ 종가     │ 거래량     │ 등락")
+        print("-" * 65)
+        
+        for i, candle in enumerate(chart_data[:5]):
+            date = candle.get('stck_bsop_date', '')
+            open_price = int(candle.get('stck_oprc', 0))
+            high_price = int(candle.get('stck_hgpr', 0))
+            low_price = int(candle.get('stck_lwpr', 0))
+            close_price = int(candle.get('stck_clpr', 0))
+            volume = int(candle.get('acml_vol', 0))
+            change_rate = float(candle.get('prdy_vrss_rate', 0))
+            
+            change_symbol = "▲" if change_rate > 0 else "▼" if change_rate < 0 else "="
+            
+            print(f"{date} │ {open_price:7,} │ {high_price:7,} │ {low_price:7,} │ {close_price:7,} │ {volume:9,} │ {change_symbol}{abs(change_rate):.2f}%")
+        
+        # 기술적 분석
+        closes = [int(candle.get('stck_clpr', 0)) for candle in chart_data]
+        volumes = [int(candle.get('acml_vol', 0)) for candle in chart_data]
+        
+        if len(closes) >= 5:
+            sma5 = sum(closes[:5]) / 5
+            current_price = closes[0]
+            
+            print(f"\n[기술적 분석]")
+            print(f"├─ 5일 평균: {sma5:,.0f}원")
+            print(f"├─ 현재 vs 5일평균: {((current_price / sma5 - 1) * 100):+.2f}%")
+            print(f"├─ 평균 거래량: {sum(volumes) / len(volumes):,.0f}주")
+            print(f"└─ 최근 거래량: {volumes[0]:,}주 (평균 대비 {(volumes[0] / (sum(volumes) / len(volumes)) * 100):.1f}%)")
+        
+        print("=" * 65)
+    
+    async def get_minute_chart(self, stock_code: str, time_frame: str = "1") -> List[Dict]:
+        """분봉 데이터 조회"""
+        url = f"{self.base_url}/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice"
+        headers = self.auth.get_headers("FHKST01010200")
+        params = {
+            "fid_etc_cls_code": "",
+            "fid_cond_mrkt_div_code": "J",
+            "fid_input_iscd": stock_code,
+            "fid_input_hour_1": time_frame,
+            "fid_pw_data_incu_yn": "Y"
+        }
+        
+        try:
+            result = await self._make_request("GET", url, headers, params)
+            data = result.get("output2", [])
+            
+            self._print_minute_chart(stock_code, data, time_frame)
+            return data
+            
+        except Exception as e:
+            logger.error(f"분봉 조회 실패 {stock_code}: {e}")
+            raise e
+    
+    def _print_minute_chart(self, stock_code: str, data: List[Dict], time_frame: str):
+        """분봉 데이터 출력"""
+        print(f"\n[{time_frame}분봉] {stock_code} - 최근 {min(len(data), 10)}개")
+        print("시간     │ 시가     │ 고가     │ 저가     │ 종가     │ 거래량    │ 등락률")
+        print("-" * 70)
+        
+        for candle in data[:10]:
+            time = candle.get('stck_cntg_hour', '')
+            open_price = int(candle.get('stck_oprc', 0))
+            high_price = int(candle.get('stck_hgpr', 0))
+            low_price = int(candle.get('stck_lwpr', 0))
+            close_price = int(candle.get('stck_prpr', 0))
+            volume = int(candle.get('cntg_vol', 0))
+            change_rate = float(candle.get('prdy_vrss_rate', 0))
+            
+            change_symbol = "▲" if change_rate > 0 else "▼" if change_rate < 0 else "="
+            
+            print(f"{time} │ {open_price:7,} │ {high_price:7,} │ {low_price:7,} │ {close_price:7,} │ {volume:8,} │ {change_symbol}{abs(change_rate):.2f}%")
+    
+    async def get_stock_info(self, stock_code: str) -> Dict:
+        """종목 기본 정보 조회"""
+        url = f"{self.base_url}/uapi/domestic-stock/v1/quotations/search-stock-info"
+        headers = self.auth.get_headers("CTPF1002R")
+        params = {
+            "PRDT_TYPE_CD": "300",
+            "PDNO": stock_code
+        }
+        
+        try:
+            result = await self._make_request("GET", url, headers, params)
+            return result.get("output", {})
+        except Exception as e:
+            logger.error(f"종목 정보 조회 실패 {stock_code}: {e}")
+            return {}
+    
+    async def get_top_stocks(self, market: str = "0", sort_type: str = "1") -> List[Dict]:
+        """인기 종목 조회"""
+        url = f"{self.base_url}/uapi/domestic-stock/v1/quotations/volume-rank"
+        headers = self.auth.get_headers("FHPST01710000")
+        params = {
+            "fid_cond_mrkt_div_code": "J",
+            "fid_cond_scr_div_code": "20171",
+            "fid_input_iscd": market,
+            "fid_div_cls_code": sort_type,
+            "fid_blng_cls_code": "0",
+            "fid_trgt_cls_code": "111111111",
+            "fid_trgt_exls_cls_code": "0000000000",
+            "fid_input_price_1": "",
+            "fid_input_price_2": "",
+            "fid_vol_cnt": ""
+        }
+        
+        try:
+            result = await self._make_request("GET", url, headers, params)
+            data = result.get("output", [])
+            
+            self._print_top_stocks(data[:10])
+            return data
+            
+        except Exception as e:
+            logger.error(f"인기 종목 조회 실패: {e}")
+            return []
+    
+    def _print_top_stocks(self, stocks: List[Dict]):
+        """인기 종목 리스트 출력"""
+        print(f"\n================= 거래량 상위 종목 =================")
+        print("순위 │ 종목코드 │ 종목명        │ 현재가     │ 등락률   │ 거래량")
+        print("-" * 60)
+        
+        for i, stock in enumerate(stocks, 1):
+            code = stock.get('mksc_shrn_iscd', '')
+            name = stock.get('hts_kor_isnm', '')[:10]
+            price = int(stock.get('stck_prpr', 0))
+            change_rate = float(stock.get('prdy_vrss_rate', 0))
+            volume = int(stock.get('acml_vol', 0))
+            
+            change_symbol = "▲" if change_rate > 0 else "▼" if change_rate < 0 else "="
+            
+            print(f"{i:2d}위 │ {code:6s} │ {name:10s} │ {price:8,}원 │ {change_symbol}{abs(change_rate):6.2f}% │ {volume:8,}")
+        
+        print("=" * 60)
+    
+    def print_api_stats(self):
+        """API 호출 통계 상세 출력"""
+        now = datetime.now()
+        
+        print(f"\n==================== API 통계 ====================")
+        print(f"현재 시간: {now.strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"마지막 호출: {self.last_call_time.strftime('%H:%M:%S')}")
+        print(f"분당 호출: {self.call_count}/20회")
+        print(f"일일 호출: {self.daily_call_count:,}/10,000회")
+        
+        # 제한 상태 표시
+        minute_usage = (self.call_count / 20) * 100
+        daily_usage = (self.daily_call_count / 10000) * 100
+        
+        print(f"\n[사용률]")
+        print(f"├─ 분당 사용률: {minute_usage:.1f}% {'🟢' if minute_usage < 70 else '🟡' if minute_usage < 90 else '🔴'}")
+        print(f"└─ 일일 사용률: {daily_usage:.1f}% {'🟢' if daily_usage < 70 else '🟡' if daily_usage < 90 else '🔴'}")
+        
+        if minute_usage > 90:
+            print("⚠️  분당 호출 제한 임박")
+        if daily_usage > 90:
+            print("⚠️  일일 호출 제한 임박")
+        
+        print("=" * 48)
+    
+    async def batch_current_prices(self, stock_codes: List[str]) -> Dict[str, Dict]:
+        """여러 종목 현재가 일괄 조회"""
+        print(f"\n[일괄 조회] {len(stock_codes)}개 종목 현재가 조회 시작")
+        
+        results = {}
+        failed_codes = []
+        
+        for i, code in enumerate(stock_codes, 1):
+            try:
+                print(f"진행률: {i}/{len(stock_codes)} ({(i/len(stock_codes)*100):.1f}%) - {code}")
+                
+                data = await self.get_current_price(code)
+                results[code] = data
+                
+                # API 제한 고려하여 잠시 대기
+                if i % 10 == 0:
+                    print("⏳ API 안정성을 위해 2초 대기...")
+                    await asyncio.sleep(2)
+                    
+            except Exception as e:
+                print(f"❌ {code} 조회 실패: {e}")
+                failed_codes.append(code)
+                continue
+        
+        print(f"\n[일괄 조회 완료]")
+        print(f"├─ 성공: {len(results)}개")
+        print(f"├─ 실패: {len(failed_codes)}개")
+        print(f"└─ 성공률: {(len(results)/(len(results)+len(failed_codes))*100):.1f}%")
+        
+        if failed_codes:
+            print(f"실패 종목: {', '.join(failed_codes)}")
+        
+        return results
+    
+    async def search_stock(self, keyword: str) -> List[Dict]:
+        """종목 검색"""
+        url = f"{self.base_url}/uapi/domestic-stock/v1/quotations/search-stock-info"
+        headers = self.auth.get_headers("CTPF1002R")
+        params = {
+            "PRDT_TYPE_CD": "300",
+            "PDNO": keyword
+        }
+        
+        try:
+            result = await self._make_request("GET", url, headers, params)
+            data = result.get("output", [])
+            
+            print(f"\n[종목 검색] '{keyword}' 검색 결과: {len(data)}개")
+            print("종목코드 │ 종목명              │ 현재가     │ 등락률")
+            print("-" * 50)
+            
+            for stock in data[:10]:
+                code = stock.get('pdno', '')
+                name = stock.get('prdt_name', '')[:15]
+                price = int(stock.get('stck_prpr', 0))
+                change_rate = float(stock.get('prdy_vrss_rate', 0))
+                
+                change_symbol = "▲" if change_rate > 0 else "▼" if change_rate < 0 else "="
+                print(f"{code:6s} │ {name:15s} │ {price:8,}원 │ {change_symbol}{abs(change_rate):6.2f}%")
+            
+            return data
+            
+        except Exception as e:
+            logger.error(f"종목 검색 실패: {e}")
+            return []
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\services\kis_auth.py
+==================================================
+# services/kis_auth.py - KIS 인증 서비스
+import aiohttp
+import asyncio
+import json
+from datetime import datetime, timedelta
+from typing import Optional
+import logging
+
+logger = logging.getLogger(__name__)
+
+class KISAuth:
+    """KIS API 인증 관리 클래스"""
+    
+    def __init__(self, app_key: str, app_secret: str, base_url: str):
+        self.app_key = app_key
+        self.app_secret = app_secret
+        self.base_url = base_url
+        self.access_token: Optional[str] = None
+        self.token_expiry: Optional[datetime] = None
+        self._lock = asyncio.Lock()
+    
+    async def get_access_token(self) -> str:
+        """액세스 토큰 반환 (필요시 갱신)"""
+        async with self._lock:
+            if self._is_token_valid():
+                return self.access_token
+            
+            await self._refresh_token()
+            return self.access_token
+    
+    def _is_token_valid(self) -> bool:
+        """토큰 유효성 검사"""
+        if not self.access_token or not self.token_expiry:
+            return False
+        
+        # 5분 여유를 두고 갱신
+        return self.token_expiry > datetime.now() + timedelta(minutes=5)
+    
+    async def _refresh_token(self):
+        """토큰 갱신"""
+        url = f"{self.base_url}/oauth2/tokenP"
+        data = {
+            "grant_type": "client_credentials",
+            "appkey": self.app_key,
+            "appsecret": self.app_secret
+        }
+        
+        try:
+            logger.info("🔑 KIS API 토큰 갱신 중...")
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.post(url, json=data) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        self.access_token = result["access_token"]
+                        expires_in = result.get("expires_in", 86400)
+                        self.token_expiry = datetime.now() + timedelta(seconds=expires_in)
+                        
+                        logger.info(f"✅ 토큰 갱신 완료 (만료: {self.token_expiry.strftime('%Y-%m-%d %H:%M:%S')})")
+                        print(f"\n[토큰 상태] 새 액세스 토큰 발급 완료")
+                        print(f"├─ 발급시간: {datetime.now().strftime('%H:%M:%S')}")
+                        print(f"├─ 만료시간: {self.token_expiry.strftime('%H:%M:%S')}")
+                        print(f"└─ 유효기간: {expires_in//3600}시간 {(expires_in%3600)//60}분")
+                    else:
+                        error_text = await response.text()
+                        raise Exception(f"토큰 발급 실패: {response.status} - {error_text}")
+                        
+        except Exception as error:
+            logger.error(f"❌ 토큰 갱신 실패: {error}")
+            print(f"\n[오류] 토큰 갱신 실패: {error}")
+            raise error
+    
+    def get_headers(self, tr_id: str) -> dict:
+        """API 호출용 헤더 생성"""
+        return {
+            "authorization": f"Bearer {self.access_token}",
+            "appkey": self.app_key,
+            "appsecret": self.app_secret,
+            "tr_id": tr_id,
+            "custtype": "P"
+        }
+    
+    def print_status(self):
+        """현재 인증 상태 출력"""
+        print("\n==================== KIS 인증 상태 ====================")
+        print(f"APP KEY: {self.app_key[:10]}...")
+        if self.access_token:
+            print(f"액세스 토큰: {self.access_token[:20]}...")
+            print(f"토큰 만료: {self.token_expiry.strftime('%Y-%m-%d %H:%M:%S')}")
+            print(f"토큰 상태: {'✅ 유효' if self._is_token_valid() else '❌ 만료'}")
+        else:
+            print("액세스 토큰: 없음")
+        print("=" * 54)
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\services\kis_websocket.py
+==================================================
+# services/kis_websocket.py - KIS WebSocket 실시간 데이터 클라이언트
+
+import websockets
+import json
+import asyncio
+from typing import Dict, List, Callable, Optional
+import logging
+from datetime import datetime
+
+logger = logging.getLogger(__name__)
+
+class KISWebSocket:
+    """KIS WebSocket 실시간 데이터 클라이언트"""
+    
+    def __init__(self, auth_service, ws_url: str):
+        self.auth = auth_service
+        self.ws_url = ws_url
+        self.websocket: Optional[websockets.WebSocketServerProtocol] = None
+        self.is_connected = False
+        self.subscribers: Dict[str, List[Callable]] = {}
+        self.reconnect_attempts = 0
+        self.max_reconnect_attempts = 5
+        
+    async def connect(self):
+        """WebSocket 연결"""
+        try:
+            logger.info("🔌 KIS WebSocket 연결 시도...")
+            print(f"\n[WebSocket] 연결 시도 중...")
+            print(f"├─ URL: {self.ws_url}")
+            print(f"└─ 시간: {datetime.now().strftime('%H:%M:%S')}")
+            
+            self.websocket = await websockets.connect(
+                self.ws_url,
+                ping_interval=30,
+                ping_timeout=10
+            )
+            
+            self.is_connected = True
+            self.reconnect_attempts = 0
+            
+            logger.info("✅ KIS WebSocket 연결 완료")
+            print(f"✅ WebSocket 연결 성공!")
+            
+            # 승인키 전송
+            await self._send_approval()
+            
+            # 메시지 수신 태스크 시작
+            asyncio.create_task(self._listen_messages())
+            
+        except Exception as e:
+            logger.error(f"❌ WebSocket 연결 실패: {e}")
+            print(f"❌ WebSocket 연결 실패: {e}")
+            await self._handle_reconnect()
+    
+    async def _send_approval(self):
+        """승인키 전송"""
+        try:
+            token = await self.auth.get_access_token()
+            approval_data = {
+                "header": {
+                    "approval_key": token,
+                    "custtype": "P",
+                    "tr_type": "1",
+                    "content_type": "utf-8"
+                },
+                "body": {
+                    "input": {
+                        "tr_id": "PINGPONG",
+                        "tr_key": ""
+                    }
+                }
+            }
+            
+            await self.websocket.send(json.dumps(approval_data))
+            logger.info("🔐 승인키 전송 완료")
+            print("🔐 WebSocket 승인키 전송 완료")
+            
+        except Exception as e:
+            logger.error(f"승인키 전송 실패: {e}")
+            print(f"❌ 승인키 전송 실패: {e}")
+    
+    async def subscribe_realtime_price(self, stock_code: str, callback: Callable = None):
+        """실시간 시세 구독"""
+        if not self.is_connected:
+            await self.connect()
+        
+        try:
+            subscribe_data = {
+                "header": {
+                    "approval_key": await self.auth.get_access_token(),
+                    "custtype": "P",
+                    "tr_type": "1",
+                    "content_type": "utf-8"
+                },
+                "body": {
+                    "input": {
+                        "tr_id": "H0STCNT0",  # 실시간 시세
+                        "tr_key": stock_code
+                    }
+                }
+            }
+            
+            await self.websocket.send(json.dumps(subscribe_data))
+            
+            # 콜백 등록
+            if callback:
+                if stock_code not in self.subscribers:
+                    self.subscribers[stock_code] = []
+                self.subscribers[stock_code].append(callback)
+            
+            logger.info(f"📡 실시간 시세 구독: {stock_code}")
+            print(f"\n[구독 시작] {stock_code} 실시간 시세")
+            print(f"├─ 구독 시간: {datetime.now().strftime('%H:%M:%S')}")
+            print(f"└─ 상태: 활성")
+            
+        except Exception as e:
+            logger.error(f"실시간 구독 실패: {e}")
+            print(f"❌ {stock_code} 구독 실패: {e}")
+    
+    async def subscribe_realtime_orderbook(self, stock_code: str, callback: Callable = None):
+        """실시간 호가 구독"""
+        if not self.is_connected:
+            await self.connect()
+        
+        try:
+            subscribe_data = {
+                "header": {
+                    "approval_key": await self.auth.get_access_token(),
+                    "custtype": "P",
+                    "tr_type": "1",
+                    "content_type": "utf-8"
+                },
+                "body": {
+                    "input": {
+                        "tr_id": "H0STASP0",  # 실시간 호가
+                        "tr_key": stock_code
+                    }
+                }
+            }
+            
+            await self.websocket.send(json.dumps(subscribe_data))
+            
+            if callback:
+                callback_key = f"{stock_code}_orderbook"
+                if callback_key not in self.subscribers:
+                    self.subscribers[callback_key] = []
+                self.subscribers[callback_key].append(callback)
+            
+            print(f"[호가 구독] {stock_code} 실시간 호가 구독 시작")
+            
+        except Exception as e:
+            logger.error(f"호가 구독 실패: {e}")
+            print(f"❌ {stock_code} 호가 구독 실패: {e}")
+    
+    async def _listen_messages(self):
+        """실시간 메시지 수신"""
+        try:
+            async for message in self.websocket:
+                await self._process_message(message)
+        except websockets.exceptions.ConnectionClosed:
+            logger.warning("WebSocket 연결이 끊어졌습니다")
+            print("⚠️  WebSocket 연결 끊어짐 - 재연결 시도 중...")
+            self.is_connected = False
+            await self._handle_reconnect()
+        except Exception as e:
+            logger.error(f"메시지 수신 오류: {e}")
+            print(f"❌ 메시지 수신 오류: {e}")
+    
+    async def _process_message(self, message):
+        """받은 메시지 처리"""
+        try:
+            data = json.loads(message)
+            header = data.get("header", {})
+            body = data.get("body", {})
+            
+            tr_id = header.get("tr_id")
+            tr_key = header.get("tr_key")
+            
+            if tr_id == "H0STCNT0":  # 실시간 시세
+                await self._handle_realtime_price(tr_key, body)
+            elif tr_id == "H0STASP0":  # 실시간 호가
+                await self._handle_realtime_orderbook(tr_key, body)
+            
+        except Exception as e:
+            logger.error(f"메시지 처리 오류: {e}")
+    
+    async def _handle_realtime_price(self, stock_code: str, data: Dict):
+        """실시간 시세 데이터 처리"""
+        try:
+            price_data = {
+                'timestamp': datetime.now(),
+                'code': stock_code,
+                'price': int(data.get('stck_prpr', 0)),
+                'volume': int(data.get('cntg_vol', 0)),
+                'total_volume': int(data.get('acml_vol', 0)),
+                'change': int(data.get('prdy_vrss', 0)),
+                'change_rate': float(data.get('prdy_vrss_rate', 0))
+            }
+            
+            # 실시간 틱 출력
+            self._print_tick_data(price_data)
+            
+            # 구독자들에게 콜백 실행
+            if stock_code in self.subscribers:
+                for callback in self.subscribers[stock_code]:
+                    await callback(price_data)
+                    
+        except Exception as e:
+            logger.error(f"실시간 시세 처리 오류: {e}")
+    
+    async def _handle_realtime_orderbook(self, stock_code: str, data: Dict):
+        """실시간 호가 데이터 처리"""
+        try:
+            # 호가 데이터 파싱
+            orderbook = {
+                'timestamp': datetime.now(),
+                'code': stock_code,
+                'ask_prices': [int(data.get(f'askp{i}', 0)) for i in range(1, 11)],
+                'ask_volumes': [int(data.get(f'askp_rsqn{i}', 0)) for i in range(1, 11)],
+                'bid_prices': [int(data.get(f'bidp{i}', 0)) for i in range(1, 11)],
+                'bid_volumes': [int(data.get(f'bidp_rsqn{i}', 0)) for i in range(1, 11)]
+            }
+            
+            # 호가창 출력
+            self._print_orderbook(orderbook)
+            
+            # 콜백 실행
+            callback_key = f"{stock_code}_orderbook"
+            if callback_key in self.subscribers:
+                for callback in self.subscribers[callback_key]:
+                    await callback(orderbook)
+                    
+        except Exception as e:
+            logger.error(f"호가 데이터 처리 오류: {e}")
+    
+    def _print_tick_data(self, data: Dict):
+        """틱 데이터 실시간 출력"""
+        timestamp = data['timestamp'].strftime('%H:%M:%S')
+        price = data['price']
+        volume = data['volume']
+        change = data['change']
+        change_rate = data['change_rate']
+        
+        # 등락 표시
+        if change > 0:
+            change_symbol = "▲"
+            color = "상승"
+        elif change < 0:
+            change_symbol = "▼" 
+            color = "하락"
+        else:
+            change_symbol = "="
+            color = "보합"
+        
+        print(f"\n[실시간 틱] {data['code']} | {timestamp}")
+        print(f"├─ 현재가: {price:,}원 ({change_symbol} {abs(change)}, {change_rate:+.2f}%) [{color}]")
+        print(f"├─ 거래량: {volume:,}주")
+        print(f"└─ 누적거래량: {data['total_volume']:,}주")
+    
+    def _print_orderbook(self, data: Dict):
+        """호가창 실시간 출력"""
+        timestamp = data['timestamp'].strftime('%H:%M:%S')
+        
+        print(f"\n[실시간 호가] {data['code']} | {timestamp}")
+        print("매도 호가                    │ 매수 호가")
+        print("-" * 30 + "┼" + "-" * 30)
+        
+        for i in range(5):  # 상위 5호가만 출력
+            ask_price = data['ask_prices'][i]
+            ask_volume = data['ask_volumes'][i]
+            bid_price = data['bid_prices'][i]
+            bid_volume = data['bid_volumes'][i]
+            
+            print(f"{ask_price:>7,} ({ask_volume:>4,})    │    {bid_price:>7,} ({bid_volume:>4,})")
+    
+    async def _handle_reconnect(self):
+        """재연결 처리"""
+        if self.reconnect_attempts >= self.max_reconnect_attempts:
+            logger.error("최대 재연결 시도 횟수 초과")
+            print("❌ 최대 재연결 시도 횟수 초과 - 연결 포기")
+            return
+        
+        self.reconnect_attempts += 1
+        wait_time = min(2 ** self.reconnect_attempts, 30)  # 지수 백오프
+        
+        print(f"🔄 재연결 시도 {self.reconnect_attempts}/{self.max_reconnect_attempts} - {wait_time}초 후...")
+        await asyncio.sleep(wait_time)
+        
+        try:
+            await self.connect()
+            # 기존 구독 복구
+            await self._restore_subscriptions()
+        except Exception as e:
+            logger.error(f"재연결 실패: {e}")
+            await self._handle_reconnect()
+    
+    async def _restore_subscriptions(self):
+        """기존 구독 복구"""
+        print("\n[구독 복구] 기존 구독 종목 복구 중...")
+        
+        restored_count = 0
+        for key in list(self.subscribers.keys()):
+            if "_orderbook" not in key:  # 시세 구독만 복구
+                try:
+                    await self.subscribe_realtime_price(key)
+                    restored_count += 1
+                except Exception as e:
+                    logger.error(f"구독 복구 실패 {key}: {e}")
+        
+        print(f"✅ {restored_count}개 종목 구독 복구 완료")
+    
+    def add_subscriber(self, stock_code: str, callback: Callable):
+        """구독자 추가"""
+        if stock_code not in self.subscribers:
+            self.subscribers[stock_code] = []
+        self.subscribers[stock_code].append(callback)
+    
+    def remove_subscriber(self, stock_code: str, callback: Callable):
+        """구독자 제거"""
+        if stock_code in self.subscribers:
+            try:
+                self.subscribers[stock_code].remove(callback)
+                if not self.subscribers[stock_code]:
+                    del self.subscribers[stock_code]
+            except ValueError:
+                pass
+    
+    def print_connection_status(self):
+        """연결 상태 출력"""
+        print(f"\n==================== WebSocket 상태 ====================")
+        print(f"연결 상태: {'✅ 연결됨' if self.is_connected else '❌ 끊어짐'}")
+        print(f"구독 종목 수: {len([k for k in self.subscribers.keys() if '_orderbook' not in k])}개")
+        print(f"재연결 시도: {self.reconnect_attempts}/{self.max_reconnect_attempts}")
+        
+        if self.subscribers:
+            print(f"\n[구독 중인 종목]")
+            for i, stock_code in enumerate([k for k in self.subscribers.keys() if '_orderbook' not in k], 1):
+                print(f"{i:2d}. {stock_code}")
+        
+        print("=" * 54)
+    
+    async def disconnect(self):
+        """연결 종료"""
+        if self.websocket and not self.websocket.closed:
+            await self.websocket.close()
+        self.is_connected = False
+        print("🔌 WebSocket 연결 종료") 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\services\__init__.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\utils\indicators.py
+==================================================
+ 
+
+
+
+==================================================
+File: C:\Aproject\quant_backend\app\utils\__init__.py
+==================================================
+ 
+
+

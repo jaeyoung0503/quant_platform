@@ -16,94 +16,167 @@ import {
 } from 'recharts';
 
 // SVG Icons
-const TrendingUp = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
-    <polyline points="22,7 13.5,15.5 8.5,10.5 2,17"></polyline>
-    <polyline points="16,7 22,7 22,13"></polyline>
-  </svg>
-);
-
-const BarChart3 = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
-    <path d="M3 3v18h18"></path>
-    <path d="M18 17V9"></path>
-    <path d="M13 17V5"></path>
-    <path d="M8 17v-3"></path>
-  </svg>
-);
-
-const Shield = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-  </svg>
-);
-
-const Activity = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
-    <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
-  </svg>
-);
-
-const Target = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
-    <circle cx="12" cy="12" r="10"></circle>
-    <circle cx="12" cy="12" r="6"></circle>
-    <circle cx="12" cy="12" r="2"></circle>
-  </svg>
-);
-
-const Play = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
-    <polygon points="5,3 19,12 5,21"></polygon>
-  </svg>
-);
-
-const Download = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-    <polyline points="7,10 12,15 17,10"></polyline>
-    <line x1="12" y1="15" x2="12" y2="3"></line>
-  </svg>
-);
-
-const RefreshCw = ({ className = "w-5 h-5" }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
-    <polyline points="23,4 23,10 17,10"></polyline>
-    <polyline points="1,20 1,14 7,14"></polyline>
-    <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
-  </svg>
-);
-
-const Info = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-    <circle cx="12" cy="12" r="10"></circle>
-    <line x1="12" y1="16" x2="12" y2="12"></line>
-    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-  </svg>
-);
-
-const AlertCircle = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-    <circle cx="12" cy="12" r="10"></circle>
-    <line x1="12" y1="8" x2="12" y2="12"></line>
-    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-  </svg>
-);
-
-const riskColors = {
-  low: 'text-gray-400 bg-gray-800',
-  medium: 'text-gray-300 bg-gray-700', 
-  high: 'text-gray-200 bg-gray-600'
+const TrendingUp = () => {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+      <polyline points="22,7 13.5,15.5 8.5,10.5 2,17"></polyline>
+      <polyline points="16,7 22,7 22,13"></polyline>
+    </svg>
+  );
 };
 
-const complexityColors = {
-  simple: 'text-gray-400 bg-gray-800',
-  medium: 'text-gray-300 bg-gray-700',
-  complex: 'text-gray-200 bg-gray-600'
+const BarChart3 = () => {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+      <path d="M3 3v18h18"></path>
+      <path d="M18 17V9"></path>
+      <path d="M13 17V5"></path>
+      <path d="M8 17v-3"></path>
+    </svg>
+  );
 };
 
-// Strategy icon mapping
-const iconMapping = {
+const Shield = () => {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+    </svg>
+  );
+};
+
+const Activity = () => {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+      <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
+    </svg>
+  );
+};
+
+const Target = () => {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+      <circle cx="12" cy="12" r="10"></circle>
+      <circle cx="12" cy="12" r="6"></circle>
+      <circle cx="12" cy="12" r="2"></circle>
+    </svg>
+  );
+};
+
+const Play = () => {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+      <polygon points="5,3 19,12 5,21"></polygon>
+    </svg>
+  );
+};
+
+const Calendar = () => {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+    </svg>
+  );
+};
+
+const RefreshCw = ({ className = "w-5 h-5" }: { className?: string }) => {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <polyline points="23,4 23,10 17,10"></polyline>
+      <polyline points="1,20 1,14 7,14"></polyline>
+      <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+    </svg>
+  );
+};
+
+const Info = () => {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="16" x2="12" y2="12"></line>
+      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </svg>
+  );
+};
+
+const AlertCircle = () => {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+  );
+};
+
+const XCircle = () => {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="15" y1="9" x2="9" y2="15"></line>
+      <line x1="9" y1="9" x2="15" y2="15"></line>
+    </svg>
+  );
+};
+
+const Trophy = () => {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+      <path d="M4 22h16"></path>
+      <path d="M10 14.66V17c0 .55.47.98.97 1.21C11.62 18.75 12.26 19 13 19s1.38-.25 2.03-.79c.5-.23.97-.66.97-1.21v-2.34"></path>
+      <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path>
+    </svg>
+  );
+};
+
+type RiskLevel = 'low' | 'medium' | 'high';
+type Complexity = 'simple' | 'medium' | 'complex';
+
+const riskColors: Record<RiskLevel, string> = {
+  low: 'text-emerald-400 bg-emerald-900/30 border-emerald-700',
+  medium: 'text-yellow-400 bg-yellow-900/30 border-yellow-700', 
+  high: 'text-red-400 bg-red-900/30 border-red-700'
+};
+
+const complexityColors: Record<Complexity, string> = {
+  simple: 'text-blue-400 bg-blue-900/30 border-blue-700',
+  medium: 'text-purple-400 bg-purple-900/30 border-purple-700',
+  complex: 'text-orange-400 bg-orange-900/30 border-orange-700'
+};
+
+interface Strategy {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  riskLevel: RiskLevel;
+  complexity: Complexity;
+  expectedReturn: string;
+  volatility: string;
+  details: string;
+  icon?: React.ComponentType;
+}
+
+interface BacktestResult {
+  strategy_id: string;
+  strategy_name: string;
+  totalReturn: number;
+  annualReturn: number;
+  sharpeRatio: number;
+  sortinoRatio: number;
+  maxDrawdown: number;
+  winRate: number;
+  volatility: number;
+  finalValue: number;
+  portfolioHistory?: number[];
+  timestamp: string;
+}
+
+const iconMapping: Record<string, React.ComponentType> = {
   'low_pe': Shield,
   'dividend_aristocrats': Target,
   'simple_momentum': TrendingUp,
@@ -126,9 +199,7 @@ const iconMapping = {
   'john_neff_low_pe_dividend': Target
 };
 
-// 전체 20가지 전략 데이터
-const getAllStrategies = () => [
-  // 기본 전략 10개
+const getAllStrategies = (): Strategy[] => [
   {
     id: 'low_pe',
     name: 'Low PE Strategy',
@@ -239,7 +310,6 @@ const getAllStrategies = () => [
     volatility: '10-16%',
     details: '정기적으로 포트폴리오를 리밸런싱하여 위험을 관리합니다.'
   },
-  // 고급 전략 10개
   {
     id: 'buffett_moat',
     name: 'Buffett Moat Strategy',
@@ -353,271 +423,261 @@ const getAllStrategies = () => [
 ];
 
 export default function QuantStrategyPage() {
-  const [selectedStrategy, setSelectedStrategy] = useState(null);
-  const [backtestResult, setBacktestResult] = useState(null);
+  const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(null);
+  const [backtestResults, setBacktestResults] = useState<BacktestResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [showDetails, setShowDetails] = useState(null);
-  const [showGraphs, setShowGraphs] = useState(false);
+  const [showDetails, setShowDetails] = useState<string | null>(null);
+  const [showGraphs, setShowGraphs] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState('all');
-  
-  // Data loading states
-  const [strategies, setStrategies] = useState([]);
-  const [marketData, setMarketData] = useState([]);
+  const [strategies, setStrategies] = useState<Strategy[]>([]);
+  const [marketData, setMarketData] = useState<any[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [dataLoadError, setDataLoadError] = useState<string | null>(null);
+  
+  const [backtestPeriod, setBacktestPeriod] = useState({
+    startDate: '2024-01-01',
+    endDate: '2024-12-31'
+  });
 
-  // 데이터 로딩
   useEffect(() => {
     const loadData = async () => {
       try {
         setDataLoading(true);
-        console.log('데이터 로딩 시작...');
+        setDataLoadError(null);
         
-        // 전략 목록 로드 시도
-        let loadedStrategies = [];
-        try {
-          console.log('API에서 전략 목록 로드 시도...');
-          const strategiesResponse = await fetch('/api/strategies', {
-            method: 'GET',
-            headers: { 'Accept': 'application/json' }
-          });
-          
-          if (strategiesResponse.ok) {
-            const strategiesData = await strategiesResponse.json();
-            console.log('API 응답:', strategiesData);
-            
-            if (strategiesData && Array.isArray(strategiesData) && strategiesData.length > 0) {
-              loadedStrategies = strategiesData.map(strategy => ({
-                ...strategy,
-                icon: iconMapping[strategy.id] || Target
-              }));
-              console.log(`API에서 ${loadedStrategies.length}개 전략 로드 성공`);
-            } else {
-              console.log('API 응답이 비어있거나 올바르지 않음');
-            }
-          } else {
-            console.log('API 응답 실패:', strategiesResponse.status);
-          }
-        } catch (apiError) {
-          console.warn('API 호출 실패:', apiError.message);
-        }
-        
-        // API 실패 시 하드코딩된 전략 사용
-        if (loadedStrategies.length === 0) {
-          console.log('하드코딩된 전략 목록 사용');
-          loadedStrategies = getAllStrategies().map(strategy => ({
-            ...strategy,
-            icon: iconMapping[strategy.id] || Target
-          }));
-        }
-        
+        const loadedStrategies = getAllStrategies().map(strategy => ({
+          ...strategy,
+          icon: iconMapping[strategy.id] || Target
+        }));
         setStrategies(loadedStrategies);
-        console.log(`총 ${loadedStrategies.length}개 전략 설정 완료`);
 
-        // CSV 데이터 로드 시도
-        let loadedMarketData = [];
-        try {
-          console.log('CSV 데이터 로드 시도...');
-          const marketResponse = await fetch('/data/market_data.csv');
-          
-          if (marketResponse.ok) {
-            const marketCsvText = await marketResponse.text();
-            const marketParsed = Papa.parse(marketCsvText, {
-              header: true,
-              dynamicTyping: true,
-              skipEmptyLines: true
-            });
+        let csvLoadSuccess = false;
+        const csvPaths = ['/public/data/stock_analysis.csv', './data/stock_analysis.csv', '/data/stock_analysis.csv'];
 
-            if (marketParsed.errors.length > 0) {
-              console.warn('CSV 파싱 경고:', marketParsed.errors);
+        for (const csvPath of csvPaths) {
+          try {
+            const marketResponse = await fetch(csvPath);
+            
+            if (marketResponse.ok) {
+              const marketCsvText = await marketResponse.text();
+              
+              if (marketCsvText.length > 100 && 
+                  (marketCsvText.includes('date') || marketCsvText.includes('Date')) && 
+                  (marketCsvText.includes('ticker') || marketCsvText.includes('symbol'))) {
+                
+                const marketParsed = Papa.parse(marketCsvText, {
+                  header: true,
+                  dynamicTyping: true,
+                  skipEmptyLines: true,
+                  delimitersToGuess: [',', ';', '\t'],
+                  transformHeader: (header: string) => header.trim().toLowerCase()
+                });
+
+                if (marketParsed.data && marketParsed.data.length > 0) {
+                  const loadedMarketData = marketParsed.data
+                    .map((row: any) => {
+                      const symbol = row.ticker || row.symbol;
+                      const close = parseFloat(row.close);
+                      
+                      if (!symbol || !row.date || isNaN(close) || close <= 0) {
+                        return null;
+                      }
+
+                      return {
+                        date: row.date,
+                        year: parseInt(row.year) || new Date(row.date).getFullYear(),
+                        symbol: symbol,
+                        ticker: symbol,
+                        name: row.name || symbol,
+                        market: row.market || 'UNKNOWN',
+                        open: parseFloat(row.open) || close,
+                        high: parseFloat(row.high) || close,
+                        low: parseFloat(row.low) || close,
+                        close: close,
+                        volume: parseInt(row.volume) || 0,
+                        market_cap: parseFloat(row.market_cap) || 0,
+                        pe_ratio: parseFloat(row.pe_ratio) || 0,
+                        roe: parseFloat(row.roe) || 0,
+                        rsi_14: parseFloat(row.rsi_14) || 50
+                      };
+                    })
+                    .filter((row: any) => row !== null);
+                  
+                  if (loadedMarketData.length > 0) {
+                    setMarketData(loadedMarketData);
+                    csvLoadSuccess = true;
+                    break;
+                  }
+                }
+              }
             }
-
-            if (marketParsed.data && marketParsed.data.length > 0) {
-              loadedMarketData = marketParsed.data;
-              console.log(`CSV에서 ${loadedMarketData.length}개 데이터 포인트 로드 성공`);
-            }
-          } else {
-            console.log('CSV 파일 응답 실패:', marketResponse.status);
+          } catch (pathError) {
+            console.warn(`${csvPath} 로드 실패:`, pathError);
           }
-        } catch (csvError) {
-          console.warn('CSV 로드 실패:', csvError.message);
         }
         
-        // CSV 실패 시 샘플 데이터 생성
-        if (loadedMarketData.length === 0) {
-          console.log('샘플 데이터 생성');
-          loadedMarketData = generateSampleData();
+        if (!csvLoadSuccess) {
+          throw new Error('stock_analysis.csv 파일을 찾을 수 없습니다. /public/data/ 폴더에 파일이 있는지 확인하세요.');
         }
-        
-        setMarketData(loadedMarketData);
-        console.log(`총 ${loadedMarketData.length}개 데이터 포인트 설정 완료`);
 
-      } catch (err) {
-        console.error('전체 데이터 로딩 오류:', err);
-        setError(`데이터 로딩 중 오류 발생: ${err.message}`);
-        
-        // 오류 시에도 기본 데이터 설정
+      } catch (err: any) {
+        setDataLoadError(err.message);
         const fallbackStrategies = getAllStrategies().map(strategy => ({
           ...strategy,
           icon: iconMapping[strategy.id] || Target
         }));
         setStrategies(fallbackStrategies);
-        setMarketData(generateSampleData());
-        
       } finally {
         setDataLoading(false);
-        console.log('데이터 로딩 완료');
       }
     };
 
     loadData();
   }, []);
 
-  // // 샘플 데이터 생성 함수
-  // const generateSampleData = () => {
-  //   const data = [];
-  //   const symbols = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA'];
-  //   const startDate = new Date('2024-01-01');
-    
-  //   for (let i = 0; i < 100; i++) {
-  //     const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
-  //     symbols.forEach(symbol => {
-  //       const basePrice = 100 + Math.random() * 200;
-  //       data.push({
-  //         date: date.toISOString().split('T')[0],
-  //         symbol,
-  //         open: basePrice,
-  //         high: basePrice * (1 + Math.random() * 0.05),
-  //         low: basePrice * (1 - Math.random() * 0.05),
-  //         close: basePrice * (0.95 + Math.random() * 0.1),
-  //         volume: Math.floor(1000000 + Math.random() * 5000000),
-  //         pe_ratio: 15 + Math.random() * 20,
-  //         pb_ratio: 1 + Math.random() * 5,
-  //         market_cap: 1000 + Math.random() * 2000,
-  //         dividend_yield: Math.random() * 0.05,
-  //         roe: 0.1 + Math.random() * 0.3,
-  //         debt_to_equity: Math.random() * 0.5
-  //       });
-  //     });
-  //   }
-  //   return data;
-  // };
-
   const filteredStrategies = strategies.filter(strategy => 
     categoryFilter === 'all' || strategy.category === categoryFilter
   );
 
-  // 백테스트 실행
-  const runBacktest = async (strategyId) => {
+  const runBacktest = async (strategyId: string) => {
     if (!marketData || marketData.length === 0) {
-      setError('시장 데이터가 로드되지 않았습니다.');
+      alert('시장 데이터가 로드되지 않았습니다.');
       return;
     }
 
     setIsLoading(true);
-    setError(null);
     
     try {
-      const response = await fetch('/api/backtest', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          strategy_id: strategyId,
-          parameters: selectedStrategy?.parameters || {},
-          market_data: marketData
-        })
+      // 백테스트 기간에 맞는 데이터 필터링
+      const filteredData = marketData.filter(row => {
+        const rowDate = new Date(row.date);
+        const startDate = new Date(backtestPeriod.startDate);
+        const endDate = new Date(backtestPeriod.endDate);
+        return rowDate >= startDate && rowDate <= endDate;
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        let errorData;
-        try {
-          errorData = JSON.parse(errorText);
-        } catch {
-          errorData = { error: `HTTP ${response.status}: ${errorText}` };
+      if (filteredData.length === 0) {
+        alert('선택한 기간에 해당하는 데이터가 없습니다.');
+        return;
+      }
+
+      // API 호출 시도
+      let result: BacktestResult | null = null;
+      
+      try {
+        console.log(`백테스트 API 호출: ${strategyId}`);
+        const response = await fetch('/api/backtest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            strategy_id: strategyId,
+            start_date: backtestPeriod.startDate,
+            end_date: backtestPeriod.endDate,
+            market_data: filteredData.slice(0, 500) // 데이터 크기 제한
+          })
+        });
+
+        if (response.ok) {
+          const apiResult = await response.json();
+          if (!apiResult.error) {
+            result = apiResult;
+            console.log('API 백테스트 성공');
+          }
+        } else {
+          const errorText = await response.text();
+          console.warn(`API 응답 오류 ${response.status}:`, errorText);
         }
-        throw new Error(errorData.error || '백테스트 실행 실패');
+      } catch (apiError: any) {
+        console.warn('API 호출 실패:', apiError.message);
       }
 
-      const result = await response.json();
-      
-      if (result.error) {
-        throw new Error(result.error);
+      // API 실패 시 모의 결과 생성
+      if (!result) {
+        console.log('모의 백테스트 결과 생성');
+        const strategy = strategies.find(s => s.id === strategyId);
+        const baseReturn = 5 + Math.random() * 15; // 5-20% 연간 수익률
+        const volatility = 8 + Math.random() * 20; // 8-28% 변동성
+        
+        result = {
+          strategy_id: strategyId,
+          strategy_name: strategy?.name || 'Unknown Strategy',
+          totalReturn: baseReturn * ((new Date(backtestPeriod.endDate).getTime() - new Date(backtestPeriod.startDate).getTime()) / (365.25 * 24 * 60 * 60 * 1000)),
+          annualReturn: baseReturn,
+          volatility: volatility,
+          sharpeRatio: 0.3 + Math.random() * 1.5,
+          sortinoRatio: 0.5 + Math.random() * 1.5,
+          maxDrawdown: 3 + Math.random() * 20,
+          winRate: 45 + Math.random() * 20,
+          finalValue: 100000 * (1 + (baseReturn / 100)),
+          portfolioHistory: generateMockHistory(252, baseReturn, volatility),
+          timestamp: new Date().toLocaleTimeString()
+        };
+        
+        alert(`백테스트 API가 응답하지 않아 모의 결과를 생성했습니다. 실제 백엔드 연결이 필요합니다.`);
       }
 
-      setBacktestResult(result);
+      // 기존 결과에 추가
+      const newResults = [...backtestResults];
+      const existingIndex = newResults.findIndex(r => r.strategy_id === strategyId);
       
-    } catch (error) {
+      if (existingIndex >= 0) {
+        newResults[existingIndex] = result;
+      } else {
+        newResults.push(result);
+      }
+      
+      setBacktestResults(newResults);
+      
+    } catch (error: any) {
       console.error('백테스트 오류:', error);
-      
-      // 폴백: 목 데이터로 결과 생성
-      const mockResult = generateMockResult(strategyId);
-      setBacktestResult(mockResult);
-      
-      setError(`백테스트 실행 중 오류가 발생했습니다. 샘플 결과를 표시합니다: ${error.message}`);
+      alert(`백테스트 실행 중 오류가 발생했습니다: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // 목 결과 생성
-  const generateMockResult = (strategyId) => {
-    const baseReturn = 8 + Math.random() * 12;
-    const volatility = 10 + Math.random() * 15;
-    const portfolioHistory = generatePortfolioHistory(baseReturn, volatility);
-    
-    return {
-      strategy_name: strategyId,
-      symbol: 'PORTFOLIO',
-      totalReturn: baseReturn * 10 + Math.random() * 50,
-      annualReturn: baseReturn,
-      volatility: volatility,
-      sharpeRatio: 0.8 + Math.random() * 0.8,
-      sortinoRatio: 1.0 + Math.random() * 0.8,
-      calmarRatio: 0.6 + Math.random() * 0.6,
-      maxDrawdown: 5 + Math.random() * 15,
-      winRate: 55 + Math.random() * 15,
-      finalValue: portfolioHistory[portfolioHistory.length - 1],
-      portfolioHistory: portfolioHistory,
-      components: ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA'],
-      weights: {'AAPL': 0.2, 'GOOGL': 0.2, 'MSFT': 0.2, 'AMZN': 0.2, 'TSLA': 0.2}
-    };
-  };
-
-  const generatePortfolioHistory = (baseReturn, volatility, days = 1000) => {
-    const dailyReturn = baseReturn / 365 / 100;
-    const dailyVol = volatility / Math.sqrt(365) / 100;
-    
+  // 모의 포트폴리오 히스토리 생성
+  const generateMockHistory = (days: number, annualReturn: number, volatility: number): number[] => {
+    const dailyReturn = annualReturn / 252 / 100;
+    const dailyVol = volatility / Math.sqrt(252) / 100;
     const history = [100000];
     
     for (let i = 1; i < days; i++) {
       const randomReturn = dailyReturn + (Math.random() - 0.5) * dailyVol * 2;
       const newValue = history[i-1] * (1 + randomReturn);
-      history.push(Math.max(newValue, history[i-1] * 0.7));
+      history.push(Math.max(newValue, history[i-1] * 0.8)); // 최대 20% 손실 제한
     }
     
     return history;
   };
 
-  const chartData = backtestResult?.portfolioHistory?.map((value, index) => ({
-    date: index,
-    value: value,
-    benchmark: 100000 + index * 200
-  })) || [];
+  if (dataLoadError) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-8">
+          <div className="w-16 h-16 bg-red-900/30 border border-red-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <XCircle />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-100 mb-2">데이터 로드 실패</h3>
+          <p className="text-gray-400 mb-4">{dataLoadError}</p>
+          <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 text-left">
+            <p className="text-gray-300 text-sm mb-2">필요한 파일:</p>
+            <code className="text-gray-400 text-xs">/public/data/stock_analysis.csv</code>
+            <p className="text-gray-400 text-xs mt-2">
+              CSV 형식: date,year,ticker,name,market,open,high,low,close,volume,market_cap,pe_ratio,roe,rsi_14
+            </p>
+          </div>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-gray-600 text-gray-100 rounded-lg hover:bg-gray-500 transition-colors"
+          >
+            다시 시도
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-  const drawdownData = backtestResult?.portfolioHistory?.map((value, index) => {
-    if (!backtestResult?.portfolioHistory) return { date: index, drawdown: 0 };
-    const peak = Math.max(...backtestResult.portfolioHistory.slice(0, index + 1));
-    const drawdown = ((value - peak) / peak) * 100;
-    return {
-      date: index,
-      drawdown: drawdown
-    };
-  }) || [];
-
-  // 로딩 화면
   if (dataLoading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -625,8 +685,8 @@ export default function QuantStrategyPage() {
           <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
             <RefreshCw className="w-8 h-8 animate-spin" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-100 mb-2">시스템 초기화 중</h3>
-          <p className="text-gray-400">전략 엔진 및 시장 데이터 로딩 중...</p>
+          <h3 className="text-xl font-semibold text-gray-100 mb-2">데이터 로딩 중</h3>
+          <p className="text-gray-400">stock_analysis.csv 파일을 읽는 중...</p>
         </div>
       </div>
     );
@@ -647,18 +707,18 @@ export default function QuantStrategyPage() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-100">Quant Strategy Backtester</h1>
-                <p className="text-gray-400 text-sm">20가지 전문가 투자전략 - 기본 10가지 + 고급 10가지</p>
+                <p className="text-gray-400 text-sm">20가지 전문가 투자전략 백테스트</p>
               </div>
             </motion.div>
             
             <div className="flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-gray-300 text-sm">데이터 포인트</p>
-                <p className="text-gray-100 font-semibold">{marketData.length.toLocaleString()}개</p>
+                <p className="text-gray-300 text-sm">데이터 상태</p>
+                <p className="text-emerald-400 text-sm font-semibold">CSV 연결됨</p>
               </div>
               <div className="text-right">
-                <p className="text-gray-300 text-sm">전략 수</p>
-                <p className="text-gray-100 font-semibold">{strategies.length}가지</p>
+                <p className="text-gray-300 text-sm">데이터 포인트</p>
+                <p className="text-gray-100 font-semibold">{marketData.length.toLocaleString()}개</p>
               </div>
             </div>
           </div>
@@ -666,15 +726,6 @@ export default function QuantStrategyPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {error && (
-          <div className="mb-6 p-4 bg-yellow-800 border border-yellow-600 rounded-lg">
-            <div className="flex items-center space-x-2">
-              <AlertCircle className="text-yellow-400" />
-              <p className="text-yellow-200 text-sm">{error}</p>
-            </div>
-          </div>
-        )}
-
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           <div className="xl:col-span-1">
             <motion.div 
@@ -684,9 +735,40 @@ export default function QuantStrategyPage() {
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-gray-100 flex items-center">
-                  <Target className="mr-2" />
-                  Quant Strategies
+                  <Target />
+                  <span className="ml-2">백테스트 설정</span>
                 </h2>
+              </div>
+
+              <div className="mb-6 p-4 bg-gray-700 rounded-lg">
+                <h3 className="text-sm font-semibold text-gray-200 mb-3 flex items-center">
+                  <Calendar />
+                  <span className="ml-2">백테스트 기간</span>
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs text-gray-400 block mb-1">시작일</label>
+                    <input
+                      type="date"
+                      value={backtestPeriod.startDate}
+                      onChange={(e) => setBacktestPeriod({...backtestPeriod, startDate: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded-lg text-gray-100 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-400 block mb-1">종료일</label>
+                    <input
+                      type="date"
+                      value={backtestPeriod.endDate}
+                      onChange={(e) => setBacktestPeriod({...backtestPeriod, endDate: e.target.value})}
+                      className="w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded-lg text-gray-100 text-xs"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-100">투자 전략</h3>
                 <div className="flex space-x-2">
                   <button
                     onClick={() => setCategoryFilter('all')}
@@ -739,7 +821,7 @@ export default function QuantStrategyPage() {
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-2">
                           <div className="text-gray-400">
-                            {React.createElement(strategy.icon)}
+                            {React.createElement(strategy.icon || Target)}
                           </div>
                           <h3 className="font-semibold text-gray-100 text-sm">{strategy.name}</h3>
                           {strategy.category === 'advanced' && (
@@ -749,10 +831,10 @@ export default function QuantStrategyPage() {
                         <p className="text-gray-400 text-xs mb-3">{strategy.description}</p>
                         
                         <div className="flex flex-wrap gap-2">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${riskColors[strategy.riskLevel] || riskColors.medium}`}>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium border ${riskColors[strategy.riskLevel]}`}>
                             {strategy.riskLevel === 'low' ? '낮은 위험' : strategy.riskLevel === 'medium' ? '중간 위험' : '높은 위험'}
                           </span>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${complexityColors[strategy.complexity] || complexityColors.simple}`}>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium border ${complexityColors[strategy.complexity]}`}>
                             {strategy.complexity === 'simple' ? '간단' : strategy.complexity === 'medium' ? '보통' : '복잡'}
                           </span>
                         </div>
@@ -799,9 +881,9 @@ export default function QuantStrategyPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => selectedStrategy && runBacktest(selectedStrategy.id)}
-                disabled={!selectedStrategy || isLoading}
+                disabled={!selectedStrategy || isLoading || marketData.length === 0}
                 className={`w-full mt-6 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center space-x-2 ${
-                  selectedStrategy && !isLoading
+                  selectedStrategy && !isLoading && marketData.length > 0
                     ? 'bg-gray-600 text-gray-100 hover:bg-gray-500 shadow-lg'
                     : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                 }`}
@@ -822,256 +904,240 @@ export default function QuantStrategyPage() {
           </div>
 
           <div className="xl:col-span-2">
-            <AnimatePresence>
-              {backtestResult ? (
+            {backtestResults.length > 0 ? (
+              <div className="space-y-6">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="space-y-6"
+                  className="bg-gray-800 rounded-2xl border border-gray-700 p-6"
                 >
-                  <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-xl font-bold text-gray-100 flex items-center">
-                        <BarChart3 className="mr-2" />
-                        포트폴리오 성과 요약
-                      </h2>
-                      <div className="flex space-x-2">
-                        <button 
-                          onClick={() => setShowGraphs(!showGraphs)}
-                          className="p-2 text-gray-400 hover:text-gray-200 transition-colors bg-gray-700 rounded-lg"
-                        >
-                          <BarChart3 />
-                        </button>
-                        <button className="p-2 text-gray-400 hover:text-gray-200 transition-colors">
-                          <Download />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="bg-gray-700 border border-gray-600 rounded-xl p-4">
-                        <p className="text-gray-300 text-sm font-medium">총 수익률</p>
-                        <p className="text-2xl font-bold text-gray-100">{backtestResult.totalReturn.toFixed(1)}%</p>
-                      </div>
-                      <div className="bg-gray-700 border border-gray-600 rounded-xl p-4">
-                        <p className="text-gray-300 text-sm font-medium">연간 수익률</p>
-                        <p className="text-2xl font-bold text-gray-100">{backtestResult.annualReturn.toFixed(1)}%</p>
-                      </div>
-                      <div className="bg-gray-700 border border-gray-600 rounded-xl p-4">
-                        <p className="text-gray-300 text-sm font-medium">샤프 비율</p>
-                        <p className="text-2xl font-bold text-gray-100">{backtestResult.sharpeRatio.toFixed(2)}</p>
-                      </div>
-                      <div className="bg-gray-700 border border-gray-600 rounded-xl p-4">
-                        <p className="text-gray-300 text-sm font-medium">최대 낙폭</p>
-                        <p className="text-2xl font-bold text-gray-100">-{backtestResult.maxDrawdown.toFixed(1)}%</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                      <div className="bg-gray-700 rounded-xl p-4">
-                        <p className="text-gray-400 text-sm">변동성</p>
-                        <p className="text-lg font-semibold text-gray-100">{backtestResult.volatility.toFixed(1)}%</p>
-                      </div>
-                      <div className="bg-gray-700 rounded-xl p-4">
-                        <p className="text-gray-400 text-sm">소르티노 비율</p>
-                        <p className="text-lg font-semibold text-gray-100">{backtestResult.sortinoRatio.toFixed(2)}</p>
-                      </div>
-                      <div className="bg-gray-700 rounded-xl p-4">
-                        <p className="text-gray-400 text-sm">승률</p>
-                        <p className="text-lg font-semibold text-gray-100">{backtestResult.winRate.toFixed(1)}%</p>
-                      </div>
-                      <div className="bg-gray-700 rounded-xl p-4">
-                        <p className="text-gray-400 text-sm">최종 가치</p>
-                        <p className="text-lg font-semibold text-gray-100">${Math.round(backtestResult.finalValue).toLocaleString()}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <AnimatePresence>
-                    {showGraphs && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="space-y-6"
-                      >
-                        <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
-                          <h3 className="text-lg font-bold text-gray-100 mb-4 flex items-center">
-                            <Activity className="mr-2" />
-                            Equity Curve - 자산 성장 곡선
-                          </h3>
-                          
-                          <div className="h-80">
-                            <ResponsiveContainer width="100%" height="100%">
-                              <LineChart data={chartData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#4b5563" />
-                                <XAxis 
-                                  dataKey="date" 
-                                  stroke="#9ca3af"
-                                  fontSize={12}
-                                />
-                                <YAxis 
-                                  stroke="#9ca3af"
-                                  fontSize={12}
-                                  tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
-                                />
-                                <Tooltip 
-                                  contentStyle={{
-                                    backgroundColor: '#374151',
-                                    border: '1px solid #4b5563',
-                                    borderRadius: '8px',
-                                    color: '#f9fafb'
-                                  }}
-                                  formatter={(value, name) => [
-                                    `$${Number(value).toLocaleString()}`,
-                                    name === 'value' ? '포트폴리오' : '벤치마크'
-                                  ]}
-                                />
-                                <Line 
-                                  type="monotone" 
-                                  dataKey="value" 
-                                  stroke="#6b7280" 
-                                  strokeWidth={2}
-                                  dot={false}
-                                  name="포트폴리오"
-                                />
-                                <Line 
-                                  type="monotone" 
-                                  dataKey="benchmark" 
-                                  stroke="#9ca3af" 
-                                  strokeWidth={1}
-                                  strokeDasharray="5 5"
-                                  dot={false}
-                                  name="벤치마크"
-                                />
-                              </LineChart>
-                            </ResponsiveContainer>
-                          </div>
-                        </div>
-
-                        <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
-                          <h3 className="text-lg font-bold text-gray-100 mb-4 flex items-center">
-                            <Shield className="mr-2" />
-                            Drawdown Analysis - 낙폭 분석
-                          </h3>
-                          
-                          <div className="h-64">
-                            <ResponsiveContainer width="100%" height="100%">
-                              <AreaChart data={drawdownData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#4b5563" />
-                                <XAxis 
-                                  dataKey="date" 
-                                  stroke="#9ca3af"
-                                  fontSize={12}
-                                />
-                                <YAxis 
-                                  stroke="#9ca3af"
-                                  fontSize={12}
-                                  tickFormatter={(value) => `${value.toFixed(1)}%`}
-                                />
-                                <Tooltip 
-                                  contentStyle={{
-                                    backgroundColor: '#374151',
-                                    border: '1px solid #4b5563',
-                                    borderRadius: '8px',
-                                    color: '#f9fafb'
-                                  }}
-                                  formatter={(value) => [`${Number(value).toFixed(2)}%`, 'Drawdown']}
-                                />
-                                <Area 
-                                  type="monotone" 
-                                  dataKey="drawdown" 
-                                  stroke="#6b7280" 
-                                  fill="#6b7280"
-                                  fillOpacity={0.3}
-                                />
-                              </AreaChart>
-                            </ResponsiveContainer>
-                          </div>
-                          
-                          <div className="mt-4 bg-gray-700 rounded-lg p-4">
-                            <div className="flex items-center space-x-2 mb-2">
-                              <AlertCircle />
-                              <h4 className="text-sm font-semibold text-gray-200">Drawdown 분석</h4>
-                            </div>
-                            <p className="text-xs text-gray-400">
-                              이 차트는 포트폴리오의 최고점 대비 하락 정도를 보여줍니다. 
-                              낮은 drawdown은 더 안정적인 투자를 의미합니다.
-                            </p>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {backtestResult.components && (
-                    <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6">
-                      <h3 className="text-lg font-bold text-gray-100 mb-4 flex items-center">
-                        <Target className="mr-2" />
-                        포트폴리오 구성
-                      </h3>
-                      
-                      <div className="grid grid-cols-5 gap-4">
-                        {backtestResult.components.map((symbol) => (
-                          <div key={symbol} className="bg-gray-700 rounded-lg p-3 text-center">
-                            <p className="text-gray-100 font-semibold">{symbol}</p>
-                            <p className="text-gray-400 text-sm">
-                              {((backtestResult.weights?.[symbol] || 0.2) * 100).toFixed(1)}%
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </motion.div>
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="bg-gray-800 rounded-2xl border border-gray-700 p-12 text-center"
-                >
-                  <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
-                    <BarChart3 />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-100 mb-2">백테스트 결과를 기다리는 중</h3>
-                  <p className="text-gray-400">
-                    왼쪽에서 전략을 선택하고 백테스트를 실행하면 
-                    <br />
-                    상세한 성과 분석 결과가 여기에 표시됩니다.
-                  </p>
+                  <h2 className="text-xl font-bold text-gray-100 mb-6 flex items-center">
+                    <Trophy />
+                    <span className="ml-2">성과 종합 비교</span>
+                  </h2>
                   
-                  <div className="mt-8 grid grid-cols-3 gap-4">
-                    <div className="bg-gray-700 rounded-lg p-4 text-center">
-                      <div className="text-gray-400 flex justify-center mb-2">
-                        <Target />
-                      </div>
-                      <p className="text-gray-100 font-semibold">실제 데이터</p>
-                      <p className="text-gray-400 text-sm">CSV 파일 로딩</p>
-                    </div>
-                    <div className="bg-gray-700 rounded-lg p-4 text-center">
-                      <div className="text-gray-400 flex justify-center mb-2">
-                        <Shield />
-                      </div>
-                      <p className="text-gray-100 font-semibold">Python 엔진</p>
-                      <p className="text-gray-400 text-sm">실제 백테스트</p>
-                    </div>
-                    <div className="bg-gray-700 rounded-lg p-4 text-center">
-                      <div className="text-gray-400 flex justify-center mb-2">
-                        <Activity />
-                      </div>
-                      <p className="text-gray-100 font-semibold">상세 분석</p>
-                      <p className="text-gray-400 text-sm">성과 측정</p>
-                    </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-gray-600">
+                          <th className="text-left text-gray-300 pb-3">전략</th>
+                          <th className="text-right text-gray-300 pb-3">연간수익률</th>
+                          <th className="text-right text-gray-300 pb-3">샤프비율</th>
+                          <th className="text-right text-gray-300 pb-3">최대낙폭</th>
+                          <th className="text-right text-gray-300 pb-3">승률</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {backtestResults
+                          .sort((a, b) => (b.annualReturn || 0) - (a.annualReturn || 0))
+                          .map((result, index) => (
+                          <tr key={result.strategy_id} className="border-b border-gray-700">
+                            <td className="py-3">
+                              <div className="flex items-center space-x-2">
+                                {index === 0 && <Trophy className="w-4 h-4 text-yellow-400" />}
+                                <span className="text-gray-100 font-medium">{result.strategy_name}</span>
+                              </div>
+                            </td>
+                            <td className="text-right py-3">
+                              <span className={`font-semibold ${
+                                (result.annualReturn || 0) >= 12 ? 'text-emerald-400' : 
+                                (result.annualReturn || 0) >= 8 ? 'text-yellow-400' : 'text-red-400'
+                              }`}>
+                                {(result.annualReturn || 0).toFixed(1)}%
+                              </span>
+                            </td>
+                            <td className="text-right py-3">
+                              <span className="text-gray-100">{(result.sharpeRatio || 0).toFixed(2)}</span>
+                            </td>
+                            <td className="text-right py-3">
+                              <span className="text-red-400">-{(result.maxDrawdown || 0).toFixed(1)}%</span>
+                            </td>
+                            <td className="text-right py-3">
+                              <span className="text-gray-100">{(result.winRate || 0).toFixed(1)}%</span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </motion.div>
-              )}
-            </AnimatePresence>
+
+                <div className="space-y-4">
+                  {backtestResults.map((result, index) => (
+                    <motion.div
+                      key={result.strategy_id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="bg-gray-800 rounded-2xl border border-gray-700 p-6"
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-bold text-gray-100 flex items-center">
+                          {React.createElement(iconMapping[result.strategy_id] || Target)}
+                          <span className="ml-2">{result.strategy_name}</span>
+                        </h3>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-xs text-gray-400">실행: {result.timestamp}</span>
+                          <button 
+                            onClick={() => setShowGraphs(showGraphs === result.strategy_id ? null : result.strategy_id)}
+                            className={`p-2 transition-colors rounded-lg ${
+                              showGraphs === result.strategy_id
+                                ? 'text-gray-200 bg-gray-600' 
+                                : 'text-gray-400 hover:text-gray-200 bg-gray-700'
+                            }`}
+                          >
+                            <BarChart3 />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="bg-gray-700 border border-gray-600 rounded-xl p-4">
+                          <p className="text-gray-300 text-sm font-medium">총 수익률</p>
+                          <p className="text-2xl font-bold text-gray-100">{(result.totalReturn || 0).toFixed(1)}%</p>
+                        </div>
+                        <div className="bg-gray-700 border border-gray-600 rounded-xl p-4">
+                          <p className="text-gray-300 text-sm font-medium">연간 수익률</p>
+                          <p className="text-2xl font-bold text-gray-100">{(result.annualReturn || 0).toFixed(1)}%</p>
+                        </div>
+                        <div className="bg-gray-700 border border-gray-600 rounded-xl p-4">
+                          <p className="text-gray-300 text-sm font-medium">샤프 비율</p>
+                          <p className="text-2xl font-bold text-gray-100">{(result.sharpeRatio || 0).toFixed(2)}</p>
+                        </div>
+                        <div className="bg-gray-700 border border-gray-600 rounded-xl p-4">
+                          <p className="text-gray-300 text-sm font-medium">최대 낙폭</p>
+                          <p className="text-2xl font-bold text-red-400">-{(result.maxDrawdown || 0).toFixed(1)}%</p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                        <div className="bg-gray-700 rounded-xl p-4">
+                          <p className="text-gray-400 text-sm">변동성</p>
+                          <p className="text-lg font-semibold text-gray-100">{(result.volatility || 0).toFixed(1)}%</p>
+                        </div>
+                        <div className="bg-gray-700 rounded-xl p-4">
+                          <p className="text-gray-400 text-sm">소르티노 비율</p>
+                          <p className="text-lg font-semibold text-gray-100">{(result.sortinoRatio || 0).toFixed(2)}</p>
+                        </div>
+                        <div className="bg-gray-700 rounded-xl p-4">
+                          <p className="text-gray-400 text-sm">승률</p>
+                          <p className="text-lg font-semibold text-gray-100">{(result.winRate || 0).toFixed(1)}%</p>
+                        </div>
+                        <div className="bg-gray-700 rounded-xl p-4">
+                          <p className="text-gray-400 text-sm">최종 가치</p>
+                          <p className="text-lg font-semibold text-gray-100">${Math.round(result.finalValue || 0).toLocaleString()}</p>
+                        </div>
+                      </div>
+
+                      <AnimatePresence>
+                        {showGraphs === result.strategy_id && result.portfolioHistory && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mt-6 space-y-6"
+                          >
+                            <div className="bg-gray-700 rounded-xl p-4">
+                              <h4 className="text-md font-bold text-gray-100 mb-4 flex items-center">
+                                <Activity />
+                                <span className="ml-2">Equity Curve</span>
+                              </h4>
+                              
+                              <div className="h-64">
+                                <ResponsiveContainer width="100%" height="100%">
+                                  <LineChart data={result.portfolioHistory.map((value, idx) => ({
+                                    date: idx,
+                                    value: value,
+                                    benchmark: 100000 * Math.pow(1.08, idx / 252)
+                                  }))}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#4b5563" />
+                                    <XAxis dataKey="date" stroke="#9ca3af" fontSize={12} />
+                                    <YAxis stroke="#9ca3af" fontSize={12} tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`} />
+                                    <Tooltip 
+                                      contentStyle={{
+                                        backgroundColor: '#374151',
+                                        border: '1px solid #4b5563',
+                                        borderRadius: '8px',
+                                        color: '#f9fafb'
+                                      }}
+                                      formatter={(value, name) => [
+                                        `$${Number(value).toLocaleString()}`,
+                                        name === 'value' ? '전략' : '벤치마크'
+                                      ]}
+                                    />
+                                    <Line type="monotone" dataKey="value" stroke="#6b7280" strokeWidth={3} dot={false} name="전략" />
+                                    <Line type="monotone" dataKey="benchmark" stroke="#9ca3af" strokeWidth={2} strokeDasharray="5 5" dot={false} name="벤치마크" />
+                                  </LineChart>
+                                </ResponsiveContainer>
+                              </div>
+                            </div>
+
+                            <div className="bg-gray-700 rounded-xl p-4">
+                              <h4 className="text-md font-bold text-gray-100 mb-4 flex items-center">
+                                <Shield />
+                                <span className="ml-2">Drawdown Analysis</span>
+                              </h4>
+                              
+                              <div className="h-48">
+                                <ResponsiveContainer width="100%" height="100%">
+                                  <AreaChart data={result.portfolioHistory.map((value, idx) => {
+                                    const peak = Math.max(...result.portfolioHistory.slice(0, idx + 1));
+                                    const drawdown = ((value - peak) / peak) * 100;
+                                    return { date: idx, drawdown: drawdown };
+                                  })}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#4b5563" />
+                                    <XAxis dataKey="date" stroke="#9ca3af" fontSize={12} />
+                                    <YAxis stroke="#9ca3af" fontSize={12} tickFormatter={(value) => `${value.toFixed(1)}%`} />
+                                    <Tooltip 
+                                      contentStyle={{
+                                        backgroundColor: '#374151',
+                                        border: '1px solid #4b5563',
+                                        borderRadius: '8px',
+                                        color: '#f9fafb'
+                                      }}
+                                      formatter={(value) => [`${Number(value).toFixed(2)}%`, 'Drawdown']}
+                                    />
+                                    <Area type="monotone" dataKey="drawdown" stroke="#ef4444" fill="#ef4444" fillOpacity={0.2} />
+                                  </AreaChart>
+                                </ResponsiveContainer>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-gray-800 rounded-2xl border border-gray-700 p-12 text-center"
+              >
+                <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                  <BarChart3 />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-100 mb-2">백테스트 결과 대기 중</h3>
+                <p className="text-gray-400 mb-4">
+                  백테스트 기간을 설정하고 전략을 선택한 후 실행하세요
+                </p>
+                
+                <div className="bg-gray-700 rounded-lg p-4 text-left max-w-md mx-auto">
+                  <h4 className="text-sm font-semibold text-gray-200 mb-2">백테스트 정보</h4>
+                  <div className="space-y-1 text-xs text-gray-400">
+                    <p>• 기간: {backtestPeriod.startDate} ~ {backtestPeriod.endDate}</p>
+                    <p>• 사용 가능한 데이터: {marketData.length.toLocaleString()}개 포인트</p>
+                    <p>• 전략: {strategies.length}가지 사용 가능</p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </div>
         </div>
       </div>
 
-      <footer className="bg-gray-800 border-t border-gray-700 mt-16">
+      <footer className="bg-gray-800 border-b border-gray-700 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-3 mb-4 md:mb-0">
@@ -1080,22 +1146,30 @@ export default function QuantStrategyPage() {
               </div>
               <div>
                 <p className="text-gray-100 font-semibold">Quant Strategy Backtester</p>
-                <p className="text-gray-400 text-sm">Python 기반 전략 엔진 + CSV 데이터</p>
+                <p className="text-gray-400 text-sm">stock_analysis.csv 데이터 기반 백테스트</p>
               </div>
             </div>
             
             <div className="flex items-center space-x-6 text-sm text-gray-400">
-              <p>실제 데이터 분석</p>
-              <p>20가지 전략</p>
-              <p>백엔드 연동</p>
-              <p>상세 백테스트</p>
+              <div className="text-center">
+                <p className="text-gray-300 font-medium">{marketData.length.toLocaleString()}</p>
+                <p>데이터 포인트</p>
+              </div>
+              <div className="text-center">
+                <p className="text-gray-300 font-medium">20</p>
+                <p>전략 수</p>
+              </div>
+              <div className="text-center">
+                <p className="text-gray-300 font-medium">{backtestResults.length}</p>
+                <p>실행된 백테스트</p>
+              </div>
             </div>
           </div>
           
           <div className="border-t border-gray-700 mt-6 pt-6 text-center">
             <p className="text-gray-500 text-sm">
-              본 시스템은 CSV 데이터와 Python 전략 엔진을 활용하여 실제 백테스트를 수행합니다. 
-              투자 결정 시 신중하게 검토하시기 바랍니다.
+              백테스트 기간: {backtestPeriod.startDate} ~ {backtestPeriod.endDate} | 
+              실제 투자 결정 시 신중하게 검토하시기 바랍니다.
             </p>
           </div>
         </div>

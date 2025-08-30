@@ -2,12 +2,12 @@ import os
 
 # 설정
 input_dirs = [
-    r"C:\Aproject\quant_platform\src\app\api",
+    r"C:\Aproject\quant_backend",
     # r"C:\Aproject\quant-platform\quant-trading-platform\backend",
     # r"C:\Aproject\quant-platform\src",
     # r"C:\Aproject\quant-platform\backtester"
 ]  # 입력 디렉토리 목록
-output_file = r"C:\Aproject\quant_platform\combined_output.txt"  # 출력 파일
+output_file = r"C:\Aproject\quant_backend\combined_output.txt"  # 출력 파일
 file_extensions = [".py", ".ts", ".tsx", ".js", ".json"]  # 포함할 파일 확장자
 
 def combine_files():

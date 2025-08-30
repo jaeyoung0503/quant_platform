@@ -8,14 +8,14 @@ const QuantStrategyMain = () => {
   const router = useRouter();
 
   const menuItems = [
-    { name: 'Portfolio 분석', icon: '', path: '/portfolio' },
-    { name: '종목별 분석', icon: '', path: '/onestock' },
+    { name: '전략선택', icon: '', path: '/backrefactor' },
     { name: 'My 전략', icon: '', path: '/quant-strategy' },
+    { name: '종목별 분석', icon: '', path: '/onestock' },
+    { name: '종목리스트', icon: '', path: '/stock_sorting' },
+    { name: 'Portfolio 분석', icon: '', path: '/portfolio' },
     { name: '모의거래', icon: '', path: '/mock_trading' },
     { name: '실제거래', icon: '', path: '/actual_trading' },
     { name: 'Membership', icon: '', path: '/member_payment' },
-    { name: '종목리스트', icon: '', path: '/stock_sorting' },
-    { name: 'Backtester(refactor)', icon: '', path: '/backrefactor' },
     { name: 'Community', icon: '', path: '/community' }    
   ];
 
